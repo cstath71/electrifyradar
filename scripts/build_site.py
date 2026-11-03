@@ -18,6 +18,8 @@ ORIGIN = SITE["canonical_origin"].rstrip("/")
 AS_OF = SITE["data_as_of"]
 EMAIL = SITE["contact_email"]
 NAME = SITE["name"]
+FORM_KEY = SITE.get("form_access_key", "")
+FORM_ENDPOINT = SITE.get("form_endpoint", "") if FORM_KEY else ""
 
 
 def esc(value) -> str:
@@ -124,8 +126,8 @@ def shell(from_dir: str, title: str, description: str, body: str, path: str, ext
     <form class="newsletter" action="mailto:{esc(EMAIL)}" data-subject="Newsletter signup">
       <label for="newsletter-email">Newsletter</label>
       <input id="newsletter-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
-      <button type="submit">Email me the signup</button>
-      <p class="fine">Opens your email app to {esc(EMAIL)}. No list is stored on this site until a form service is connected.</p>
+      <button type="submit">Sign me up</button>
+      <p class="fine">Occasional updates on installers and rebates. Unsubscribe any time by writing to {esc(EMAIL)}.</p>
     </form>
   </div>
 </footer>
@@ -135,10 +137,39 @@ document.querySelector(".menu-btn").addEventListener("click", function () {{
   nav.classList.toggle("open");
   this.setAttribute("aria-expanded", nav.classList.contains("open") ? "true" : "false");
 }});
+var FORM_ENDPOINT = {json.dumps(FORM_ENDPOINT)};
+var FORM_KEY = {json.dumps(FORM_KEY)};
 document.querySelectorAll("form[action^='mailto:']").forEach(function (form) {{
   form.addEventListener("submit", function (event) {{
     event.preventDefault();
     var data = new FormData(form);
+    if (FORM_ENDPOINT && FORM_KEY) {{
+      if ((data.get("company_website") || "").trim()) return;
+      data.delete("company_website");
+      data.append("access_key", FORM_KEY);
+      data.append("subject", "ElectrifyRadar: " + (form.getAttribute("data-subject") || "Form"));
+      data.append("from_name", "ElectrifyRadar website");
+      data.append("page", window.location.href);
+      var btn = form.querySelector("button[type=submit]");
+      if (btn) btn.disabled = true;
+      fetch(FORM_ENDPOINT, {{method: "POST", body: data, headers: {{"Accept": "application/json"}}}})
+        .then(function (r) {{ return r.json(); }})
+        .then(function (res) {{
+          var msg = document.createElement("p");
+          msg.className = "fine form-status";
+          msg.textContent = res.success ? "Thanks, we got it." : "Sorry, that didn't send. Please email {EMAIL}.";
+          form.appendChild(msg);
+          if (res.success) form.reset();
+        }})
+        .catch(function () {{
+          var msg = document.createElement("p");
+          msg.className = "fine form-status";
+          msg.textContent = "Sorry, that didn't send. Please email {EMAIL}.";
+          form.appendChild(msg);
+        }})
+        .finally(function () {{ if (btn) btn.disabled = false; }});
+      return;
+    }}
     var lines = [];
     data.forEach(function (value, key) {{
       if (key !== "company_website") lines.push(key + ": " + value);
@@ -580,8 +611,8 @@ def write_profiles(listings):
   <h2>Where this row came from</h2>
   <ul>{sources}</ul>
   <h2>Ask for a quote</h2>
-  <p>Quote requests are not sold, and this form does not send your details to the installer. It emails {esc(EMAIL)} so we can see demand. Nothing is forwarded unless we later say so on this page.</p>
-  <form action="mailto:{esc(EMAIL)}" data-subject="Quote request placeholder — {esc(row['name'])}">
+  <p>Quote requests are not sold, and this form does not send your details to the installer. It goes to {esc(EMAIL)} so we can see demand. Nothing is forwarded unless we later say so on this page.</p>
+  <form action="mailto:{esc(EMAIL)}" data-subject="Quote request — {esc(row['name'])}">
     <input type="text" name="company_website" autocomplete="off" tabindex="-1" style="position:absolute;left:-9999px" aria-hidden="true">
     <label for="lead-name">Your name</label>
     <input id="lead-name" name="name" type="text" required>
@@ -591,7 +622,7 @@ def write_profiles(listings):
     <input id="lead-city" name="city" type="text" value="{esc(row['city'])}">
     <label for="lead-note">What you need</label>
     <textarea id="lead-note" name="note"></textarea>
-    <div class="actions"><button type="submit">Email ElectrifyRadar</button></div>
+    <div class="actions"><button type="submit">Send request</button></div>
   </form>
   <p class="actions"><a class="button secondary" href="{esc(claim)}">Claim this listing</a> <a class="button secondary" href="{esc(correct)}">Report an ownership correction</a></p>
 </div>
@@ -688,7 +719,7 @@ def write_static_pages(counts):
 <div class="wrap prose">
   <h1>Privacy</h1>
   <p>ElectrifyRadar is a static site. Pages do not set analytics cookies and do not run a signed-in account.</p>
-  <p>Forms open your email program and send a message to {esc(EMAIL)}. Until a form service is connected, the site itself does not store what you type. Your email provider stores the message you send, under that provider’s terms.</p>
+  <p>Forms on this site are delivered to {esc(EMAIL)} through Web3Forms, a form-to-email service, which processes what you type under its own privacy terms. The site itself does not store form entries, and we do not sell or share them with installers.</p>
   <p>Installer phone numbers and addresses are copied from public program rosters and public license files. Email addresses that appeared in those files are not republished.</p>
   <p>If you want a listing changed or removed, use <a href="../report-correction/">report a correction</a> or email {esc(EMAIL)}.</p>
 </div>
@@ -738,7 +769,7 @@ def write_form_page(path, heading, description, subject, intro):
     <input id="f-contact" name="contact" type="text" required>
     <label for="f-detail">Details and source links</label>
     <textarea id="f-detail" name="details" required></textarea>
-    <div class="actions"><button type="submit">Open email</button></div>
+    <div class="actions"><button type="submit">Send</button></div>
   </form>
   <p>Or write directly to <a href="mailto:{esc(EMAIL)}">{esc(EMAIL)}</a>.</p>
 </div>
