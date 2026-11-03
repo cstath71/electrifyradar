@@ -136,6 +136,13 @@ textarea { min-height: 8rem; }
 .badge.franchise { background: #e0e7ff; color: #312e81; }
 .badge.license { background: #ecfccb; color: #3f6212; }
 .badge.quiet { background: transparent; border: 1px solid var(--line); color: var(--muted); font-weight: 650; }
+.badge.self-reported {
+  background: transparent;
+  border: 1px dashed #9a3412;
+  color: #9a3412;
+  font-style: italic;
+  font-weight: 650;
+}
 
 .state-grid { display: grid; gap: 0.8rem; margin: 1.2rem 0 2rem; }
 .state-card {
@@ -198,6 +205,7 @@ dd { margin: 0; }
 .site-footer a { color: #f4f0e6; }
 .footer-grid { display: grid; gap: 1rem; }
 .fine { color: #d9d0c0; font-size: 0.92rem; }
+.source-note { display: block; color: var(--muted); font-size: 0.88rem; margin-top: 0.2rem; }
 
 .pager { margin: 1rem 0 2rem; }
 

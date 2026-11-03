@@ -440,6 +440,8 @@ def badge_html(row) -> str:
         own = '<span class="badge platform">Other corporate owner</span>'
     else:
         own = '<span class="badge quiet">Ownership: unverified</span>'
+    if row.get("ownership_self_reported"):
+        own += f'<span class="badge self-reported">Self-reported by the business: {esc(row["ownership_self_reported"])}</span>'
     if row["heat_pump_signal"] == "mechanical_license_only":
         signal = '<span class="badge license">Mechanical license only</span>'
     else:
@@ -911,7 +913,16 @@ def write_profiles(listings):
         city_path = f"/us/{state_slug}/{row['city_slug']}/"
         city_name = city_title(state_slug, row["city_slug"], row)
         phone = f'<a href="tel:{esc(row["phone"])}">{esc(row["phone"])}</a>' if row["phone"] else "Not in source"
-        website = f'<a href="{esc(row["website"])}">{esc(row["website"])}</a>' if row["website"] else "Not in source"
+        if row["website"]:
+            website = f'<a href="{esc(row["website"])}">{esc(row["website"])}</a>'
+            if row.get("website_note"):
+                basis = row.get("website_match_basis") or ""
+                website += f'<span class="source-note">{esc(row["website_note"])}.'
+                if basis:
+                    website += f' {esc(basis)}'
+                website += "</span>"
+        else:
+            website = "Not in source"
         services = "".join(f"<li>{esc(item)}</li>" for item in row["services"]) or "<li>Not broken out in the source.</li>"
         programs = "".join(
             f'<li><a href="{esc(item["url"])}">{esc(item["name"])}</a></li>' for item in row["rebate_programs"]
@@ -1152,6 +1163,10 @@ def write_static_pages(counts):
   <p>Every listing starts as Ownership: unverified. That means no documented private-equity platform or franchise parent matched <a href="https://dealseam.com/hvac-pe-rollup-tracker-2026">DealSeam’s 2026 HVAC roll-up tracker</a> (page last updated 28 July 2026; read {esc(AS_OF)}) or the <a href="https://www.aireserv.com/">Aire Serv</a> site, which describes Aire Serv as a Neighborly company whose work is done by franchise companies. A match stores the parent, the matched words, the source URL, and the day the source was read. The profile links that source.</p>
   <p>Matches are narrow. “Comfort Systems” is not treated as Comfort Systems USA. “Champion” is not treated as Champions Group. The letters ARS alone are not treated as Rescue Rooter. Nexstar membership is not a match. See <a href="https://www.nexstarnetwork.com/about/">Nexstar’s about page</a>. We did not ingest a membership roster.</p>
   <p>An independent label is used only when the company’s own site states family ownership with a year or generation, or names the owner-operator, and a search on the checked date did not turn up a sale. The quotes are in the evidence file. See <a href="../platforms/">platforms and local brands</a>.</p>
+  <p>Some California and Minnesota rows in the ten largest cities had no website in the state file. When a public web search on {esc(AS_OF)} found an official site, and the page matched the business name plus the phone, the street address and ZIP, or the license number, that URL is added to the profile with the note “Website found by ElectrifyRadar” and the match basis. A directory page is not treated as the business’s site. Finding a site does not by itself change the ownership label.</p>
+  <h2>What a business tells us</h2>
+  <p>The <a href="../claim/">claim form</a> asks the business to describe ownership: independent or family-owned, a franchise, part of a larger company or a private-equity-backed platform (with the name), or not sure. An optional field asks for the owner name or parent company. The form emails {esc(EMAIL)} through Web3Forms. It does not write the answer into the listing file.</p>
+  <p>If we later publish an ownership answer from a reviewed submission, the profile shows it as <span class="badge self-reported">self-reported by the business</span>. That style is a dashed label, separate from sourced labels such as Independent or PE or platform-owned, which link a public page and quote it. A self-reported line does not replace a sourced label, and it is not evidence that the business is independent.</p>
   <h2>What we do not publish</h2>
   <p>No star ratings, review counts, or made-up prices. Manual J is marked only when a source says the installer performed or claimed it. None of the files above say that, so every listing reads “Manual J: not in source.” Rebate dollar amounts appear only when an official page stated them, with that page linked and this checked date. The Minnesota $4,000 figure is one of those, quoted on the <a href="../us/rebates/mn/">Minnesota rebate guide</a> from the Commerce page.</p>
   <h2>Update cadence</h2>
@@ -1183,12 +1198,26 @@ def write_static_pages(counts):
 </div>
 """
     write_page("/terms/", shell("/terms", f"Terms | {NAME}", "Terms for using the ElectrifyRadar directory.", terms, "/terms/", breadcrumbs=[("Home", "/"), ("Terms", "/terms/")]))
+    claim_ownership = """
+    <label for="f-ownership">Ownership</label>
+    <select id="f-ownership" name="ownership" required>
+      <option value="">Select one</option>
+      <option>Independent / family-owned</option>
+      <option>Franchise</option>
+      <option>Part of a larger company or PE-backed platform</option>
+      <option>Not sure</option>
+    </select>
+    <label for="f-owner">Owner name / parent company (optional)</label>
+    <input id="f-owner" name="owner_or_parent" type="text" autocomplete="organization">
+    """
     write_form_page(
         "/claim/",
         "Claim a listing",
         "Tell us you operate this business.",
         "Claim a listing",
-        """<p>Claiming a listing is free. It does not buy placement. Email {email} with the business name, the listing URL, and a phone number or website we can match to the public record. We will not mark the business independent from a claim alone.</p>""",
+        """<p>Claiming a listing is free. It does not buy placement. Email {email} with the business name, the listing URL, and a phone number or website we can match to the public record. We will not mark the business independent from a claim alone.</p>
+        <p>If we publish an ownership answer from this form after review, the profile will show it as <span class="badge self-reported">self-reported by the business</span>, in a different style from labels we took from a public source. The form sends an email. It does not change the listing by itself.</p>""",
+        extra_fields=claim_ownership,
     )
     write_form_page(
         "/report-correction/",
@@ -1245,7 +1274,7 @@ def write_platforms_page():
     ))
 
 
-def write_form_page(path, heading, description, subject, intro):
+def write_form_page(path, heading, description, subject, intro, extra_fields=""):
     from_dir = path.rstrip("/")
     body = f"""
 <div class="wrap prose">
@@ -1261,6 +1290,7 @@ def write_form_page(path, heading, description, subject, intro):
     <input id="f-url" name="listing_url" type="url">
     <label for="f-contact">Email or phone</label>
     <input id="f-contact" name="contact" type="text" required>
+    {extra_fields}
     <label for="f-detail">Details and source links</label>
     <textarea id="f-detail" name="details" required></textarea>
     <div class="actions"><button type="submit">Send</button></div>
@@ -1292,7 +1322,7 @@ def guide_pages():
             <p>Every listing starts as <strong>Ownership: unverified</strong>. That sentence means: no documented private-equity platform or franchise parent was matched in our dataset as of the date on the page. It does not mean we investigated the company’s owners, and it does not mean the company is independent.</p>
             <p>A listing becomes <strong>PE or platform-owned</strong> or <strong>Franchise</strong> only when the business name matches a term in our platform file. The file records the parent, the match term, the source URL, and the day we read the source. The profile links that source. The current source for platforms is <a href="https://dealseam.com/hvac-pe-rollup-tracker-2026">DealSeam’s 2026 PE roll-up tracker</a> (page last updated 28 July 2026; we read it 3 November 2026). Aire Serv is labeled a franchise because <a href="https://www.aireserv.com/">aireserv.com</a> describes Aire Serv as a Neighborly company whose work is done by franchise companies.</p>
             <p>Matches are conservative. “Comfort Systems” is a common local name and is not treated as Comfort Systems USA. “Champion” is not treated as Champions Group. “ARS” alone is not treated as Rescue Rooter. “Service Experts” counts only when the name starts with those words, so a sentence like “heating service experts” does not match. Nexstar is not a match term.</p>
-            <p>We will set an independent label only after a public filing or the owner’s own statement shows no platform or franchise parent, and we record that source. No listing in this release has that label.</p>
+            <p>An independent label is used only when the company’s own site states family ownership with a year or generation, or names the owner-operator, and we record the quote and the page. A claim form answer is not that source. If we later publish what a business submitted, it is shown as self-reported by the business, in a different style from a sourced label. See the <a href="../../../methodology/">methodology</a>.</p>
             <p>Featured placement exists as a data flag and is false on every row. Paying for a label is not offered.</p>
             """,
         ),

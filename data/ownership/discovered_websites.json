@@ -1,0 +1,1756 @@
+{
+  "checked": "2026-11-03",
+  "scope": "California and Minnesota listings in the ten in-state cities with the most listings in each state, limited to rows whose source file had no website. A URL is stored only when the page matched the business name and at least one of the listing phone, the license number, or the street number plus ZIP. Directory pages are not stored.",
+  "records": [
+    {
+      "listing_id": "us-ca-anaheim-albert-air-inc",
+      "website": "https://www.albertair.com/",
+      "match_basis": "Matched on phone (714) 526-6368; license 623420; address number 4091 and ZIP 92807; the page names the business (albert); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-anaheim-associated-heating-and-air-inc",
+      "website": "https://www.associatedheatingandair.com/",
+      "match_basis": "Matched on phone (714) 777-8833; license 608210; the page names the business (associated); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-anaheim-coolpros-heating-and-air",
+      "website": "https://coolprosair.com/",
+      "match_basis": "Matched on license 1115021; address number 1061 and ZIP 92806; the page names the business (coolpros); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-anaheim-dymek-s-freedom-plumbing-inc",
+      "website": "https://freedomplumbing.com/",
+      "match_basis": "Matched on phone (714) 632-8989; license 764483; the page names the business (dymek, freedom); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-anaheim-fkjm-enterprises-inc-dba-air-concepts",
+      "website": "https://www.airconcepts.com/",
+      "match_basis": "Matched on phone (714) 779-1000; the page names the business (concepts); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-anaheim-haven-air-dba-mighty-ducts-heating-cooling",
+      "website": "https://mightyductsonline.com/",
+      "match_basis": "Matched on license 748387; the page names the business (mighty, ducts); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-anaheim-horizon-heating-air-conditioning-inc",
+      "website": "https://www.horizonheatingandair.com/",
+      "match_basis": "Matched on phone (714) 577-8220; address number 1400 and ZIP 92807; the page names the business (horizon); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-anaheim-j-martin-indoor-air-quality",
+      "website": "https://www.jmartiniaq.com/",
+      "match_basis": "Matched on phone (714) 462-4686; license 998956; address number 4212 and ZIP 92807; the page names the business (martin, indoor); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-anaheim-nexgen-air-conditioning-and-heating-inc",
+      "website": "https://www.nexgenairandplumbing.com/",
+      "match_basis": "Matched on license 1011173; the page names the business (nexgen); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-citrus-heights-a-plus-heating-and-air-inc",
+      "website": "https://aplusheatingair.com/",
+      "match_basis": "Matched on phone (916) 838-3748; license 1084364; address number 7485 and ZIP 95621; the page names the business (plus); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-citrus-heights-balanced-a-c-and-heat-service",
+      "website": "https://balancedacandheat.com/",
+      "match_basis": "Matched on phone (916) 521-3978; license 1023235; the page names the business (balanced, heat); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-citrus-heights-bryant-heating-air-conditioning",
+      "website": "https://www.bryantdealer.net/",
+      "match_basis": "Matched on phone (916) 224-9253; license 828107; address number 6035 and ZIP 95621; the page names the business (bryant); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-citrus-heights-buckley-s-heat-and-air-inc",
+      "website": "https://www.buckleyheatair.com/",
+      "match_basis": "Matched on license 558980; address number 5990 and ZIP 95621; the page names the business (buckley, heat); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-citrus-heights-jack-buckley",
+      "website": "https://www.buckleyheatair.com/",
+      "match_basis": "Matched on license 558980; address number 5990 and ZIP 95621; the page names the business (buckley, heat); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-citrus-heights-local-heating-and-air",
+      "website": "https://localhna.com/",
+      "match_basis": "Matched on phone (916) 880-6819; license 1058688; the page names the business (local); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-citrus-heights-super-brothers-construction-jv",
+      "website": "https://www.superbrothers.com/",
+      "match_basis": "Matched on address number 7475 and ZIP 95621; the page names the business (super); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-citrus-heights-super-brothers-plumbing-heating-and-air",
+      "website": "https://www.superbrothers.com/",
+      "match_basis": "Matched on license 986303; address number 7475 and ZIP 95621; the page names the business (super); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-fresno-air-worthy",
+      "website": "https://www.airworthyfresno.com/",
+      "match_basis": "Matched on phone (559) 903-0057; license 993670; the page names the business (worthy); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-fresno-balanced-comfort-dba-balanced-comfort-cooling-heating-plumbing",
+      "website": "https://balancedcomfort.com/",
+      "match_basis": "Matched on license 1130415; the page names the business (balanced); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-fresno-borgen-s-construction-inc",
+      "website": "https://borgensconstructioninc.com/",
+      "match_basis": "Matched on phone (559) 399-5014; license 1074527; address number 2455 and city Fresno; the page names the business (borgen); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-fresno-california-indoor-comfort-inc",
+      "website": "https://www.calindoorcomfort.com/",
+      "match_basis": "Matched on phone (559) 276-7457; license 888103; the page names the business (indoor); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-fresno-fresno-heating-and-cooling",
+      "website": "https://fresnosheatingandcooling.com/",
+      "match_basis": "Matched on phone (559) 720-0479; license 1078849.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-fresno-fynaut-johnson-inc",
+      "website": "https://www.fynautair.co/",
+      "match_basis": "Matched on phone (559) 647-7445; license 1018574; the page names the business (fynaut, johnson); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-fresno-highlands-diversified-inc",
+      "website": "https://highlandsdiversified.net/",
+      "match_basis": "Matched on phone (559) 455-1700; the page names the business (highlands, diversified); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-fresno-mechanical-air",
+      "website": "https://mech-air.com/",
+      "match_basis": "Matched on phone (559) 577-3668; license 969564; address number 4762 and ZIP 93722.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-fresno-melton-investments-inc-dba-j-c-melton-air-conditioning",
+      "website": "https://jcmeltonair.com/",
+      "match_basis": "Matched on phone (559) 268-6286; license 842258; address number 1932 and ZIP 93703; the page names the business (melton); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-fresno-precision-aire",
+      "website": "https://sequoiaairco.com/",
+      "match_basis": "Matched on phone (559) 354-6285; license 906929; address number 7081 and ZIP 93711; the page names the business (precision, aire).",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-fresno-s-a-d-s-inc-dba-just-air-heating-cooling",
+      "website": "https://www.justairfresno.com/",
+      "match_basis": "Matched on phone (559) 908-0992; license 1053725; address number 1849 and ZIP 93727; the page names the business (just); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-fresno-valley-air-conditioning-and-repair-inc",
+      "website": "https://valleyairrepair.com/",
+      "match_basis": "Matched on phone (559) 237-3188; address number 825 and ZIP 93721; the page names the business (valley); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-los-angeles-a-c-control-inc",
+      "website": "https://ac-control.com/",
+      "match_basis": "Matched on license 850093; address number 2355 and ZIP 90064; the page names the business (control); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-los-angeles-amgreen-solar-electric",
+      "website": "http://amgreensolutions.com/",
+      "match_basis": "Matched on address number 1451 and ZIP 90006; the page names the business (amgreen, solar); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-los-angeles-building-doctors-inc",
+      "website": "https://www.buildingdoctors.com/",
+      "match_basis": "Matched on phone (323) 646-2534; the page names the business (building, doctors); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-los-angeles-precise-air-systems-inc",
+      "website": "https://www.preciseairsystems.com/",
+      "match_basis": "Matched on phone (818) 240-1737; license 428900; the page names the business (precise); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-los-angeles-sn-services-llc-dba-blueberry-air",
+      "website": "https://blueberry-air.com/",
+      "match_basis": "Matched on phone (818) 854-5675; license 1110024; address number 5115 and ZIP 91601; the page names the business (blueberry); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-los-angeles-titanium-power-inc",
+      "website": "https://www.titaniumpower.com/",
+      "match_basis": "Matched on address number 1545 and ZIP 90035; the page names the business (titanium, power); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-los-angeles-universal-heating-air",
+      "website": "https://www.universalhvaclosangeles.com/",
+      "match_basis": "Matched on license 1069748; address number 2260 and city Los Angeles; the page names the business (universal); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-los-angeles-zuniga-s-plumbing-services-inc",
+      "website": "https://zunigasplumbingservicesinc.com/",
+      "match_basis": "Matched on phone (323) 799-7043; the page names the business (zuniga); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-new-york-acosta-heating-and-air-conditioning-sealed-daap",
+      "website": "https://www.acostahvac.com/",
+      "match_basis": "Matched on phone (805) 498-3939; the page names the business (acosta); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-new-york-airworks-solutions-inc-sealed-daap",
+      "website": "https://airworkssolutions.com/",
+      "match_basis": "Matched on license 950716; the page names the business (airworks); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-new-york-fresno-heating-and-cooling-sealed-daap",
+      "website": "https://fresnosheatingandcooling.com/",
+      "match_basis": "Matched on phone (559) 720-0479; license 1078849.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-new-york-phs-m-inc-dba-pacific-heating-and-sheet-metal-sealed-daap",
+      "website": "https://www.pacificheat.net/",
+      "match_basis": "Matched on phone (805) 772-4404; license 578710; the page names the business (pacific); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-new-york-r-s-heating-and-sheet-metal-inc-sealed-inc-daap",
+      "website": "https://rsheatingguys.com/",
+      "match_basis": "Matched on phone (831) 641-0508; license 770707.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-new-york-service-genius-corporation-sealed-daap",
+      "website": "https://servicegenius.com/",
+      "match_basis": "Matched on phone (818) 301-3663; license 1030812; the page names the business (genius); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-new-york-southland-heating-and-air-sealed-daap",
+      "website": "https://southlandac.com/",
+      "match_basis": "Matched on phone (805) 498-6700; license 797064; the page names the business (southland); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-new-york-stockdale-aire-inc-sealed-daap",
+      "website": "https://stockdaleaire.com/",
+      "match_basis": "Matched on phone (661) 399-0100; license 442257; the page names the business (stockdale, aire); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-new-york-temp-air-system-inc-sealed-daap",
+      "website": "https://tempairsystem.com/",
+      "match_basis": "Matched on phone (626) 333-3409; license 807933; the page names the business (temp); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-riverside-darren-c-huscher-dba-hush-air",
+      "website": "https://www.hushair.com/",
+      "match_basis": "Matched on phone (951) 789-4148; license 630899; address number 21790 and ZIP 92518; the page names the business (hush); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-riverside-darren-c-huscher-dba-hush-air-energuy",
+      "website": "https://www.hushair.com/",
+      "match_basis": "Matched on phone (951) 789-4148; license 630899; address number 21790 and ZIP 92518; the page names the business (hush); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-riverside-fire-n-ice-air-conditioning-plumbing",
+      "website": "https://firenicehvac.net/",
+      "match_basis": "Matched on phone (951) 258-7557; the page names the business (fire); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-riverside-fire-n-ice-heating-and-air-conditioning",
+      "website": "https://firenicehvac.net/",
+      "match_basis": "Matched on phone (951) 258-7557; the page names the business (fire); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-riverside-hasco-heating-airconditioning-service-co",
+      "website": "https://hascoac.com/",
+      "match_basis": "Matched on phone (951) 682-3336; license 519360; address number 3015 and ZIP 92507; the page names the business (hasco); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-riverside-inland-empire-comfort",
+      "website": "https://www.iecomfortac.com/",
+      "match_basis": "Matched on phone (951) 789-3238; license 1053697; address number 19071 and ZIP 92508; the page names the business (inland, empire).",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-riverside-sheldon-s-heating-and-air",
+      "website": "https://www.sheldonsservice.com/",
+      "match_basis": "Matched on license 987412; address number 3401 and ZIP 92507; the page names the business (sheldon); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-sacramento-a-cool-air",
+      "website": "https://acoolair.com/",
+      "match_basis": "Matched on phone (916) 879-7288; address number 140 and ZIP 95834; the page names the business (cool); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-sacramento-airsmiths-home-performance-mechanical",
+      "website": "https://airsmiths.net/",
+      "match_basis": "Matched on phone (916) 648-0121; license 950795; address number 4101 and ZIP 95834; the page names the business (airsmiths); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-sacramento-archon-atticman-heating-air-conditioning-insulation-inc",
+      "website": "https://atticmanhvac.com/",
+      "match_basis": "Matched on license 1046762; address number 9745 and ZIP 95827; the page names the business (atticman, insulation); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-sacramento-barnett-heating-air",
+      "website": "https://barnettheatingandair.com/",
+      "match_basis": "Matched on phone (916) 804-1774; the page names the business (barnett); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-sacramento-big-mountain-heating-and-air-inc",
+      "website": "https://www.bigmountainair.com/",
+      "match_basis": "Matched on address number 1670 and ZIP 95838; the page names the business (mountain); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-sacramento-clarke-rush-mechanical",
+      "website": "https://clarke-rush.com/",
+      "match_basis": "Matched on phone (916) 609-2665; address number 4411 and ZIP 95841; the page names the business (clarke, rush); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-sacramento-comfortable-hvac-services",
+      "website": "https://comfortablehvacservicesllc.com/",
+      "match_basis": "Matched on phone (916) 297-1525; address number 10057 and ZIP 95827; the page names the business (comfortable); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-sacramento-ducks-plumbing-heating-air",
+      "website": "https://ducksplumbingca.com/",
+      "match_basis": "Matched on phone (916) 803-4245; license 1022840; address number 8175 and ZIP 95826; the page names the business (ducks); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-sacramento-energuy-atticman-heating-air-conditioning-insulation-inc",
+      "website": "https://atticmanhvac.com/",
+      "match_basis": "Matched on license 1046762; address number 9745 and ZIP 95827; the page names the business (atticman, insulation); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-sacramento-ever-breeze-heating-and-air-conditioning",
+      "website": "https://www.everbreezehvac.com/",
+      "match_basis": "Matched on license 1114490; the page names the business (ever, breeze); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-sacramento-jaguar-heating-and-air-inc",
+      "website": "https://www.jaguarheatingandair.com/",
+      "match_basis": "Matched on phone (916) 646-2007; license 989872; address number 501 and ZIP 95818; the page names the business (jaguar); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-sacramento-nor-cal-heating-and-cooling",
+      "website": "https://www.norcalheatandcool.com/",
+      "match_basis": "Matched on phone (916) 838-7470; license 1083504; address number 1520 and ZIP 95833.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-sacramento-rebel-air-inc",
+      "website": "https://rebelair.net/",
+      "match_basis": "Matched on license 1131212; the page names the business (rebel); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-sacramento-south-placer-heating-and-air",
+      "website": "https://www.placerheatingandair.com/",
+      "match_basis": "Matched on phone (916) 622-0997; license 940668; address number 5485 and ZIP 95841; the page names the business (placer); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-sacramento-st-atticman-heating-air-conditioning-insulation-inc",
+      "website": "https://atticmanhvac.com/",
+      "match_basis": "Matched on license 1046762; address number 9745 and ZIP 95827; the page names the business (atticman, insulation); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-sacramento-star-energy-inc",
+      "website": "https://starenergyca.com/",
+      "match_basis": "Matched on phone (916) 457-7817; the page names the business (star); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-sacramento-todd-s-repair-and-construction-dba-trc-heating-air",
+      "website": "https://www.sacairrepair.com/",
+      "match_basis": "Matched on phone (916) 912-9388; license 468895; address number 11355 and city Sacramento.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-san-diego-atlas-hvac-inc",
+      "website": "https://atlascoolingandheating.com/",
+      "match_basis": "Matched on phone (877) 452-8527; license 955327; address number 8525 and ZIP 92126; the page names the business (atlas); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-san-diego-ez-breezy-heating-air-inc",
+      "website": "https://www.ezbreezyac.com/",
+      "match_basis": "Matched on phone (888) 588-8899; the page names the business (breezy); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-san-diego-guthrie-and-sons",
+      "website": "https://www.guthrieandsons.com/",
+      "match_basis": "Matched on phone (619) 269-3013; address number 8248 and ZIP 92111; the page names the business (guthrie); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-san-diego-morey-plumbing-heating-and-cooling-inc-dba-morey-plumbing",
+      "website": "https://moreyphc.com/",
+      "match_basis": "Matched on phone (858) 505-4500; license 967435; address number 7895 and ZIP 92111; the page names the business (morey); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-san-diego-one-stop-comfort-center-inc",
+      "website": "https://www.onestopcomfortcenter.com/",
+      "match_basis": "Matched on phone (858) 267-7558; the page names the business (stop, center); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-san-diego-san-diego-cool-air-inc",
+      "website": "https://sdcoolair.com/",
+      "match_basis": "Matched on phone (858) 789-8163; the page names the business (cool); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-san-diego-verday-electrical-solutions-inc-dba-verday-smart-solutions",
+      "website": "https://verdaysmartsolutions.com/",
+      "match_basis": "Matched on phone (858) 300-6172; license 962934; the page names the business (verday, smart); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-san-francisco-building-efficiency-inc",
+      "website": "https://buildingefficiency.net/",
+      "match_basis": "Matched on phone (415) 831-4535; license 947504; address number 2037 and city San Francisco; the page names the business (building, efficiency); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-san-francisco-david-brown-dba-db-heating-cooling-eli-technologies-inc-daap",
+      "website": "https://www.dbheatingcooling.com/",
+      "match_basis": "Matched on phone (831) 238-2465; license 1076388.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-san-francisco-delta-hvac-services-eli-technologies-inc-daap",
+      "website": "https://deltahvaccontractor.com/",
+      "match_basis": "Matched on phone (818) 984-5771; license 1056182; the page names the business (delta); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-san-francisco-kevel-home-performance",
+      "website": "https://www.kevelhome.com/",
+      "match_basis": "Matched on phone (415) 213-5545; license 1021221; address number 3624 and ZIP 94122; the page names the business (kevel, performance); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-san-francisco-onsemble-albert-nahman-plumbing-and-heating",
+      "website": "http://albertnahmanplumbing.com/",
+      "match_basis": "Matched on license 1083634; the page names the business (albert, nahman); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-san-francisco-onsemble-fast-water-heaters",
+      "website": "https://fastwaterheater.com/",
+      "match_basis": "Matched on license 987398; address number 16120 and city San Francisco; the page names the business (fast, water, heaters); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-san-francisco-two-guys-plumbing-inc-dba-cabrillo-plumbing-heating",
+      "website": "https://discovercabrillo.com/",
+      "match_basis": "Matched on license 629538; address number 78 and ZIP 94124; the page names the business (cabrillo); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-san-francisco-vayu-industries-inc",
+      "website": "https://vayu.pro/",
+      "match_basis": "Matched on phone (650) 772-5269; license 1127295; address number 2261 and ZIP 94114; the page names the business (vayu); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-san-jose-air-sharks-heating-and-air-conditioning",
+      "website": "https://airsharks.com/",
+      "match_basis": "Matched on phone (877) 774-2757; license 1100692; address number 1560 and ZIP 95112; the page names the business (sharks); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-san-jose-aranda-air-inc",
+      "website": "https://www.arandaairhvac.com/",
+      "match_basis": "Matched on address number 1805 and ZIP 95125; the page names the business (aranda); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-san-jose-atkinson-climatrollers-inc-dba-valley-heating-cooling-electrical-and-solar",
+      "website": "https://valleyheating.com/",
+      "match_basis": "Matched on license 258540; address number 1171 and ZIP 95112; the page names the business (valley, solar); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-san-jose-better-water-heaters-inc",
+      "website": "https://betterwaterheaters.com/",
+      "match_basis": "Matched on license 1060089; the page names the business (better, water, heaters); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-san-jose-calvey-heating-and-air",
+      "website": "https://www.calveyheatingandair.com/",
+      "match_basis": "Matched on license 932199; address number 247 and ZIP 95112; the page names the business (calvey); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-san-jose-calvey-heating-and-air-hers-by-hastings",
+      "website": "https://www.calveyheatingandair.com/",
+      "match_basis": "Matched on license 932199; address number 247 and ZIP 95112; the page names the business (calvey); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-san-jose-cozy-house-forever-corporation",
+      "website": "https://cozyhouseforever.com/",
+      "match_basis": "Matched on phone (408) 888-4959; license 1119224; the page names the business (cozy, house, forever); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-san-jose-euro-climate-inc",
+      "website": "https://euro-climate.com/",
+      "match_basis": "Matched on phone (408) 441-0468; the page names the business (euro); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-san-jose-freon-inc-norcal-dba-freon-hvac-freon-service-freon-hvac-electrical-and-appliance-repair",
+      "website": "https://www.freonhvac.com/",
+      "match_basis": "Matched on license 1101181; address number 6291 and ZIP 95120; the page names the business (freon); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-san-jose-gld-construction-co",
+      "website": "https://gldgreenenergy.com/",
+      "match_basis": "Matched on phone (408) 368-5925; the page names the business (green, kelvin, hong); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-san-jose-gld-construction-co-dba-gld-green-energy",
+      "website": "https://gldgreenenergy.com/",
+      "match_basis": "Matched on phone (408) 368-5925; the page names the business (green, kelvin, hong); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-san-jose-golden-bear-heating-air",
+      "website": "https://goldenbearheatingandair.com/",
+      "match_basis": "Matched on phone (408) 728-7705; the page names the business (golden, bear); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-san-jose-irbis-hvac-inc",
+      "website": "https://www.irbishvac.com/",
+      "match_basis": "Matched on license 1048009; address number 2210 and ZIP 95131; the page names the business (irbis); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-san-jose-jetpipe-plumbing",
+      "website": "https://jetpipeplumbing.com/",
+      "match_basis": "Matched on phone (650) 495-4570; license 1139033; the page names the business (jetpipe); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-san-jose-kelvin-hong",
+      "website": "https://gldgreenenergy.com/",
+      "match_basis": "Matched on phone (408) 368-5925; the page names the business (green, kelvin, hong); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-san-jose-long-phuong",
+      "website": "https://gldgreenenergy.com/",
+      "match_basis": "Matched on phone (408) 368-5925; the page names the business (green, kelvin, hong); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-san-jose-norcal-water-heaters",
+      "website": "https://norcalwaterheaters.com/",
+      "match_basis": "Matched on license 1104288; the page names the business (norcal, water, heaters); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-san-jose-ozone-service",
+      "website": "https://serviceozone.com/",
+      "match_basis": "Matched on license 1128892; address number 857 and ZIP 95129; the page names the business (ozone); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-san-jose-ozone-service-elem3nts",
+      "website": "https://serviceozone.com/",
+      "match_basis": "Matched on license 1128892; address number 857 and ZIP 95129; the page names the business (ozone); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-san-jose-rando-aaa-hvac-inc-dba-aaa-furnace-and-air-conditioning-co",
+      "website": "https://www.aaa-furnace.com/",
+      "match_basis": "Matched on address number 1712 and ZIP 95125; the page names the business (furnace); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-san-jose-rescue-air-service-inc",
+      "website": "https://www.rescueair.net/",
+      "match_basis": "Matched on phone (408) 655-9916; license 826201; the page names the business (rescue); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-ca-san-jose-therma-tech-inc",
+      "website": "https://thermatechhvac.com/",
+      "match_basis": "Matched on phone (408) 629-5400; license 913806; address number 222 and ZIP 95125; the page names the business (therma); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-blaine-erickson-plumbing-heating-cooling-inc-erickson-plumbing-heating-air-electrical",
+      "website": "https://www.ihearterickson.com/",
+      "match_basis": "Matched on phone (763) 783-4545; address number 1471 and ZIP 55449; the page names the business (erickson); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-blaine-grey-duct-heating-air-conditioning-llc",
+      "website": "https://greyductmn.com/",
+      "match_basis": "Matched on phone (763) 272-4822; the page names the business (grey, duct); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-blaine-legacy-heating-and-air-llc",
+      "website": "https://www.legacyheatingandairmn.com/",
+      "match_basis": "Matched on phone (651) 775-6791; the page names the business (legacy); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-blaine-massoglia-contracting-corp",
+      "website": "https://www.massogliacontracting.com/",
+      "match_basis": "Matched on phone (763) 228-2840; address number 264 and ZIP 55434; the page names the business (massoglia, contracting); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-blaine-master-mobile-home-service-inc",
+      "website": "https://www.mastermobilehomeservice.com/",
+      "match_basis": "Matched on phone (763) 755-7555; the page names the business (master, mobile); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-blaine-rybak-environmental-llc",
+      "website": "https://rybakinc.com/",
+      "match_basis": "Matched on phone (651) 633-2221; address number 9174 and ZIP 55449; the page names the business (rybak, environmental); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-blaine-sunderland-plumbing-inc",
+      "website": "https://www.sunderlandplumbing.com/",
+      "match_basis": "Matched on phone (763) 753-2845; the page names the business (sunderland); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-blaine-twin-city-mechanical-inc",
+      "website": "https://www.twincitymechanical.com/",
+      "match_basis": "Matched on phone (763) 784-0566; address number 2141 and city Blaine; the page names the business (twin, city); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-blaine-wencl-services-inc",
+      "website": "https://wenclservices.com/",
+      "match_basis": "Matched on phone (952) 881-1558; address number 10350 and ZIP 55449; the page names the business (wencl); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-bloomington-blue-rain-plumbing-inc",
+      "website": "https://bluerainplumbing.com/",
+      "match_basis": "Matched on phone (612) 801-4722; the page names the business (blue, rain); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-bloomington-chan-consulting-llc",
+      "website": "https://chansconsultingllc.com/",
+      "match_basis": "Matched on address number 7901 and ZIP 55425; the page names the business (chan, consulting); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-bloomington-cyber-heating-and-cooling-llc",
+      "website": "https://www.cyberheating.com/",
+      "match_basis": "Matched on phone (612) 440-7511; the page names the business (cyber); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-bloomington-donaldson-company-inc",
+      "website": "https://www.donaldson.com/",
+      "match_basis": "Matched on address number 1400 and ZIP 55431; the page names the business (donaldson); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-bloomington-legacy-companies-inc",
+      "website": "https://www.legacymech.net/",
+      "match_basis": "Matched on phone (612) 866-1351; the page names the business (legacy, companies); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-bloomington-owens-companies-inc",
+      "website": "https://www.owenscompanies.com/",
+      "match_basis": "Matched on address number 500 and ZIP 55420; the page names the business (owens, companies); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-bloomington-parkview-heating-and-air-inc",
+      "website": "http://parkviewheating.com/",
+      "match_basis": "Matched on phone (952) 212-8732; the page names the business (parkview); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-bloomington-richfield-plumbing-co",
+      "website": "https://www.richfieldplumbing.com/",
+      "match_basis": "Matched on address number 8640 and ZIP 55420; the page names the business (richfield); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-bloomington-solid-refrigeration-llc",
+      "website": "https://www.solidrefrigerationmn.com/",
+      "match_basis": "Matched on phone (952) 854-2850; address number 1125 and ZIP 55420; the page names the business (solid); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-bloomington-southside-heating-air-conditioning-inc",
+      "website": "https://southsideheating.com/",
+      "match_basis": "Matched on phone (952) 884-2453; address number 10808 and ZIP 55437; the page names the business (southside); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-brainerd-all-season-heating-ac-of-brainerd-inc",
+      "website": "https://www.allseasonheatingandac.com/",
+      "match_basis": "Matched on address number 11502 and ZIP 56401; the page names the business (season); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-brainerd-anderson-aire-llc",
+      "website": "http://www.andersonaire.com/",
+      "match_basis": "Matched on phone (218) 821-3109; the page names the business (anderson, aire); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-brainerd-god-s-country-plumbing-heating-and-air-llc",
+      "website": "https://godscountryplumbingheating.com/",
+      "match_basis": "Matched on phone (218) 297-8257; address number 1209 and ZIP 56401; the page names the business (country); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-brainerd-ideal-mechanical-llc",
+      "website": "https://idealmech.com/",
+      "match_basis": "Matched on phone (320) 333-9740; the page names the business (ideal); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-brainerd-pike-plumbing-heating-of-brainerd-inc",
+      "website": "https://www.pikeplumbingandheating.com/",
+      "match_basis": "Matched on phone (218) 829-4332; address number 452 and ZIP 56401; the page names the business (pike); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-brainerd-pipe-dream-plumbing-inc",
+      "website": "https://www.pipedreamplumbing.net/",
+      "match_basis": "Matched on phone (612) 396-4798; the page names the business (pipe, dream); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-brainerd-precision-electrical-llc",
+      "website": "https://www.precisionelectricalmn.com/",
+      "match_basis": "Matched on phone (218) 825-0378; address number 6330 and ZIP 56401; the page names the business (precision); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-brainerd-schroeders-home-services-inc",
+      "website": "https://www.schroedersappliance.com/",
+      "match_basis": "Matched on phone (218) 829-3624; address number 16603 and ZIP 56401; the page names the business (schroeders); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-brainerd-thelen-heating-roofing-inc",
+      "website": "https://www.thelenheating.com/",
+      "match_basis": "Matched on address number 1717 and ZIP 56401; the page names the business (thelen, roofing); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-brooklyn-park-airtech-thermex-llc",
+      "website": "https://www.airtechthermex.com/",
+      "match_basis": "Matched on phone (952) 929-8810; address number 5417 and ZIP 55428; the page names the business (airtech, thermex); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-brooklyn-park-corporate-mechanical-inc",
+      "website": "https://corporatemechanical.com/",
+      "match_basis": "Matched on phone (763) 533-3070; address number 5114 and ZIP 55428; the page names the business (corporate); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-brooklyn-park-harrison-plumbing-limited-liability-company",
+      "website": "https://harrisonbplumbing.com/",
+      "match_basis": "Matched on phone (763) 647-9841; the page names the business (harrison); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-brooklyn-park-major-mechanical-llc",
+      "website": "https://majormech.com/",
+      "match_basis": "Matched on phone (763) 424-6680; address number 7601 and ZIP 55428; the page names the business (major); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-brooklyn-park-marsh-heating-and-air-conditioning-co-inc",
+      "website": "https://marshheating.com/",
+      "match_basis": "Matched on phone (763) 536-0667; address number 6248 and ZIP 55428; the page names the business (marsh); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-brooklyn-park-modern-plumbing-llc-modern-plumbing-heating",
+      "website": "https://www.callmoderntoday.com/",
+      "match_basis": "Matched on phone (763) 639-1632; address number 8600 and ZIP 55445; the page names the business (modern); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-brooklyn-park-northland-mechanical-contractors-inc",
+      "website": "https://northland-mn.com/",
+      "match_basis": "Matched on phone (763) 544-5764; address number 9001 and ZIP 55428; the page names the business (northland); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-brooklyn-park-paskar-plumbing-llc",
+      "website": "https://www.paskarplumbing.com/",
+      "match_basis": "Matched on phone (612) 483-0348; the page names the business (paskar); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-brooklyn-park-seitz-bros-inc",
+      "website": "https://www.seitzbros.com/",
+      "match_basis": "Matched on phone (763) 425-6700; address number 8608 and ZIP 55445; the page names the business (seitz); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-brooklyn-park-spectrum-mechanical-llc",
+      "website": "https://www.spectrum-mech.com/",
+      "match_basis": "Matched on address number 8912 and ZIP 55428; the page names the business (spectrum); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-brooklyn-park-vector-services-llc",
+      "website": "https://callvector.com/",
+      "match_basis": "Matched on address number 9210 and ZIP 55445; the page names the business (vector); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-duluth-a-w-kuettel-sons-inc",
+      "website": "https://awkuettel.com/",
+      "match_basis": "Matched on phone (218) 722-3901; address number 3930 and ZIP 55811; the page names the business (kuettel); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-duluth-artisan-renovations-and-builders-llc",
+      "website": "https://artisanrenovationsandbuilders.com/",
+      "match_basis": "Matched on phone (218) 831-0508; the page names the business (artisan, renovations, builders); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-duluth-bills-plumbing-and-heating-llc",
+      "website": "https://billsplumbingmn.com/",
+      "match_basis": "Matched on phone (218) 391-5006; address number 4130 and ZIP 55811; the page names the business (bills); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-duluth-carlson-duluth-co",
+      "website": "https://carlsonduluth.com/",
+      "match_basis": "Matched on phone (218) 727-0063; address number 4415 and ZIP 55811; the page names the business (carlson); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-duluth-design-heating-llc",
+      "website": "https://www.designheating.net/",
+      "match_basis": "Matched on phone (218) 525-5914; address number 5131 and ZIP 55803; the page names the business (design); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-duluth-duluth-stove-fireplace-llc",
+      "website": "https://duluthstove.com/",
+      "match_basis": "Matched on phone (218) 727-9002; address number 2431 and ZIP 55806; the page names the business (stove, fireplace); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-duluth-easyliving-services-llc",
+      "website": "https://easylivingmn.com/",
+      "match_basis": "Matched on phone (218) 522-4599; address number 5610 and ZIP 55807; the page names the business (easyliving); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-duluth-energy-plus-incorporated-conservation-technologies",
+      "website": "https://www.energy-plus.com/",
+      "match_basis": "Matched on phone (218) 722-7818; address number 4811 and ZIP 55811; the page names the business (plus); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-duluth-gartner-refrigeration-company",
+      "website": "https://gartner1.com/",
+      "match_basis": "Matched on address number 2331 and ZIP 55806; the page names the business (gartner); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-duluth-guthrie-plumbing-heating-llc",
+      "website": "https://www.guthrieplumbingandheating.com/",
+      "match_basis": "Matched on phone (218) 348-7473; address number 1005 and ZIP 55811; the page names the business (guthrie); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-duluth-harbor-mechanical-incorporated",
+      "website": "http://harbormechanical.com/",
+      "match_basis": "Matched on phone (218) 525-7473; address number 2315 and ZIP 55804; the page names the business (harbor, incorporated); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-duluth-hietala-rodney-e-hietala-plumbing-heating",
+      "website": "https://www.hietalaplumbingandheating.com/",
+      "match_basis": "Matched on phone (218) 393-4542; the page names the business (hietala); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-duluth-inter-city-oil-co-inc",
+      "website": "https://intercityoil.com/",
+      "match_basis": "Matched on phone (218) 728-3641; the page names the business (inter, city); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-duluth-kalkbrenner-plumbing-heating-inc",
+      "website": "https://callkalkbrenner.com/",
+      "match_basis": "Matched on phone (218) 626-3316; address number 12802 and ZIP 55808; the page names the business (kalkbrenner); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-duluth-krause-sheet-metal-heating-inc",
+      "website": "https://www.krauseheating.com/",
+      "match_basis": "Matched on phone (218) 722-6354; address number 2020 and ZIP 55806; the page names the business (krause); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-duluth-modern-mechanical-and-automation-llc",
+      "website": "https://www.modernmechanicalandautomation.com/",
+      "match_basis": "Matched on phone (715) 817-2400; the page names the business (modern, automation); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-duluth-northstar-mechanical-services-llc-northstar-services",
+      "website": "https://northstarservices.com/",
+      "match_basis": "Matched on phone (218) 628-9276; address number 301 and ZIP 55807; the page names the business (northstar); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-duluth-on-point-home-maintenance-inc-heirloom-property-services",
+      "website": "https://rentwithheirloom.com/",
+      "match_basis": "Matched on phone (218) 390-4317; the page names the business (point, maintenance, heirloom); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-duluth-polar-plumbing-heating-air-inc",
+      "website": "https://polarplumbingco.com/",
+      "match_basis": "Matched on phone (218) 966-7227; the page names the business (polar); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-duluth-shubitz-plumbing-heating-llc",
+      "website": "http://shubitzplumbing.com/",
+      "match_basis": "Matched on phone (218) 727-2595; address number 1925 and ZIP 55806; the page names the business (shubitz); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-duluth-simco-electric-llc",
+      "website": "https://simcoelectric.com/",
+      "match_basis": "Matched on address number 3947 and ZIP 55803; the page names the business (simco); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-elk-river-comfort-plus-heat-air-llc",
+      "website": "https://comfortplusheatandair.com/",
+      "match_basis": "Matched on phone (763) 486-3878; the page names the business (plus, heat); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-elk-river-helios-air-llc",
+      "website": "https://callheliosair.com/",
+      "match_basis": "Matched on phone (651) 286-9275; license 803121; address number 561 and ZIP 55330; the page names the business (helios); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-elk-river-huber-plumbing-co-llc",
+      "website": "https://www.huberplumbing.com/",
+      "match_basis": "Matched on phone (763) 231-0295; the page names the business (huber); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-elk-river-iconic-plumbing-llc-iconic-plumbing",
+      "website": "https://www.iconicplumbingmn.com/",
+      "match_basis": "Matched on phone (612) 839-7449; the page names the business (iconic); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-elk-river-marchand-plumbing-and-gas-llc",
+      "website": "https://www.marchandplumbingandgas.com/",
+      "match_basis": "Matched on phone (763) 528-5197; the page names the business (marchand); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-elk-river-midwest-electric-and-generator-llc",
+      "website": "https://midwestelectricandgeneratorincmetro.kohlergeneratordealer.com/",
+      "match_basis": "Matched on phone (612) 284-1550; address number 10215 and ZIP 55330; the page names the business (midwest, generator); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-elk-river-north-lakes-plumbing-llc",
+      "website": "https://www.northlakesplumbing.com/",
+      "match_basis": "Matched on phone (763) 334-2088; address number 10408 and ZIP 55330; the page names the business (lakes); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-elk-river-utility-energy-systems-llc",
+      "website": "https://www.utilityenergysystems.com/",
+      "match_basis": "Matched on phone (763) 263-3330; the page names the business (utility); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-mankato-armz-plumbing-llc",
+      "website": "https://armzplumbing.com/",
+      "match_basis": "Matched on phone (507) 508-4171; address number 1076 and city Mankato; the page names the business (armz); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-mankato-davis-comfort-systems-inc",
+      "website": "https://www.daviscomfortsystems.com/",
+      "match_basis": "Matched on phone (507) 387-2434; address number 20765 and ZIP 56001; the page names the business (davis); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-mankato-javens-mechanical-contracting-co",
+      "website": "https://javensmech.com/",
+      "match_basis": "Matched on phone (507) 388-7332; address number 59160 and ZIP 56001; the page names the business (javens, contracting); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-mankato-liberty-solutions-llc-wasko-contruction-liberty-heating-and-cooling",
+      "website": "http://libertyheatingcooling.com/",
+      "match_basis": "Matched on phone (507) 389-9855; address number 601 and ZIP 56001; the page names the business (liberty, wasko); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-mankato-mechanical-resources-inc",
+      "website": "https://www.mrimankato.com/",
+      "match_basis": "Matched on phone (507) 388-7774; address number 20 and ZIP 56001; the page names the business (resources).",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-mankato-mid-states-mechanical-services-inc",
+      "website": "https://www.mid-statesmechanical.com/",
+      "match_basis": "Matched on phone (507) 388-1572; address number 55121 and ZIP 56001; the page names the business (states); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-mankato-northern-comfort-inc",
+      "website": "https://www.northerncomfortinc.com/",
+      "match_basis": "Matched on phone (507) 387-6596; address number 917 and ZIP 56001; the page names the business (northern); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-mankato-paape-distributing-company",
+      "website": "https://www.paape.com/",
+      "match_basis": "Matched on phone (507) 345-4828; address number 307 and ZIP 56001; the page names the business (paape); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-mankato-plumb-rite-plumbing-llc",
+      "website": "https://plumbritemn.com/",
+      "match_basis": "Matched on phone (507) 340-1151; address number 308 and ZIP 56001; the page names the business (plumb, rite); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-mankato-polar-heating-and-cooling-inc",
+      "website": "http://www.polarhvac.com/",
+      "match_basis": "Matched on phone (507) 388-2327; address number 118 and ZIP 56001; the page names the business (polar); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-mankato-schwickerts-tecta-america-llc",
+      "website": "https://www.schwickerts.com/",
+      "match_basis": "Matched on phone (507) 387-3101; the page names the business (schwickerts, tecta, america); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-mankato-schwickerts-tecta-llc",
+      "website": "https://www.schwickerts.com/",
+      "match_basis": "Matched on phone (507) 387-3101; the page names the business (schwickerts, tecta); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-mankato-skogen-mechanical-llc",
+      "website": "http://skogenmechanical.com/",
+      "match_basis": "Matched on address number 1408 and ZIP 56001; the page names the business (skogen); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-mankato-thorset-comfort-systems-inc",
+      "website": "https://www.thorset.com/",
+      "match_basis": "Matched on address number 1215 and ZIP 56001; the page names the business (thorset); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-minneapolis-architect-mechanical-inc",
+      "website": "https://www.architectmechanical.com/",
+      "match_basis": "Matched on phone (612) 436-2250; address number 2917 and ZIP 55418; the page names the business (architect); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-minneapolis-barnes-plumbing-co-inc",
+      "website": "http://www.barnesplbgmn.com/",
+      "match_basis": "Matched on phone (612) 529-1172; the page names the business (barnes); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-minneapolis-barr-web-industries-incorporated",
+      "website": "https://barrwebplumbing.com/",
+      "match_basis": "Matched on address number 3038 and ZIP 55406; the page names the business (barr, industries); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-minneapolis-burnomatic-mooney-and-ridler-mechanical-contractors-inc",
+      "website": "https://burnomaticmn.com/",
+      "match_basis": "Matched on phone (612) 827-2825; address number 2925 and ZIP 55408; the page names the business (burnomatic, mooney, ridler); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-minneapolis-daikin-applied-americas-inc-daikin-applied",
+      "website": "https://www.daikinapplied.com/",
+      "match_basis": "Matched on phone (763) 553-5330; address number 13600 and ZIP 55441; the page names the business (daikin, applied); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-minneapolis-dan-larson-enterprises-inc-zahl-petroleum-maintenance-co",
+      "website": "https://zahl-pmc.com/",
+      "match_basis": "Matched on phone (612) 331-8550; address number 3101 and ZIP 55413; the page names the business (larson, zahl, petroleum); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-minneapolis-endless-quality-and-comfort-llc",
+      "website": "https://endlessqualityandcomfort.com/",
+      "match_basis": "Matched on phone (612) 226-5855; the page names the business (endless); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-minneapolis-general-parts-llc",
+      "website": "https://generalparts.com/",
+      "match_basis": "Matched on phone (952) 944-5800; address number 11311 and ZIP 55438; the page names the business (parts); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-minneapolis-gittleman-construction-maintenance-corporation",
+      "website": "https://gittlemanconstruction.com/",
+      "match_basis": "Matched on phone (952) 567-6840; address number 1015 and ZIP 55405; the page names the business (gittleman, maintenance); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-minneapolis-h-o-soderlin-inc-soderlin-plumbing-heating-air-conditioning",
+      "website": "https://www.soderlin.com/",
+      "match_basis": "Matched on phone (612) 721-4080; the page names the business (soderlin); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-minneapolis-ideal-refrigeration-equipment-company",
+      "website": "http://www.idealrefrigeration.com/",
+      "match_basis": "Matched on address number 4046 and ZIP 55416; the page names the business (ideal, equipment); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-minneapolis-jake-the-plumber-llc-resource-plumbing-heating-and-air",
+      "website": "https://jaketheplumbercompany.com/",
+      "match_basis": "Matched on phone (651) 212-5253; the page names the business (jake, plumber); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-minneapolis-jayhawk-mechanical-inc",
+      "website": "https://jayhawkmechanical.com/",
+      "match_basis": "Matched on phone (612) 522-9492; address number 3307 and ZIP 55412; the page names the business (jayhawk); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-minneapolis-kens-sewer-service-company",
+      "website": "https://www.kensewer.com/",
+      "match_basis": "Matched on phone (952) 929-4146; the page names the business (kens, sewer); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-minneapolis-midland-hvac-llc-midland-heating-and-air-conditioning",
+      "website": "https://midlandhtg.com/",
+      "match_basis": "Matched on address number 4804 and ZIP 55416; the page names the business (midland); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-minneapolis-oboys-heating-air-llc-oboys-plumbing-heating-air",
+      "website": "https://calloboys.com/",
+      "match_basis": "Matched on phone (763) 333-5803; address number 777 and ZIP 55413; the page names the business (oboys); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-minneapolis-onyx-plumbing-llc-onyx-plumbing-gas",
+      "website": "https://www.calltheonyx.com/",
+      "match_basis": "Matched on phone (612) 234-6699; address number 6325 and ZIP 55416; the page names the business (onyx); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-minneapolis-otogawa-anschel-general-contractors-consultants-llc-oa-design-build",
+      "website": "https://otogawa-anschel.com/",
+      "match_basis": "Matched on phone (612) 789-7070; address number 3212 and ZIP 55408; the page names the business (otogawa, anschel, design); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-minneapolis-piperight-plumbing-inc",
+      "website": "https://www.piperightmn.com/",
+      "match_basis": "Matched on phone (612) 237-1123; the page names the business (piperight); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-minneapolis-point-property-management-remodeling-llc",
+      "website": "https://pointpropertyllc.com/",
+      "match_basis": "Matched on phone (612) 558-6209; the page names the business (point, property, management); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-minneapolis-pronto-heating-air-conditioning-inc-pronto-heating-air-conditioning",
+      "website": "https://prontoheat.com/",
+      "match_basis": "Matched on address number 7415 and ZIP 55439; the page names the business (pronto); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-minneapolis-ray-n-welter-heating-company",
+      "website": "https://welterheating.com/",
+      "match_basis": "Matched on phone (612) 825-6867; address number 4637 and ZIP 55407; the page names the business (welter); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-minneapolis-seasonal-control-mechanical-division-inc",
+      "website": "http://www.seasonalcontrol.com/",
+      "match_basis": "Matched on phone (952) 929-4423; address number 6225 and ZIP 55416; the page names the business (seasonal, control, division); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-minneapolis-select-mechanical-services-inc",
+      "website": "https://selectmechanical.com/",
+      "match_basis": "Matched on phone (952) 926-4488; address number 6219 and ZIP 55416; the page names the business (select); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-minneapolis-spi-mechanical-llc",
+      "website": "https://spimechanical.com/",
+      "match_basis": "Matched on phone (763) 843-9825; address number 1116 and ZIP 55413.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-minneapolis-standard-heating-air-conditioning-inc",
+      "website": "https://www.standardheating.com/",
+      "match_basis": "Matched on phone (612) 824-2656; address number 130 and ZIP 55411; the page names the business (standard); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-minneapolis-woodland-way-inc-woodland-stoves-fireplaces",
+      "website": "https://woodlandstoves.com/",
+      "match_basis": "Matched on address number 2901 and ZIP 55406; the page names the business (woodland, stoves, fireplaces); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-rochester-1st-class-plumbing-heating-inc",
+      "website": "https://www.1stclassplumbingandheating.com/",
+      "match_basis": "Matched on phone (507) 280-5883; address number 855 and ZIP 55901; the page names the business (class); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-rochester-cozik-plumbing-heating-inc",
+      "website": "https://cozikplumbing.com/",
+      "match_basis": "Matched on address number 7511 and ZIP 55903; the page names the business (cozik); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-rochester-energy-products-design-inc",
+      "website": "https://energyproductsanddesign.com/",
+      "match_basis": "Matched on phone (507) 289-7496; address number 497 and ZIP 55906; the page names the business (products, design); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-rochester-h-h-enterprises-inc-action-plumbing-heating",
+      "website": "https://www.callactionplumbing.com/",
+      "match_basis": "Matched on phone (507) 282-8333; address number 4006 and ZIP 55904; the page names the business (action); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-rochester-haley-comfort-systems-inc",
+      "website": "https://www.haleycomfort.com/",
+      "match_basis": "Matched on address number 3708 and ZIP 55906; the page names the business (haley); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-rochester-harris-rochester-inc",
+      "website": "https://harriscompany.com/",
+      "match_basis": "Matched on phone (507) 281-4000; address number 1400 and ZIP 55901; the page names the business (harris); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-rochester-hybrid-mechanical-llc",
+      "website": "https://hybridmechanicalmn.com/",
+      "match_basis": "Matched on phone (507) 282-2526; address number 5555 and ZIP 55904; the page names the business (hybrid); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-rochester-stevens-heating-inc",
+      "website": "https://stevensheating.com/",
+      "match_basis": "Matched on phone (507) 951-2031; the page names the business (stevens); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-rochester-superior-companies-of-minnesota-inc-superior-mechanical",
+      "website": "https://superiormechanical.us/",
+      "match_basis": "Matched on phone (507) 289-0229; address number 1244 and ZIP 55901; the page names the business (superior); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-rochester-tonna-mechanical-inc",
+      "website": "https://www.calltonna.com/",
+      "match_basis": "Matched on address number 1440 and ZIP 55901; the page names the business (tonna); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-st-paul-acclaim-services-inc",
+      "website": "https://www.acclaimservices.net/",
+      "match_basis": "Matched on phone (651) 641-1343; address number 1449 and ZIP 55104; the page names the business (acclaim); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-st-paul-affordable-comfort-mechanical-llc-apollo-heating-air-plumbing",
+      "website": "https://callapollo.com/",
+      "match_basis": "Matched on phone (651) 770-0603; address number 1167 and ZIP 55109; the page names the business (affordable, apollo); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-st-paul-albers-mechanical-contractors-inc",
+      "website": "https://www.albersmechanicalcontractors.com/",
+      "match_basis": "Matched on phone (651) 224-5428; address number 200 and ZIP 55107; the page names the business (albers); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-st-paul-aljohns-hvac-services-llc",
+      "website": "https://aljohnshvac.com/",
+      "match_basis": "Matched on phone (612) 500-3913; the page names the business (aljohns); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-st-paul-belair-builders-inc-belair-sitework-services",
+      "website": "https://www.belair-us.com/",
+      "match_basis": "Matched on address number 2200 and ZIP 55112; the page names the business (belair, sitework); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-st-paul-castro-plumbing-and-construction-llc",
+      "website": "https://castroplumbingmn.com/",
+      "match_basis": "Matched on address number 1158 and ZIP 55106; the page names the business (castro); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-st-paul-cities-1-plumbing-and-heating-inc",
+      "website": "https://www.cities1plumbing.com/",
+      "match_basis": "Matched on phone (651) 274-6547; the page names the business (cities); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-st-paul-corval-constructors-inc",
+      "website": "https://www.corvalgroup.com/",
+      "match_basis": "Matched on address number 1633 and ZIP 55108; the page names the business (corval); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-st-paul-erik-nelson-plumbing-llc",
+      "website": "https://www.eriknelsonplumbing.com/",
+      "match_basis": "Matched on phone (612) 242-6483; the page names the business (erik, nelson); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-st-paul-faircon-service-company",
+      "website": "https://fairconservicecompany.com/",
+      "match_basis": "Matched on phone (651) 203-0020; address number 764 and ZIP 55114; the page names the business (faircon); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-st-paul-focus-plumbing-services-llc",
+      "website": "https://focusplumbingmn.com/",
+      "match_basis": "Matched on phone (651) 295-5417; the page names the business (focus); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-st-paul-gust-plumbing-inc-gust-plumbing",
+      "website": "https://gustplumbing.com/",
+      "match_basis": "Matched on phone (651) 592-7919; the page names the business (gust); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-st-paul-harris-mountain-west-llc",
+      "website": "https://harriscompany.com/",
+      "match_basis": "Matched on phone (651) 602-6500; address number 909 and ZIP 55102; the page names the business (harris); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-st-paul-harris-st-paul-inc",
+      "website": "https://harriscompany.com/",
+      "match_basis": "Matched on phone (651) 602-6500; address number 909 and ZIP 55102; the page names the business (harris); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-st-paul-hinding-heating-air-electric-inc",
+      "website": "https://hindingheating.com/",
+      "match_basis": "Matched on address number 915 and ZIP 55102; the page names the business (hinding); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-st-paul-metro-cleaning-service-inc",
+      "website": "https://www.metrocleaningmn.com/",
+      "match_basis": "Matched on phone (651) 484-9799; address number 208 and ZIP 55117; the page names the business (metro, cleaning); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-st-paul-nasseff-plumbing-heating-inc-nasseff-mechanical-contractors-inc",
+      "website": "https://www.nasseff.com/",
+      "match_basis": "Matched on address number 122 and ZIP 55107; the page names the business (nasseff); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-st-paul-norblom-plumbing-company",
+      "website": "https://www.norblomplumbing.com/",
+      "match_basis": "Matched on phone (612) 827-4033; address number 1465 and ZIP 55104; the page names the business (norblom); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-st-paul-plumbing-restoration-and-services-llc",
+      "website": "https://www.plumbing-restoration.com/",
+      "match_basis": "Matched on phone (651) 528-8834; address number 889 and ZIP 55104; the page names the business (restoration); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-st-paul-rascher-plumbing-and-heating-inc",
+      "website": "https://www.rascherplghtg.com/",
+      "match_basis": "Matched on phone (651) 224-4759; address number 712 and ZIP 55107; the page names the business (rascher); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-st-paul-ryan-plumbing-and-heating-co-inc",
+      "website": "https://ryanplumbing.com/",
+      "match_basis": "Matched on phone (651) 224-4771; the page names the business (ryan); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-st-paul-st-paul-pipeworks-llc-st-paul-pipeworks",
+      "website": "https://www.stpaulpipeworks.com/",
+      "match_basis": "Matched on phone (651) 644-9400; the page names the business (pipeworks); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-st-paul-the-snelling-company",
+      "website": "https://snellingcompany.com/",
+      "match_basis": "Matched on phone (651) 646-7381; address number 1400 and ZIP 55104; the page names the business (snelling); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    },
+    {
+      "listing_id": "us-mn-st-paul-warners-stellian-co-inc",
+      "website": "https://www.warnersstellian.com/",
+      "match_basis": "Matched on address number 550 and ZIP 55103; the page names the business (warners, stellian); the domain matches the business name.",
+      "checked": "2026-11-03",
+      "note": "Website found by ElectrifyRadar"
+    }
+  ]
+}

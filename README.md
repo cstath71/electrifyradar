@@ -1,6 +1,6 @@
 # ElectrifyRadar
 
-A static directory of heat pump and ductless mini-split installers in Massachusetts, Maine, New York, California, and Minnesota. The public label on each listing is ownership: unverified, PE or platform-owned, or franchise. “Independent” is not applied without a source.
+A static directory of heat pump and ductless mini-split installers in Massachusetts, Maine, New York, California, and Minnesota. The public label on each listing is ownership: unverified, independent, PE or platform-owned, franchise, or another sourced status. “Independent” is not applied without a quoted page.
 
 The site is plain HTML. GitHub Actions builds `dist/` and publishes it to GitHub Pages on every push to `main`.
 
@@ -52,15 +52,15 @@ OEM dealer locators were not copied. Their terms generally prohibit scraping, an
 
 ### Ownership
 
-`data/ownership/platforms.json` is the only match list. A listing stays **Ownership: unverified** unless the business name matches a term in that file. Platform and franchise rows store the source URL. Nexstar is not a match term. The word “Independent” is not written onto a listing in this release.
+`data/ownership/platforms.json` matches documented platform and franchise names. `data/ownership/evidence.json` stores a label only with a quote, a URL, and the day the page was read. Nexstar is not a match term. `data/ownership/discovered_websites.json` adds an official site for a California or Minnesota top-city listing when a page matched the name plus the phone, address, or license. The profile says “Website found by ElectrifyRadar” and keeps the match basis. A discovered site does not change ownership unless that evidence file has a quote.
 
 Featured placement is a boolean on every row and is false. The quote form emails the publisher. It does not send the message to the installer and it is not a sold lead.
 
 ## Forms
 
-Every form opens the visitor’s email program to hello@electrifyradar.com (a `mailto:` link). Nothing is stored on the site.
+Forms keep a `mailto:` action and, when `form_endpoint` and `form_access_key` are set in `config/site.json`, the page script posts the same fields to Web3Forms. Submissions are email. They are not written into `data/listings.json`.
 
-A hosted form endpoint is **not** connected. To replace mailto later, set `form_endpoint` in `config/site.json` and teach `scripts/build_site.py` to post there. Services that need an account before they work: Formspree, Getform, Web3Forms, Basin, or a Google Form. None of those accounts exist for this project yet.
+The claim form asks for ownership (independent / family-owned, franchise, part of a larger company or PE-backed platform, or not sure) and an optional owner name or parent company. A reviewed answer that is later published is labeled “self-reported by the business,” in a dashed style separate from sourced labels.
 
 ## Custom domain
 

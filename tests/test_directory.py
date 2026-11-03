@@ -47,6 +47,12 @@ class ListingsTest(unittest.TestCase):
                 self.assertTrue(row["ownership_parent"])
             if row["ownership_status"] == "unverified":
                 self.assertEqual(row["ownership_label"], "Ownership: unverified")
+            if row.get("website_note"):
+                self.assertEqual(row["website_note"], "Website found by ElectrifyRadar")
+                self.assertTrue((row.get("website") or "").startswith("http"))
+                self.assertTrue(row.get("website_match_basis"))
+                self.assertIn(row["admin1"], {"CA", "MN"})
+                self.assertEqual(row.get("website_checked"), "2026-11-03")
             if row["admin1"] == "MN":
                 self.assertEqual(row["heat_pump_signal"], "mechanical_license_only")
                 self.assertEqual(row["rebate_programs"], [])
@@ -180,6 +186,23 @@ class SiteTest(unittest.TestCase):
         for word in FORBIDDEN:
             self.assertNotIn(word, text)
         self.assertNotIn(" Gus ", " " + text + " ")
+
+    def test_claim_form_asks_ownership_and_methodology_explains_self_report(self):
+        claim = (DIST / "claim" / "index.html").read_text(encoding="utf-8")
+        self.assertIn('name="ownership"', claim)
+        self.assertIn("Independent / family-owned", claim)
+        self.assertIn("Franchise", claim)
+        self.assertIn("Part of a larger company or PE-backed platform", claim)
+        self.assertIn("Not sure", claim)
+        self.assertIn('name="owner_or_parent"', claim)
+        self.assertIn("self-reported by the business", claim)
+        self.assertIn("mailto:hello@electrifyradar.com", claim)
+        method = (DIST / "methodology" / "index.html").read_text(encoding="utf-8")
+        self.assertIn("self-reported by the business", method)
+        self.assertIn("Website found by ElectrifyRadar", method)
+        self.assertIn("badge self-reported", method)
+        correction = (DIST / "report-correction" / "index.html").read_text(encoding="utf-8")
+        self.assertNotIn('name="ownership"', correction)
 
 
 if __name__ == "__main__":

@@ -543,6 +543,29 @@ def ownership_label(status: str) -> str:
     return LABELS.get(status, status)
 
 
+def apply_discovered_websites(listings):
+    path = DATA / "ownership" / "discovered_websites.json"
+    if not path.exists():
+        return 0
+    payload = load_json(path)
+    by_id = {row["listing_id"]: row for row in payload.get("records", [])}
+    applied = 0
+    for listing in listings:
+        found = by_id.get(listing["id"])
+        if not found:
+            continue
+        website = (found.get("website") or "").strip()
+        if not website.startswith("http"):
+            continue
+        if not listing.get("website"):
+            listing["website"] = website
+        listing["website_note"] = found.get("note") or "Website found by ElectrifyRadar"
+        listing["website_match_basis"] = found.get("match_basis") or ""
+        listing["website_checked"] = found.get("checked") or payload.get("checked")
+        applied += 1
+    return applied
+
+
 def apply_evidence(listings):
     path = DATA / "ownership" / "evidence.json"
     if not path.exists():
@@ -698,6 +721,7 @@ def main():
     ownership_hits = apply_ownership(listings)
     assign_paths(listings)
     evidence_applied = apply_evidence(listings)
+    websites_discovered = apply_discovered_websites(listings)
     listings.sort(key=lambda row: (row["admin1"], row["city_label"], row["name"]))
     out = {
         "generated_from": "scripts/build_listings.py",
@@ -719,6 +743,7 @@ def main():
         "by_ownership": dict(by_own),
         "ownership_hits": dict(ownership_hits),
         "evidence_applied": evidence_applied,
+        "websites_discovered": websites_discovered,
         "by_signal": {f"{a}:{b}": n for (a, b), n in by_signal.items()},
         "skipped": skip_report,
         "cslb_c20_rows": len(c20),

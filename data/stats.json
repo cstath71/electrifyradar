@@ -9,10 +9,10 @@
     "NY": 585
   },
   "by_ownership": {
-    "unverified": 6233,
+    "unverified": 6198,
+    "independent": 58,
     "franchise": 6,
     "pe_owned": 4,
-    "independent": 23,
     "other_corporate": 1
   },
   "ownership_hits": {
@@ -21,7 +21,8 @@
     "aire-serv": 6,
     "any-hour": 2
   },
-  "evidence_applied": 24,
+  "evidence_applied": 59,
+  "websites_discovered": 250,
   "by_signal": {
     "CA:program_roster": 1074,
     "MA:program_roster": 1770,
