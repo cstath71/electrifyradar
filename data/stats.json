@@ -1,0 +1,49 @@
+{
+  "as_of": "2026-11-03",
+  "count": 6267,
+  "by_state": {
+    "CA": 1074,
+    "MA": 1770,
+    "ME": 590,
+    "MN": 2248,
+    "NY": 585
+  },
+  "by_ownership": {
+    "unverified": 6257,
+    "franchise": 6,
+    "platform_owned": 4
+  },
+  "ownership_hits": {
+    "ars-rescue-rooter": 1,
+    "sila-services": 1,
+    "aire-serv": 6,
+    "any-hour": 2
+  },
+  "by_signal": {
+    "CA:program_roster": 1074,
+    "MA:program_roster": 1770,
+    "ME:program_roster": 590,
+    "MN:mechanical_license_only": 2248,
+    "NY:program_roster": 585
+  },
+  "skipped": {
+    "ma": {},
+    "me": {
+      "no_name": 1
+    },
+    "ny": {},
+    "mn": {
+      "not_issued": 2820,
+      "outside_mn": 273,
+      "no_phone": 37
+    },
+    "ca": {
+      "no_phone_after_cslb_join": 231,
+      "no_city": 36,
+      "tech_project_rows": 72782,
+      "tech_unique_contractors": 1341
+    }
+  },
+  "cslb_c20_rows": 11604,
+  "cslb_c36_rows": 17543
+}

@@ -1,0 +1,4 @@
+openpyxl==3.1.5
+beautifulsoup4==4.12.3
+# Optional, only for scripts/fetch_sources.py browser steps (CSLB portal, Efficiency Maine locator):
+# playwright==1.49.0

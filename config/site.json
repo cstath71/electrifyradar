@@ -1,0 +1,17 @@
+{
+  "name": "ElectrifyRadar",
+  "tagline": "Heat pump installers, with the ownership label other directories skip.",
+  "domain": "electrifyradar.com",
+  "contact_email": "hello@electrifyradar.com",
+  "github_owner": "cstath71",
+  "github_repo": "electrifyradar",
+  "canonical_origin": "https://cstath71.github.io/electrifyradar",
+  "publish_cname": false,
+  "locale": "en-US",
+  "currency": "USD",
+  "category": "heat_pump",
+  "data_as_of": "2026-11-03",
+  "form_endpoint": "",
+  "future_categories": ["ev_charger"],
+  "future_countries": ["CA", "GB"]
+}
