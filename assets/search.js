@@ -69,6 +69,13 @@
     });
   }
 
+  var params = new URLSearchParams(window.location.search);
+  var initialQuery = params.get("q");
+  if (initialQuery) {
+    var queryInput = document.getElementById("q");
+    if (queryInput) queryInput.value = initialQuery;
+  }
+
   fetch(indexUrl)
     .then(function (res) { return res.json(); })
     .then(function (data) {

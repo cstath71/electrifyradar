@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import html
 import json
+import re
 import shutil
 from collections import defaultdict
 from pathlib import Path
@@ -14,6 +15,19 @@ from common import ROOT, STATES, load_json
 
 DIST = ROOT / "dist"
 SITE = load_json(ROOT / "config" / "site.json")
+NOINDEX_PATHS = set()
+TOP_CITIES = {}
+TAG_RE = re.compile(r"<[^>]+>")
+ANSWER_BOTS = (
+    "GPTBot",
+    "OAI-SearchBot",
+    "ChatGPT-User",
+    "PerplexityBot",
+    "ClaudeBot",
+    "Google-Extended",
+    "Applebot-Extended",
+    "Bingbot",
+)
 ORIGIN = SITE["canonical_origin"].rstrip("/")
 AS_OF = SITE["data_as_of"]
 EMAIL = SITE["contact_email"]
@@ -55,7 +69,7 @@ def logo_svg() -> str:
     )
 
 
-def shell(from_dir: str, title: str, description: str, body: str, path: str, extra_head: str = "", extra_script: str = "") -> str:
+def shell(from_dir: str, title: str, description: str, body: str, path: str, extra_head: str = "", extra_script: str = "", breadcrumbs=None, noindex: bool = False) -> str:
     root = rel_url(from_dir, "/")
     css = rel_url(from_dir, "/assets/site.css")
     icon = rel_url(from_dir, "/favicon.svg")
@@ -77,9 +91,20 @@ def shell(from_dir: str, title: str, description: str, body: str, path: str, ext
         ("Claim a listing", "/claim/"),
         ("Report a correction", "/report-correction/"),
     ]
+    footer_links.insert(1, ("Methodology", "/methodology/"))
     footer = "".join(
         f'<a href="{esc(rel_url(from_dir, href))}">{esc(label)}</a>' for label, href in footer_links
     )
+    robots = '<meta name="robots" content="noindex, follow">' if noindex else ""
+    verify = []
+    if (SITE.get("google_site_verification") or "").strip():
+        verify.append(
+            f'<meta name="google-site-verification" content="{esc(SITE["google_site_verification"].strip())}">'
+        )
+    if (SITE.get("msvalidate") or "").strip():
+        verify.append(f'<meta name="msvalidate.01" content="{esc(SITE["msvalidate"].strip())}">')
+    og_image = absolute("/og.png")
+    crumb_ld = json_ld(breadcrumb_ld(breadcrumbs)) + "\n" if breadcrumbs else ""
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -87,19 +112,30 @@ def shell(from_dir: str, title: str, description: str, body: str, path: str, ext
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{esc(title)}</title>
 <meta name="description" content="{esc(description)}">
+<meta name="author" content="{esc(NAME)}">
 <link rel="canonical" href="{esc(absolute(path))}">
+{robots}
+{chr(10).join(verify)}
 <meta property="og:title" content="{esc(title)}">
 <meta property="og:description" content="{esc(description)}">
 <meta property="og:url" content="{esc(absolute(path))}">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="{esc(NAME)}">
+<meta property="og:image" content="{esc(og_image)}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="ElectrifyRadar">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{esc(title)}">
+<meta name="twitter:description" content="{esc(description)}">
+<meta name="twitter:image" content="{esc(og_image)}">
 <meta name="theme-color" content="#1f4d3a">
 <link rel="icon" href="{esc(icon)}" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@500;600;700&family=Fraunces:opsz,wght@9..144,560;9..144,640&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{esc(css)}">
-{extra_head}
+{crumb_ld}{extra_head}
 </head>
 <body>
 <a class="skip" href="#content">Skip to content</a>
@@ -258,6 +294,72 @@ def json_ld(obj) -> str:
     return f'<script type="application/ld+json">{payload}</script>'
 
 
+def plain(fragment: str) -> str:
+    text = TAG_RE.sub(" ", fragment)
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def breadcrumb_ld(items):
+    return {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": index, "name": label, "item": absolute(path)}
+            for index, (label, path) in enumerate(items, start=1)
+        ],
+    }
+
+
+def faq_section(items):
+    blocks = "".join(f"<h3>{esc(question)}</h3><p>{answer}</p>" for question, answer in items)
+    return f'<section class="faq"><h2>Questions</h2>{blocks}</section>'
+
+
+def faq_ld(items):
+    return {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": question,
+                "acceptedAnswer": {"@type": "Answer", "text": plain(answer)},
+            }
+            for question, answer in items
+        ],
+    }
+
+
+def select_top_cities(by_city, limit=20):
+    grouped = defaultdict(list)
+    for (state_slug, city_slug), rows in by_city.items():
+        if city_slug.startswith("outside-"):
+            continue
+        grouped[state_slug].append((len(rows), city_slug))
+    chosen = {}
+    for state_slug, items in grouped.items():
+        items.sort(key=lambda item: (-item[0], item[1]))
+        chosen[state_slug] = {slug for _, slug in items[:limit]}
+    return chosen
+
+
+def ownership_counts(rows):
+    counts = {"unverified": 0, "platform_owned": 0, "franchise": 0}
+    for row in rows:
+        counts[row["ownership_status"]] = counts.get(row["ownership_status"], 0) + 1
+    return counts
+
+
+def ownership_sentence(counts):
+    return (
+        f"{counts['unverified']} labeled Ownership: unverified, "
+        f"{counts['platform_owned']} PE or platform-owned, and "
+        f"{counts['franchise']} franchise. "
+        "Unverified means no documented private-equity or franchise parent matched the list. "
+        "It is not a finding that the business is independent."
+    )
+
+
 def group_listings(listings):
     by_state = defaultdict(list)
     by_city = defaultdict(list)
@@ -311,8 +413,12 @@ def build():
     shutil.copy(ROOT / "assets" / "site.css", DIST / "assets" / "site.css")
     shutil.copy(ROOT / "assets" / "search.js", DIST / "assets" / "search.js")
     shutil.copy(ROOT / "assets" / "logo.svg", DIST / "favicon.svg")
+    shutil.copy(ROOT / "assets" / "og.png", DIST / "og.png")
     if SITE.get("publish_cname"):
         shutil.copy(ROOT / "CNAME", DIST / "CNAME")
+    key = (SITE.get("indexnow_key") or "").strip()
+    if key:
+        (DIST / f"{key}.txt").write_text(key + "\n", encoding="utf-8")
 
     payload = load_json(ROOT / "data" / "listings.json")
     listings = payload["listings"]
@@ -334,25 +440,31 @@ def build():
         })
     (DIST / "search-index.json").write_text(json.dumps(index, ensure_ascii=False), encoding="utf-8")
 
+    global TOP_CITIES
+    NOINDEX_PATHS.clear()
+    TOP_CITIES = select_top_cities(by_city)
     write_home(counts)
     write_country(counts)
     write_states(by_state, by_city)
     write_cities(by_city)
     write_profiles(listings)
     write_static_pages(counts)
+    write_llms(counts)
+    write_robots()
     write_sitemap(listings, by_city)
-    (DIST / "robots.txt").write_text(
-        f"User-agent: *\nAllow: /\nSitemap: {absolute('/sitemap.xml')}\n",
-        encoding="utf-8",
-    )
+    NOINDEX_PATHS.add("/404.html")
     (DIST / "404.html").write_text(
         shell("", f"Page not found | {NAME}", "That page is not on ElectrifyRadar.",
               f'''<div class="wrap prose"><h1>Page not found</h1>
               <p>That address is not in this directory. Try a <a href="us/">state page</a> or the <a href="./">home search</a>.</p></div>''',
-              "/404.html"),
+              "/404.html", breadcrumbs=[("Home", "/"), ("Page not found", "/404.html")], noindex=True),
         encoding="utf-8",
     )
-    print(f"Wrote {len(listings)} profiles and {len(by_city)} city pages to {DIST}")
+    indexed_cities = sum(1 for (state_slug, city_slug), rows in by_city.items() if f"/us/{state_slug}/{city_slug}/" not in NOINDEX_PATHS)
+    print(
+        f"Wrote {len(listings)} profiles and {len(by_city)} city pages to {DIST} "
+        f"({indexed_cities} city pages in the sitemap, {len(by_city) - indexed_cities} noindex)"
+    )
 
 
 def write_home(counts):
@@ -386,9 +498,37 @@ def write_home(counts):
 </div>
 """
     extra = f'<script src="{esc(rel_url("", "/assets/search.js"))}"></script>'
+    home_ld = json_ld({
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "Organization",
+                "@id": absolute("/#organization"),
+                "name": NAME,
+                "url": absolute("/"),
+                "logo": absolute("/og.png"),
+                "email": EMAIL,
+            },
+            {
+                "@type": "WebSite",
+                "@id": absolute("/#website"),
+                "name": NAME,
+                "url": absolute("/"),
+                "publisher": {"@id": absolute("/#organization")},
+                "potentialAction": {
+                    "@type": "SearchAction",
+                    "target": {
+                        "@type": "EntryPoint",
+                        "urlTemplate": absolute("/") + "?q={search_term_string}",
+                    },
+                    "query-input": "required name=search_term_string",
+                },
+            },
+        ],
+    })
     write_page("/", shell("", f"{NAME} | Heat pump installers, with ownership in view",
                           "US directory of heat pump and ductless mini-split installers in Massachusetts, Maine, New York, California, and Minnesota. Ownership is labeled only from documented platform and franchise lists.",
-                          body, "/", extra_script=extra))
+                          body, "/", extra_head=home_ld, extra_script=extra, breadcrumbs=[("Home", "/")]))
 
 
 def write_country(counts):
@@ -409,7 +549,7 @@ def write_country(counts):
 """
     write_page("/us/", shell("/us", f"US heat pump installer directory | {NAME}",
                              "State-by-state directory of heat pump installers with ownership labels for Massachusetts, Maine, New York, California, and Minnesota.",
-                             body, "/us/"))
+                             body, "/us/", breadcrumbs=[("Home", "/"), ("United States", "/us/")]))
 
 
 STATE_INTRO = {
@@ -419,6 +559,154 @@ STATE_INTRO = {
     "ca": "California listings are contractors in the TECH Clean California file ContractorProjectData_2026-10-20 who have a city and a phone number. Phones come from a join to the California Contractors State License Board public classification downloads for C-20 (warm-air HVAC) and C-36 (plumbing), matched on license number. The full license lists are not published here. A C-20 license by itself is not treated as heat pump work. Contractors in the TECH file with no phone after that join are left out.",
     "mn": "Minnesota listings are businesses with an issued Mechanical Contractor Bond in the Minnesota Department of Labor and Industry public export, a Minnesota address, and a phone number. This is a mechanical contracting credential, not a heat-pump program roster. The page does not claim that each business installs heat pumps. Email addresses in the state file are not republished.",
 }
+
+
+STATE_SOURCE = {
+    "ma": {
+        "program": "Mass Save Heat Pump Installer Network",
+        "file_note": "the public spreadsheet whose header says Revised: 10-29-2026",
+        "finder_name": "Mass Save heat pump installer finder",
+        "finder_url": "https://www.masssave.com/residential/find-a-contractor/find-a-heat-pump-installer",
+        "rebate_name": "Mass Save heating and cooling incentives",
+        "rebate_url": "https://www.masssave.com/residential/rebates-and-incentives/heating-and-cooling",
+    },
+    "me": {
+        "program": "Efficiency Maine Residential Registered Vendor locator",
+        "file_note": "the Heat Pumps service, distance any, ZIP 04101",
+        "finder_name": "Efficiency Maine vendor locator",
+        "finder_url": "https://www.efficiencymaine.com/at-home/vendor-locator/",
+        "rebate_name": "Efficiency Maine heat pump rebates",
+        "rebate_url": "https://www.efficiencymaine.com/at-home/residential-rebates/",
+    },
+    "ny": {
+        "program": "NYS Clean Heat contractor finder",
+        "file_note": "residential contractors offering ASHP, air-to-water, ground-source, or heat pump water heater installation",
+        "finder_name": "NYS Clean Heat contractor finder",
+        "finder_url": "https://nyscleanheat-findacontractor.icfsightline.com/",
+        "rebate_name": "NYS Clean Heat",
+        "rebate_url": "https://cleanheat.ny.gov/",
+    },
+    "ca": {
+        "program": "TECH Clean California contractor file ContractorProjectData_2026-10-20",
+        "file_note": "contractors with a city and a phone after a join to CSLB license downloads",
+        "finder_name": "TECH Clean California contractor data",
+        "finder_url": "https://techcleanca.com/heat-pump-data/contractor-data/",
+        "rebate_name": "TECH Clean California single-family incentives",
+        "rebate_url": "https://techcleanca.com/incentives/single-family-incentives/",
+    },
+    "mn": {
+        "program": "Minnesota DLI Mechanical Contractor Bond export",
+        "file_note": "businesses with status Issued, a Minnesota address, and a phone number. This is a mechanical bond, not a heat-pump program roster",
+        "finder_name": "Minnesota DLI license lookup",
+        "finder_url": "https://dli.mn.gov/license-and-registration-lookup",
+        "rebate_name": "Minnesota residential heat pump rebate page",
+        "rebate_url": "https://mn.gov/commerce/energy/consumer/energy-programs/heat-pump.jsp",
+    },
+}
+
+
+def state_faq(code, total, own):
+    meta = STATES[code]
+    src = STATE_SOURCE[code]
+    method = f'<a href="{esc(rel_url(f"/us/{code}", "/methodology/"))}">how ownership labels are assigned</a>'
+    manual = f'<a href="{esc(rel_url(f"/us/{code}", "/us/guides/manual-j-load-calculation/"))}">Manual J guide</a>'
+    rebate_guide = f'<a href="{esc(rel_url(f"/us/{code}", f"/us/rebates/{code}/"))}">{esc(meta["name"])} rebate guide</a>'
+    items = [
+        (
+            f"How many heat pump installers does ElectrifyRadar list in {meta['name']}?",
+            f"{total} records, checked {esc(AS_OF)}, from the {esc(src['program'])} ({esc(src['file_note'])}). "
+            f"On this state page: {ownership_sentence(own)}",
+        ),
+        (
+            f"How do I check that an installer is on the official {meta['name']} list?",
+            f"Search the company on the <a href=\"{esc(src['finder_url'])}\">{esc(src['finder_name'])}</a>. "
+            f"ElectrifyRadar is a copy of that public file, checked {esc(AS_OF)}. The program page is the record that decides approval.",
+        ),
+        (
+            "What does Manual J mean on these listings?",
+            f"Manual J is the Air Conditioning Contractors of America procedure for estimating a home’s heating and cooling load. "
+            f"The {esc(meta['name'])} source file does not say whether an installer performed one, so every listing here says Manual J is not in the source. "
+            f"See the {manual}.",
+        ),
+        (
+            "What is the difference between unverified, PE or platform-owned, and franchise?",
+            f"PE or platform-owned and Franchise appear only when the business name matches a documented list, and the profile links that source. "
+            f"Everyone else is Ownership: unverified. Read {method}.",
+        ),
+        (
+            f"How do I get a heat pump rebate in {meta['name']}?",
+            rebate_answer(code, rebate_guide),
+        ),
+    ]
+    return items
+
+
+def rebate_answer(code, rebate_guide):
+    src = STATE_SOURCE[code]
+    official = f'<a href="{esc(src["rebate_url"])}">{esc(src["rebate_name"])}</a>'
+    if code == "ma":
+        return (
+            f"Read the current offer on {official}. The incentives page checked {esc(AS_OF)} did not state a single dollar amount in the HTML we could read, "
+            f"so this site does not print one. Our {rebate_guide} links the same page."
+        )
+    if code == "me":
+        return (
+            f"Efficiency Maine’s heat pump page, checked {esc(AS_OF)}, says the program offers residential and commercial rebates and that many rebated units "
+            f"heat efficiently down to −22°F or lower. It also says more than 200,000 heat pumps have been installed in Maine homes and businesses, citing the "
+            f"2021 Maine New Construction Baseline Assessment. Dollar amounts are on {official}, not restated here. See the {rebate_guide}."
+        )
+    if code == "ny":
+        return (
+            f"The <a href=\"https://cleanheat.ny.gov/\">NYS Clean Heat</a> site, checked {esc(AS_OF)}, says rebates and financing are available. "
+            f"That page did not state one dollar amount. Utility-specific rules are on the program site. See the {rebate_guide}."
+        )
+    if code == "ca":
+        return (
+            f"Reservation status is printed on {official}. Our {rebate_guide} quotes the dates that page stated when checked {esc(AS_OF)}, including that "
+            f"several single-family incentive pools were already reserved. Confirm the live page before you rely on a reservation."
+        )
+    return (
+        f"The <a href=\"{esc(src['rebate_url'])}\">Minnesota Department of Commerce page</a>, checked {esc(AS_OF)}, includes a status update dated 12 October 2026: "
+        f"the state heat pump rebate had not launched. The same page says the rebate amount will be the lesser of $4,000 or the install cost minus other rebates, "
+        f"for an ENERGY STAR certified cold-climate air-source heat pump, and that the approved contractor list was not published yet. "
+        f"Names on this directory are mechanical-bond holders, not that future list. See the {rebate_guide}."
+    )
+
+
+def city_faq(state_slug, city_name, rows):
+    meta = STATES[state_slug]
+    src = STATE_SOURCE[state_slug]
+    own = ownership_counts(rows)
+    n = len(rows)
+    method = f'<a href="{esc(rel_url(f"/us/{state_slug}/x", "/methodology/"))}">methodology</a>'
+    # from_dir depth doesn't matter for absolute-style relative if we compute from a known depth.
+    # city pages are /us/{state}/{city}. rel_url from that directory.
+    from_dir = f"/us/{state_slug}/placeholder"
+    method = f'<a href="{esc(rel_url(from_dir, "/methodology/"))}">methodology</a>'
+    manual = f'<a href="{esc(rel_url(from_dir, "/us/guides/manual-j-load-calculation/"))}">Manual J guide</a>'
+    rebate_guide = f'<a href="{esc(rel_url(from_dir, f"/us/rebates/{state_slug}/"))}">{esc(meta["name"])} rebate guide</a>'
+    return [
+        (
+            f"How many installers are listed in {city_name}?",
+            f"{n} with a {esc(city_name)} address in the {esc(meta['name'])} source, checked {esc(AS_OF)}. "
+            f"On this page: {ownership_sentence(own)}",
+        ),
+        (
+            "Where do these names come from?",
+            f"The {esc(src['program'])} ({esc(src['file_note'])}). "
+            f"Check a company on the <a href=\"{esc(src['finder_url'])}\">{esc(src['finder_name'])}</a>.",
+        ),
+        (
+            "Does a listing mean the installer did a Manual J calculation?",
+            f"No. That source does not say. Every listing says Manual J is not in the source. See the {manual}.",
+        ),
+        (
+            f"How do {meta['name']} heat pump rebates work?",
+            f"Use the {rebate_guide}, which links the official program page checked {esc(AS_OF)}. "
+            f"Read <a href=\"{esc(src['rebate_url'])}\">{esc(src['rebate_name'])}</a> for the current offer. "
+            f"Labels on this page are explained in the {method}.",
+        ),
+    ]
 
 
 def write_states(by_state, by_city):
@@ -435,26 +723,52 @@ def write_states(by_state, by_city):
             f'<li><a href="{esc(slug)}/">{esc(title)}</a> — {count}</li>'
             for title, slug, count in cities
         )
-        own = defaultdict(int)
-        for row in rows:
-            own[row["ownership_status"]] += 1
+        own = ownership_counts(rows)
         from_dir = f"/us/{code}"
+        trail = [("Home", "/"), ("United States", "/us/"), (meta["name"], f"/us/{code}/")]
+        src = STATE_SOURCE[code]
+        quick = (
+            f"ElectrifyRadar lists {len(rows)} {meta['name']} records as of {AS_OF}, "
+            f"from the {src['program']} ({src['file_note']}). "
+            f"{ownership_sentence(own)}"
+        )
+        questions = state_faq(code, len(rows), own)
+        city_items = []
+        for position, (title, slug, count) in enumerate(cities, start=1):
+            city_items.append({
+                "@type": "ListItem",
+                "position": position,
+                "name": title,
+                "url": absolute(f"/us/{code}/{slug}/"),
+            })
+        ld = json_ld({
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            "name": f"Places with listings in {meta['name']}",
+            "numberOfItems": len(cities),
+            "itemListElement": city_items,
+        }) + json_ld(faq_ld(questions))
         body = f"""
 <div class="wrap">
-  {crumbs(from_dir, [("Home", "/"), ("United States", "/us/"), (meta["name"], f"/us/{code}/")])}
+  {crumbs(from_dir, trail)}
   <p class="eyebrow">{esc(meta["code"])}</p>
   <h1>Heat pump installers in {esc(meta["name"])}</h1>
-  <p class="lede">{len(rows)} listings. Ownership in this state: {own["unverified"]} unverified, {own["platform_owned"]} PE or platform-owned, {own["franchise"]} franchise.</p>
+  <p class="quick-answer"><strong>Quick answer.</strong> {esc(quick)}</p>
   <div class="prose"><p>{esc(STATE_INTRO[code])}</p>
   <p><a href="../rebates/{code}/">Rebate guide for {esc(meta["name"])}</a></p></div>
+  {faq_section(questions)}
   {search_block(from_dir, code.upper())}
   <h2>Cities and mailing-address groups</h2>
   <ul>{city_links}</ul>
 </div>
 """
         script = f'<script src="{esc(rel_url(from_dir, "/assets/search.js"))}"></script>'
-        desc = f"{len(rows)} heat pump installer listings in {meta['name']}, with ownership labels and the public source behind each row."
-        write_page(f"/us/{code}/", shell(from_dir, f"Heat pump installers in {meta['name']} | {NAME}", desc, body, f"/us/{code}/", extra_script=script))
+        desc = f"{len(rows)} heat pump installer listings in {meta['name']}, from the {src['program']}, checked {AS_OF}."
+        write_page(
+            f"/us/{code}/",
+            shell(from_dir, f"Heat pump installers in {meta['name']} | {NAME}", desc, body, f"/us/{code}/",
+                  extra_head=ld, extra_script=script, breadcrumbs=trail),
+        )
 
 
 def write_cities(by_city):
@@ -485,22 +799,41 @@ def write_cities(by_city):
             "numberOfItems": len(rows),
             "itemListElement": item_list,
         })
+        thin = len(rows) < 3
+        if thin:
+            NOINDEX_PATHS.add(path)
+        enriched = (not city_slug.startswith("outside-")) and city_slug in TOP_CITIES.get(state_slug, set())
+        trail = [("Home", "/"), (meta["name"], f"/us/{state_slug}/"), (title, path)]
+        extra_ld = ld
+        answer = ""
         if city_slug.startswith("outside-"):
             heading = f"{title}, listed on the {meta['name']} roster"
             lede = f"These {len(rows)} businesses are on the {meta['name']} source used for this directory, and the address in that source is outside {meta['name']}."
         else:
             heading = f"Heat pump installers in {title}, {meta['name']}"
             lede = f"{len(rows)} listings with a {title} address in the public source for {meta['name']}."
+        if enriched:
+            src = STATE_SOURCE[state_slug]
+            own = ownership_counts(rows)
+            quick = (
+                f"{len(rows)} installers with a {title} address are in the {meta['name']} source "
+                f"ElectrifyRadar checked on {AS_OF}: the {src['program']}. "
+                f"On this page: {ownership_sentence(own)}"
+            )
+            questions = city_faq(state_slug, title, rows)
+            answer = f'<p class="quick-answer"><strong>Quick answer.</strong> {esc(quick)}</p>' + faq_section(questions)
+            extra_ld += json_ld(faq_ld(questions))
         body = f"""
 <div class="wrap">
-  {crumbs(from_dir, [("Home", "/"), (meta["name"], f"/us/{state_slug}/"), (title, path)])}
+  {crumbs(from_dir, trail)}
   <h1>{esc(heading)}</h1>
+  {answer}
   <p class="lede">{esc(lede)}</p>
   <div class="grid cards">{''.join(cards)}</div>
 </div>
 """
-        desc = f"{len(rows)} heat pump installer listings in {title}, {meta['name']}."
-        write_page(path, shell(from_dir, f"{heading} | {NAME}", desc, body, path, extra_head=ld))
+        desc = f"{len(rows)} heat pump installer listings in {title}, {meta['name']}, checked {AS_OF}."
+        write_page(path, shell(from_dir, f"{heading} | {NAME}", desc, body, path, extra_head=extra_ld, breadcrumbs=trail, noindex=thin))
 
 
 def write_profiles(listings):
@@ -558,11 +891,19 @@ def write_profiles(listings):
         own_link = ""
         if row.get("ownership_source_url"):
             own_link = f' <a href="{esc(row["ownership_source_url"])}">Source</a>'
-        ld = json_ld({
+        same_as = []
+        for item in row["sources"]:
+            if item["url"] not in same_as:
+                same_as.append(item["url"])
+        if row.get("ownership_source_url") and row["ownership_source_url"] not in same_as:
+            same_as.append(row["ownership_source_url"])
+        business = {
             "@context": "https://schema.org",
             "@type": "HVACBusiness",
+            "@id": absolute(path) + "#business",
             "name": row["name"],
-            "url": absolute(path),
+            "url": row["website"] or absolute(path),
+            "mainEntityOfPage": absolute(path),
             "telephone": row["phone"] or None,
             "address": {
                 "@type": "PostalAddress",
@@ -572,18 +913,21 @@ def write_profiles(listings):
                 "postalCode": row.get("postal_code") or None,
                 "addressCountry": "US",
             },
-            "areaServed": meta["name"],
-        })
-        if row.get("lat") and row.get("lng"):
-            # geo is only included when the source API provided coordinates
-            pass
-        geo = ""
+            "areaServed": {"@type": "AdministrativeArea", "name": meta["name"]},
+            "sameAs": same_as,
+        }
         if isinstance(row.get("lat"), (int, float)) and isinstance(row.get("lng"), (int, float)):
-            geo = json_ld({
-                "@context": "https://schema.org",
-                "@type": "Place",
-                "geo": {"@type": "GeoCoordinates", "latitude": row["lat"], "longitude": row["lng"]},
-            })
+            business["geo"] = {
+                "@type": "GeoCoordinates",
+                "latitude": row["lat"],
+                "longitude": row["lng"],
+            }
+        business = {key: value for key, value in business.items() if value not in (None, "", [])}
+        business["address"] = {
+            key: value for key, value in business["address"].items() if value not in (None, "")
+        }
+        ld = json_ld(business)
+        geo = ""
         claim = rel_url(from_dir, "/claim/")
         correct = rel_url(from_dir, "/report-correction/")
         body = f"""
@@ -632,7 +976,13 @@ def write_profiles(listings):
         # Wait, look: {esc(ownership_phrase(row))}{own_link} — good.
         title = f"{row['name']} in {row['city']}, {row.get('address_region') or row['admin1']} | {NAME}"
         desc = f"{row['name']} in {row['city']}. {row['ownership_label']}. Source checked {AS_OF}."
-        write_page(path, shell(from_dir, title, desc, body, path, extra_head=ld + geo))
+        trail = [
+            ("Home", "/"),
+            (meta["name"], f"/us/{state_slug}/"),
+            (city_name, city_path),
+            (row["name"], path),
+        ]
+        write_page(path, shell(from_dir, title, desc, body, path, extra_head=ld, breadcrumbs=trail))
 
 
 def guide(slug, title, description, inner):
@@ -659,13 +1009,15 @@ def write_static_pages(counts):
   <ul>{index_items}</ul>
 </div>
 """
+    guide_trail = [("Home", "/"), ("Guides", "/us/guides/")]
     write_page("/us/guides/", shell("/us/guides", f"Heat pump guides | {NAME}",
                                     "Guides on heat pump cost, cold-climate performance, Manual J, rebates, and ownership.",
-                                    guide_index, "/us/guides/"))
+                                    guide_index, "/us/guides/", breadcrumbs=guide_trail))
     for page in guides:
-        body = f'''<div class="wrap prose">{crumbs(page["from"], [("Home", "/"), ("Guides", "/us/guides/"), (page["title"], page["path"])])}
-        <h1>{esc(page["title"])}</h1>{page["inner"]}<p class="fine">Last checked {esc(AS_OF)}.</p></div>'''
-        write_page(page["path"], shell(page["from"], f'{page["title"]} | {NAME}', page["description"], body, page["path"]))
+        trail = [("Home", "/"), ("Guides", "/us/guides/"), (page["title"], page["path"])]
+        body = f'''<div class="wrap prose">{crumbs(page["from"], trail)}
+        <h1>{esc(page["title"])}</h1>{page["inner"]}<p class="fine">Last checked {esc(AS_OF)}. Publisher: ElectrifyRadar.</p></div>'''
+        write_page(page["path"], shell(page["from"], f'{page["title"]} | {NAME}', page["description"], body, page["path"], breadcrumbs=trail))
 
     rebate_states = "".join(
         f'<li><a href="{code}/">{esc(STATES[code]["name"])}</a></li>' for code in STATES
@@ -681,7 +1033,7 @@ def write_static_pages(counts):
 """
     write_page("/us/rebates/", shell("/us/rebates", f"Heat pump rebates | {NAME}",
                                      "Heat pump rebate guides for Massachusetts, Maine, New York, California, and Minnesota, with official links and a last-checked date.",
-                                     rebates_index, "/us/rebates/"))
+                                     rebates_index, "/us/rebates/", breadcrumbs=[("Home", "/"), ("Rebates", "/us/rebates/")]))
     for code, meta in STATES.items():
         inner = REBATE_COPY[code]
         path = f"/us/rebates/{code}/"
@@ -692,7 +1044,7 @@ def write_static_pages(counts):
         <p class="fine">Last checked {esc(AS_OF)}.</p></div>'''
         doc = shell(from_dir, f"Heat pump rebates in {meta['name']} | {NAME}",
                     f"Official heat pump rebate facts for {meta['name']}, checked {AS_OF}, with links to the program pages.",
-                    body, path)
+                    body, path, breadcrumbs=[("Home", "/"), ("Rebates", "/us/rebates/"), (meta["name"], path)])
         write_page(path, doc)
         # Keyword alias /us/{state}/rebates/ points at the canonical rebate URL.
         alias_from = f"/us/{code}/rebates"
@@ -700,7 +1052,8 @@ def write_static_pages(counts):
         <p>The rebate guide lives at <a href="{esc(rel_url(alias_from, path))}">{esc(absolute(path))}</a>.</p></div>'''
         alias = shell(alias_from, f"Heat pump rebates in {meta['name']} | {NAME}",
                       f"Rebate guide for {meta['name']}.",
-                      alias_body, path)
+                      alias_body, path,
+                      breadcrumbs=[("Home", "/"), (meta["name"], f"/us/{code}/"), ("Rebates", f"/us/{code}/rebates/")])
         # canonical in shell uses `path` argument which we set to the canonical rebate path. Good.
         write_page(f"/us/{code}/rebates/", alias)
 
@@ -711,10 +1064,38 @@ def write_static_pages(counts):
   <p>The point of the site is ownership transparency. Other finders emphasize licenses, insurance, and quote requests. This one also says whether a published brand list identifies the business as platform-owned or a franchise. If we cannot support that, the label is “Ownership: unverified.” We do not mark a business independent without evidence.</p>
   <p>Listings are rebuilt from public program files and, for Minnesota, a public license export. Each profile names the source and the date it was checked. We do not invent installers, phone numbers, ratings, or counts.</p>
   <p>Paid featured listings are a field in the data and are turned off. The quote form emails the publisher. It is not a lead sold to a contractor.</p>
+  <p>How the files are chosen and how often they are refreshed is on the <a href="../methodology/">methodology page</a>.</p>
   <p>Contact <a href="mailto:{esc(EMAIL)}">{esc(EMAIL)}</a>.</p>
 </div>
 """
-    write_page("/about/", shell("/about", f"About | {NAME}", "What ElectrifyRadar publishes, and what it refuses to guess.", about, "/about/"))
+    write_page("/about/", shell("/about", f"About | {NAME}", "What ElectrifyRadar publishes, and what it refuses to guess.", about, "/about/", breadcrumbs=[("Home", "/"), ("About", "/about/")]))
+    methodology = f"""
+<div class="wrap prose">
+  <h1>Methodology</h1>
+  <p>Publisher: ElectrifyRadar. This page says where the listings come from, how an ownership label is assigned, and when the files were last checked. Checked {esc(AS_OF)}.</p>
+  <h2>Sources</h2>
+  <ul>
+    <li>Massachusetts: the Mass Save Heat Pump Installer Network spreadsheet linked from the <a href="https://www.masssave.com/residential/find-a-contractor/find-a-heat-pump-installer">heat pump installer finder</a>. The file header says Revised: 10-29-2026. The finder says participants provided EPA certification, Massachusetts insurance, and heat pump installation training, and that participation is not an endorsement.</li>
+    <li>Maine: the <a href="https://www.efficiencymaine.com/at-home/vendor-locator/">Efficiency Maine Residential Registered Vendor locator</a>, Heat Pumps service, distance “any,” ZIP 04101. The locator requires a ZIP. Installer email addresses in that tool are not republished. Efficiency Maine says it does not endorse a provider.</li>
+    <li>New York: the <a href="https://nyscleanheat-findacontractor.icfsightline.com/">NYS Clean Heat contractor finder</a>, using the same public search the site uses, limited to residential contractors offering ASHP, air-to-water, ground-source, or heat pump water heater installation. Email addresses from that API are not republished.</li>
+    <li>California: <a href="https://techcleanca.com/heat-pump-data/contractor-data/">TECH Clean California</a> file ContractorProjectData_2026-10-20. One directory row is one contractor name, CSLB number, and city. Phone and license status are joined from the <a href="https://www.cslb.ca.gov/onlineservices/dataportal/ListByClassification.aspx">CSLB classification downloads</a> for C-20 and C-36 when the license number matches. Contractors with no phone after that join are left out. The full license lists are not published. A C-20 license alone is not treated as heat pump work.</li>
+    <li>Minnesota: the <a href="https://dli.mn.gov/license-and-registration-lookup">Minnesota DLI</a> Mechanical Contractor Bond export, status Issued, Minnesota address, with a phone number. This is a mechanical contracting credential, not a heat-pump program roster. Profiles say so. Email addresses in the file are not republished.</li>
+  </ul>
+  <p>OEM dealer locators are not copied. A brand badge is not an ownership label.</p>
+  <h2>Ownership labels</h2>
+  <p>Every listing starts as Ownership: unverified. That means no documented private-equity platform or franchise parent matched <a href="https://dealseam.com/hvac-pe-rollup-tracker-2026">DealSeam’s 2026 HVAC roll-up tracker</a> (page last updated 28 July 2026; read {esc(AS_OF)}) or the <a href="https://www.aireserv.com/">Aire Serv</a> site, which describes Aire Serv as a Neighborly company whose work is done by franchise companies. A match stores the parent, the matched words, the source URL, and the day the source was read. The profile links that source.</p>
+  <p>Matches are narrow. “Comfort Systems” is not treated as Comfort Systems USA. “Champion” is not treated as Champions Group. The letters ARS alone are not treated as Rescue Rooter. Nexstar membership is not a match. See <a href="https://www.nexstarnetwork.com/about/">Nexstar’s about page</a>. We did not ingest a membership roster.</p>
+  <p>An independent label is not used in this release. Unverified is not a confirmation that a shop is independent.</p>
+  <h2>What we do not publish</h2>
+  <p>No star ratings, review counts, or made-up prices. Manual J is marked only when a source says the installer performed or claimed it. None of the files above say that, so every listing reads “Manual J: not in source.” Rebate dollar amounts appear only when an official page stated them, with that page linked and this checked date. The Minnesota $4,000 figure is one of those, quoted on the <a href="../us/rebates/mn/">Minnesota rebate guide</a> from the Commerce page.</p>
+  <h2>Update cadence</h2>
+  <p>There is no automatic daily crawl. An operator reruns the pipeline when a source file should be refreshed and commits the new listings. The date on a profile is the day that source was checked, currently {esc(AS_OF)}. City pages with fewer than three listings are marked noindex and left out of the sitemap so thin pages are not offered as search landing pages. The installer profiles on those pages stay in the sitemap.</p>
+</div>
+"""
+    write_page("/methodology/", shell("/methodology", f"Methodology | {NAME}",
+                                      "Sources, ownership labels, and update cadence for the ElectrifyRadar installer directory.",
+                                      methodology, "/methodology/",
+                                      breadcrumbs=[("Home", "/"), ("Methodology", "/methodology/")]))
     privacy = f"""
 <div class="wrap prose">
   <h1>Privacy</h1>
@@ -724,7 +1105,7 @@ def write_static_pages(counts):
   <p>If you want a listing changed or removed, use <a href="../report-correction/">report a correction</a> or email {esc(EMAIL)}.</p>
 </div>
 """
-    write_page("/privacy/", shell("/privacy", f"Privacy | {NAME}", "How ElectrifyRadar handles forms and public installer records.", privacy, "/privacy/"))
+    write_page("/privacy/", shell("/privacy", f"Privacy | {NAME}", "How ElectrifyRadar handles forms and public installer records.", privacy, "/privacy/", breadcrumbs=[("Home", "/"), ("Privacy", "/privacy/")]))
     terms = f"""
 <div class="wrap prose">
   <h1>Terms</h1>
@@ -734,7 +1115,7 @@ def write_static_pages(counts):
   <p>You may link to these pages. You may not scrape the site in order to resell the directory as a lead list.</p>
 </div>
 """
-    write_page("/terms/", shell("/terms", f"Terms | {NAME}", "Terms for using the ElectrifyRadar directory.", terms, "/terms/"))
+    write_page("/terms/", shell("/terms", f"Terms | {NAME}", "Terms for using the ElectrifyRadar directory.", terms, "/terms/", breadcrumbs=[("Home", "/"), ("Terms", "/terms/")]))
     write_form_page(
         "/claim/",
         "Claim a listing",
@@ -774,7 +1155,7 @@ def write_form_page(path, heading, description, subject, intro):
   <p>Or write directly to <a href="mailto:{esc(EMAIL)}">{esc(EMAIL)}</a>.</p>
 </div>
 """
-    write_page(path, shell(from_dir, f"{heading} | {NAME}", description, body, path))
+    write_page(path, shell(from_dir, f"{heading} | {NAME}", description, body, path, breadcrumbs=[("Home", "/"), (heading, path)]))
 
 
 def guide_pages():
@@ -929,28 +1310,118 @@ REBATE_COPY = {
 }
 
 
-def write_sitemap(listings, by_city):
-    paths = ["/", "/us/", "/us/guides/", "/us/rebates/", "/about/", "/privacy/", "/terms/", "/claim/", "/report-correction/", "/404.html"]
-    for code in STATES:
-        paths.append(f"/us/{code}/")
-        paths.append(f"/us/rebates/{code}/")
-        paths.append(f"/us/{code}/rebates/")
-    for page in guide_pages():
-        paths.append(page["path"])
-    for state_slug, city_slug in by_city:
-        paths.append(f"/us/{state_slug}/{city_slug}/")
-    for row in listings:
-        paths.append(row["path"])
+def urlset(paths):
     urls = []
     seen = set()
     for path in paths:
-        if path in seen:
+        if path in seen or path in NOINDEX_PATHS:
             continue
         seen.add(path)
         loc = absolute(path if path.endswith(".html") else path)
         urls.append(f"  <url><loc>{esc(loc)}</loc><lastmod>{AS_OF}</lastmod></url>")
-    xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n" + "\n".join(urls) + "\n</urlset>\n"
-    (DIST / "sitemap.xml").write_text(xml, encoding="utf-8")
+    body = "\n".join(urls)
+    return (
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+        "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n"
+        f"{body}\n</urlset>\n"
+    )
+
+
+def write_sitemap(listings, by_city):
+    pages = ["/", "/us/", "/us/guides/", "/us/rebates/", "/about/", "/privacy/", "/terms/", "/claim/", "/report-correction/", "/methodology/"]
+    for code in STATES:
+        pages.append(f"/us/{code}/")
+        pages.append(f"/us/rebates/{code}/")
+    for page in guide_pages():
+        pages.append(page["path"])
+    cities = [f"/us/{state_slug}/{city_slug}/" for state_slug, city_slug in by_city]
+    installers = [row["path"] for row in listings]
+    files = {
+        "sitemap-pages.xml": pages,
+        "sitemap-cities.xml": cities,
+        "sitemap-installers.xml": installers,
+    }
+    for name, paths in files.items():
+        (DIST / name).write_text(urlset(paths), encoding="utf-8")
+    entries = []
+    for name in files:
+        entries.append(
+            f"  <sitemap><loc>{esc(absolute('/' + name))}</loc><lastmod>{AS_OF}</lastmod></sitemap>"
+        )
+    index = (
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+        "<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n"
+        + "\n".join(entries)
+        + "\n</sitemapindex>\n"
+    )
+    (DIST / "sitemap.xml").write_text(index, encoding="utf-8")
+
+
+def write_robots():
+    lines = ["User-agent: *", "Allow: /", ""]
+    for bot in ANSWER_BOTS:
+        lines.extend([f"User-agent: {bot}", "Allow: /", ""])
+    lines.append(f"Sitemap: {absolute('/sitemap.xml')}")
+    (DIST / "robots.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def write_llms(counts):
+    total = sum(counts.values())
+    state_lines = [
+        f"- {STATES[code]['name']}: {counts.get(code, 0)} listings — {absolute('/us/' + code + '/')}"
+        for code in STATES
+    ]
+    summary = [
+        "# ElectrifyRadar",
+        "",
+        "> Directory of heat pump and ductless mini-split installers in five US states. "
+        "Ownership is labeled only when a business name matches a documented platform or franchise list. "
+        f"Checked {AS_OF}.",
+        "",
+        "Publisher: ElectrifyRadar",
+        f"data_as_of: {AS_OF}",
+        f"canonical: {ORIGIN}/",
+        "",
+        "## Counts",
+        *state_lines,
+        f"- Total: {total}",
+        "",
+        "## Key URLs",
+        f"- Home: {absolute('/')}",
+        f"- Methodology: {absolute('/methodology/')}",
+        f"- Ownership rules: {absolute('/us/guides/how-we-label-ownership/')}",
+        f"- Manual J: {absolute('/us/guides/manual-j-load-calculation/')}",
+        f"- Rebates: {absolute('/us/rebates/')}",
+        "",
+        f"Longer note: {absolute('/llms-full.txt')}",
+        "",
+    ]
+    (DIST / "llms.txt").write_text("\n".join(summary), encoding="utf-8")
+    full = summary + [
+        "## Method",
+        "Listings are copied from public program files and, for Minnesota, a public license export. "
+        "No installer, phone number, rating, review, or price is invented. "
+        "Manual J is true only when a source says so. In this release every listing says Manual J is not in the source.",
+        "Ownership starts as unverified. PE or platform-owned and Franchise require a name match against a sourced list, with the source URL stored on the profile. "
+        "Nexstar membership is not an ownership label. Unverified is not a confirmation of independent ownership.",
+        "City pages with fewer than three listings are noindex and omitted from the sitemap. Installer profiles on those pages stay in the sitemap.",
+        "There is no automatic daily crawl. An operator reruns the pipeline and commits the listings file. Profile dates are the day the source was checked.",
+        "",
+        "## Sources",
+        "- Massachusetts: Mass Save Heat Pump Installer Network spreadsheet, file header Revised 10-29-2026. https://www.masssave.com/residential/find-a-contractor/find-a-heat-pump-installer",
+        "- Maine: Efficiency Maine Residential Registered Vendor locator, Heat Pumps service, distance any, ZIP 04101. https://www.efficiencymaine.com/at-home/vendor-locator/",
+        "- New York: NYS Clean Heat contractor finder, residential ASHP, air-to-water, ground-source, and heat pump water heater installers. https://nyscleanheat-findacontractor.icfsightline.com/",
+        "- California: TECH Clean California ContractorProjectData_2026-10-20. https://techcleanca.com/heat-pump-data/contractor-data/ Phones joined from CSLB C-20 and C-36 downloads. https://www.cslb.ca.gov/onlineservices/dataportal/ListByClassification.aspx",
+        "- Minnesota: DLI Mechanical Contractor Bond export, status Issued, Minnesota address, with a phone. Not a heat-pump program roster. https://dli.mn.gov/license-and-registration-lookup",
+        "- Platform list: DealSeam HVAC PE roll-up tracker (2026), page last updated 28 July 2026, read on the checked date. https://dealseam.com/hvac-pe-rollup-tracker-2026",
+        "- Franchise example: Aire Serv describes itself as a Neighborly company. https://www.aireserv.com/",
+        "",
+        "## Rebate pages",
+    ]
+    for code in STATES:
+        full.append(f"- {STATES[code]['name']}: {absolute('/us/rebates/' + code + '/')}")
+    full.append("")
+    (DIST / "llms-full.txt").write_text("\n".join(full), encoding="utf-8")
 
 
 if __name__ == "__main__":

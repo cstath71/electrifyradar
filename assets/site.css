@@ -222,6 +222,16 @@ dd { margin: 0; }
   border-radius: 10px;
   padding: 0.4rem 0.7rem;
 }
+.quick-answer {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 0.9rem 1rem;
+  margin: 1rem 0 1.2rem;
+}
+.quick-answer strong { font-family: var(--serif); }
+.faq h2 { margin-top: 1.6rem; }
+.faq h3 { font-size: 1.2rem; margin: 1.1rem 0 0.3rem; }
 @media (max-width: 719px) {
   .menu-btn { display: inline-block; }
 }

@@ -100,9 +100,76 @@ class SiteTest(unittest.TestCase):
                     target = target / "index.html"
                 self.assertTrue(target.exists(), f"{href} from {page.relative_to(DIST)}")
 
+    def test_jsonld_parses_and_has_no_ratings(self):
+        samples = [
+            DIST / "index.html",
+            DIST / "us" / "ma" / "index.html",
+            DIST / "methodology" / "index.html",
+            DIST / "llms.txt",
+        ]
+        rows = json.loads((ROOT / "data" / "listings.json").read_text(encoding="utf-8"))["listings"]
+        # A city in the top tier and a one-listing city.
+        by_city = {}
+        for row in rows:
+            if row["city_slug"].startswith("outside-"):
+                continue
+            by_city.setdefault((row["admin1_slug"], row["city_slug"]), []).append(row)
+        ranked = sorted(by_city.items(), key=lambda item: len(item[1]), reverse=True)
+        top_state, top_slug = ranked[0][0]
+        thin = next(key for key, group in by_city.items() if len(group) < 3)
+        samples.append(DIST / "us" / top_state / top_slug / "index.html")
+        samples.append(DIST / "us" / thin[0] / thin[1] / "index.html")
+        profile = ranked[0][1][0]
+        samples.append(DIST / profile["path"].strip("/") / "index.html")
+        for page in samples:
+            if page.suffix == ".txt":
+                text = page.read_text(encoding="utf-8")
+                self.assertIn("data_as_of:", text)
+                self.assertIn("2026-11-03", text)
+                continue
+            text = page.read_text(encoding="utf-8")
+            blocks = re.findall(r'<script type="application/ld\+json">(.*?)</script>', text)
+            self.assertTrue(blocks, page)
+            for block in blocks:
+                parsed = json.loads(block)
+                blob = json.dumps(parsed)
+                self.assertNotIn("aggregateRating", blob)
+                self.assertNotIn('"@type": "Review"', blob)
+                self.assertNotIn('"@type":"Review"', blob)
+                self.assertNotIn("reviewCount", blob)
+            if page.name == "index.html" and page.parent == DIST:
+                joined = " ".join(blocks)
+                self.assertIn("SearchAction", joined)
+                self.assertIn("Organization", joined)
+                self.assertIn("BreadcrumbList", joined)
+            if page.parent.name == "ma" and page.parent.parent.name == "us":
+                joined = " ".join(blocks)
+                self.assertIn("FAQPage", joined)
+                self.assertIn("ItemList", joined)
+                self.assertIn("BreadcrumbList", joined)
+                self.assertIn("Quick answer.", text)
+        thin_html = (DIST / "us" / thin[0] / thin[1] / "index.html").read_text(encoding="utf-8")
+        self.assertIn('content="noindex, follow"', thin_html)
+        self.assertNotIn("FAQPage", thin_html)
+        top_html = (DIST / "us" / top_state / top_slug / "index.html").read_text(encoding="utf-8")
+        self.assertIn("FAQPage", top_html)
+        self.assertIn("HVACBusiness", (DIST / profile["path"].strip("/") / "index.html").read_text(encoding="utf-8"))
+        sitemap = (DIST / "sitemap.xml").read_text(encoding="utf-8")
+        self.assertIn("<sitemapindex", sitemap)
+        city_xml = (DIST / "sitemap-cities.xml").read_text(encoding="utf-8")
+        thin_url = f"https://electrifyradar.com/us/{thin[0]}/{thin[1]}/"
+        self.assertNotIn(thin_url, city_xml)
+        self.assertNotIn(thin_url, sitemap)
+        self.assertTrue((DIST / "llms.txt").exists())
+        self.assertTrue((DIST / "llms-full.txt").exists())
+        robots = (DIST / "robots.txt").read_text(encoding="utf-8")
+        for bot in ("GPTBot", "OAI-SearchBot", "ChatGPT-User", "PerplexityBot", "ClaudeBot", "Google-Extended", "Applebot-Extended", "Bingbot"):
+            self.assertIn(bot, robots)
+        self.assertTrue((DIST / "og.png").exists())
+
     def test_public_copy_has_no_private_names(self):
         blobs = []
-        for path in [ROOT / "README.md", DIST / "index.html", DIST / "about" / "index.html"]:
+        for path in [ROOT / "README.md", DIST / "index.html", DIST / "about" / "index.html", DIST / "methodology" / "index.html", DIST / "llms.txt", DIST / "llms-full.txt"]:
             blobs.append(path.read_text(encoding="utf-8"))
         # Sample profiles rather than reading every page into one string.
         for path in list((DIST / "us").rglob("index.html"))[:40]:

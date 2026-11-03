@@ -73,6 +73,20 @@ A hosted form endpoint is **not** connected. To replace mailto later, set `form_
 
 Listings already have `country_code` and `category` (`heat_pump` today). URLs are `/{country}/{admin1}/{city}/{slug}/`. `config/site.json` lists `future_countries` (`CA`, `GB`) and `future_categories` (`ev_charger`). A new roster is another builder function in `scripts/build_listings.py` plus a section in the templates. No EV data is included.
 
+## Search and answer engines
+
+`dist/llms.txt` and `dist/llms-full.txt` describe the method, sources, counts, and key URLs. `robots.txt` allows GPTBot, OAI-SearchBot, ChatGPT-User, PerplexityBot, ClaudeBot, Google-Extended, Applebot-Extended, and Bingbot. City pages with fewer than three listings are `noindex` and left out of the sitemap. Installer profiles stay in the sitemap.
+
+`config/site.json` has empty `google_site_verification` and `msvalidate` hooks. DNS verification is already done, so leave them empty unless you also add an HTML-tag check.
+
+After a deploy is live, ping IndexNow yourself (this is not part of CI):
+
+```bash
+python3 scripts/build_site.py
+python3 scripts/indexnow.py --dry-run
+python3 scripts/indexnow.py
+```
+
 ## Tests
 
 ```bash
