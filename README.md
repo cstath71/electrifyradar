@@ -1,6 +1,6 @@
 # ElectrifyRadar
 
-A static directory of heat pump and ductless mini-split installers in Massachusetts, Maine, New York, California, and Minnesota. The public label on each listing is ownership: unverified, independent, PE or platform-owned, franchise, or another sourced status. “Independent” is not applied without a quoted page.
+A static directory of heat pump and ductless mini-split installers in Massachusetts, Maine, New York, Connecticut, Rhode Island, Vermont, California, and Minnesota. The public label on each listing is ownership: unverified, independent, PE or platform-owned, franchise, or another sourced status. “Independent” is not applied without a quoted page.
 
 The site is plain HTML. GitHub Actions builds `dist/` and publishes it to GitHub Pages on every push to `main`.
 
@@ -47,6 +47,9 @@ Checked 2026-11-03.
 | New York | NYS Clean Heat residential contractors offering ASHP, air-to-water, ground-source, or heat pump water heater installation. | The finder’s own `/api/contractor/search`. Email addresses are dropped before the file is written. |
 | California | TECH Clean California contractors in `ContractorProjectData_2026-10-20`, one row per contractor name + CSLB number + city. | Public xlsx linked from the TECH contractor data page. Phone and license status are joined from CSLB classification downloads C-20 and C-36 on license number. Contractors with no phone after that join are omitted. The full license lists are not published. A C-20 license alone is not treated as heat pump work. |
 | Minnesota | Issued Mechanical Contractor Bond, Minnesota address, phone present. | DLI CSV linked from the license lookup page. This is **not** a heat-pump program roster. Profiles say so. Email addresses are not republished. |
+| Connecticut | Energize CT contractor search, Heat Pump Installation selected. 658 results on 2026-11-03. | Browser fetch of `https://www.energizect.com/ectr_search_api/contractors?services=1106` because Cloudflare blocks plain curl. Saved as `data/raw/ct-hpin.json`. |
+| Rhode Island | Clean Heat RI Heat Pump Installer Network PDF revised 11/13/2025. | `https://cleanheatri.com/wp-content/uploads/2025/11/NEW-CHRI-HPIN-InClime-Weekly-Export-11-13-2025.pdf`. Email addresses are not republished. Parsing needs `pdfplumber`. |
+| Vermont | Efficiency Vermont Efficiency Excellence Network, Heat Pumps - Ductless. The finder showed 210 results. | Playwright load of the find-a-pro page, then `GetContractorListData`. Rows need the ductless service and the EEN ductless attribute. Star ratings in the feed are not republished. |
 
 OEM dealer locators were not copied. Their terms generally prohibit scraping, and a brand badge is not an ownership label.
 

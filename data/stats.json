@@ -1,34 +1,40 @@
 {
   "as_of": "2026-11-03",
-  "count": 6267,
+  "count": 7243,
   "by_state": {
     "CA": 1074,
+    "CT": 658,
     "MA": 1770,
     "ME": 590,
     "MN": 2248,
-    "NY": 585
+    "NY": 585,
+    "RI": 110,
+    "VT": 208
   },
   "by_ownership": {
-    "unverified": 6198,
-    "independent": 58,
-    "franchise": 6,
+    "unverified": 7155,
+    "independent": 76,
+    "franchise": 7,
     "pe_owned": 4,
     "other_corporate": 1
   },
   "ownership_hits": {
     "ars-rescue-rooter": 1,
     "sila-services": 1,
-    "aire-serv": 6,
+    "aire-serv": 7,
     "any-hour": 2
   },
-  "evidence_applied": 59,
+  "evidence_applied": 77,
   "websites_discovered": 250,
   "by_signal": {
     "CA:program_roster": 1074,
+    "CT:program_roster": 658,
     "MA:program_roster": 1770,
     "ME:program_roster": 590,
     "MN:mechanical_license_only": 2248,
-    "NY:program_roster": 585
+    "NY:program_roster": 585,
+    "RI:program_roster": 110,
+    "VT:program_roster": 208
   },
   "skipped": {
     "ma": {},
@@ -36,6 +42,13 @@
       "no_name": 1
     },
     "ny": {},
+    "ct": {},
+    "ri": {},
+    "vt": {
+      "not_ductless": 592,
+      "no_contact": 2,
+      "not_een_ductless_attribute": 67
+    },
     "mn": {
       "not_issued": 2820,
       "outside_mn": 273,

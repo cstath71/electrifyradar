@@ -211,7 +211,7 @@ dd { margin: 0; }
 
 @media (min-width: 720px) {
   .filters { grid-template-columns: 1.4fr 0.8fr 0.8fr auto; align-items: end; }
-  .state-grid { grid-template-columns: repeat(5, 1fr); }
+  .state-grid { grid-template-columns: repeat(4, 1fr); }
   .cards { grid-template-columns: 1fr 1fr; }
   .footer-grid { grid-template-columns: 1.4fr 1fr 1fr; }
   .split { display: grid; grid-template-columns: 1.4fr 0.8fr; gap: 1rem; align-items: start; }

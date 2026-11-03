@@ -638,6 +638,269 @@ def apply_ownership(listings):
     return matched
 
 
+def connecticut():
+    path = RAW / "ct-hpin.json"
+    payload = load_json(path)
+    listings = []
+    skipped = Counter()
+    for row in payload.get("results") or []:
+        name = (row.get("contractorName") or "").strip()
+        city = (row.get("city") or "").strip()
+        region = (row.get("state") or "").strip().upper()
+        phone = clean_phone(row.get("phone"))
+        website = ""
+        site = row.get("website") or {}
+        if isinstance(site, dict):
+            website = clean_url(site.get("uri"))
+        elif isinstance(site, str):
+            website = clean_url(site)
+        if not name or not city:
+            skipped["no_name_or_city"] += 1
+            continue
+        if not phone and not website:
+            skipped["no_contact"] += 1
+            continue
+        specialties = row.get("specialty") or []
+        if isinstance(specialties, str):
+            specialties = [specialties]
+        services = [item for item in specialties if item]
+        service_name = row.get("services")
+        if isinstance(service_name, str) and service_name and service_name not in services:
+            services.insert(0, service_name)
+        elif isinstance(service_name, list):
+            for item in service_name:
+                if item and item not in services:
+                    services.append(item)
+        languages = row.get("language") or []
+        if isinstance(languages, str):
+            languages = [languages] if languages else []
+        diverse = row.get("diverse_business_type") or []
+        if isinstance(diverse, str):
+            diverse = [diverse] if diverse else []
+        diverse_names = []
+        for item in diverse:
+            if isinstance(item, str) and item:
+                diverse_names.append(item)
+            elif isinstance(item, dict):
+                label = item.get("name") or item.get("label") or ""
+                if label:
+                    diverse_names.append(str(label))
+        programs = [{
+            "id": "energize_ct_hpin",
+            "name": "Energize CT Heat Pump Installer Network",
+            "url": "https://www.energizect.com/find-a-professional/contractor",
+        }]
+        if row.get("heatPumpLeadersNetwork") is True:
+            programs.append({
+                "id": "energize_ct_hpln",
+                "name": "Energize CT Heat Pump Leaders Network",
+                "url": "https://www.energizect.com/find-a-professional/contractor",
+            })
+        licenses = []
+        if row.get("id"):
+            licenses.append({"id": str(row["id"]), "authority": "Energize CT contractor id"})
+        listings.append(blank_listing(
+            name=name,
+            admin1="CT",
+            city=title_place(city),
+            address_region=region or "CT",
+            outside_program_state=bool(region and region != "CT"),
+            street=row.get("addressLine1") or "",
+            postal_code=zip5(row.get("postalCode")),
+            phone=phone,
+            website=website,
+            services=services,
+            license_ids=licenses,
+            extra={
+                "languages": languages,
+                "diverse_business_type": ", ".join(diverse_names),
+                "project_types": row.get("projectTypes") or [],
+                "heat_pump_leaders_network": bool(row.get("heatPumpLeadersNetwork")),
+            },
+            rebate_programs=programs,
+            sources=[source(
+                "Energize CT contractor search, Heat Pump Installation",
+                "https://www.energizect.com/ectr_search_api/contractors?services=1106",
+                AS_OF,
+                "Public search behind https://www.energizect.com/find-a-professional/contractor with the Heat Pump Installation service selected (service id 1106). The finder says sponsors checked credentials for valid licenses and heat pump training, and that participation is not a reason to skip getting more than one quote. The live result count on this date was 658, not the 680 named in an April 2026 survey PDF.",
+            )],
+        ))
+    return listings, skipped
+
+
+def _ri_column(x: float) -> str:
+    if x < 136:
+        return "name"
+    if x < 225:
+        return "county"
+    if x < 295:
+        return "city"
+    if x < 328:
+        return "state"
+    if x < 400:
+        return "phone"
+    if x < 530:
+        return "email"
+    if x < 575:
+        return "web"
+    return "other"
+
+
+def rhode_island():
+    path = RAW / "ri-hpin.pdf"
+    try:
+        import pdfplumber
+    except ImportError as exc:
+        raise SystemExit("pdfplumber is required to read the Rhode Island HPIN PDF. pip install pdfplumber") from exc
+    counties = {"bristol", "kent", "newport", "providence", "washington"}
+    phone_re = re.compile(r"\((\d{3})\)\s*(\d{3})-(\d{4})")
+    listings = []
+    skipped = Counter()
+    pdf = pdfplumber.open(path)
+    for page in pdf.pages:
+        bands = defaultdict(list)
+        for word in page.extract_words():
+            bands[round(word["top"] / 2) * 2].append(word)
+        rows = []
+        for y in sorted(bands):
+            buckets = defaultdict(list)
+            for word in sorted(bands[y], key=lambda item: item["x0"]):
+                buckets[_ri_column(word["x0"])].append(word["text"])
+            rows.append({"y": y, **{key: " ".join(value) for key, value in buckets.items()}})
+        links = [(link["top"], link.get("uri") or "") for link in (page.hyperlinks or [])]
+        phone_rows = [i for i, row in enumerate(rows) if phone_re.search(row.get("phone") or "")]
+        for n, index in enumerate(phone_rows):
+            row = rows[index]
+            name = row.get("name") or ""
+            if not name:
+                cursor = index - 1
+                while cursor >= 0 and not rows[cursor].get("phone"):
+                    if rows[cursor].get("name"):
+                        name = rows[cursor]["name"]
+                        break
+                    cursor -= 1
+            next_index = phone_rows[n + 1] if n + 1 < len(phone_rows) else None
+            next_y = rows[next_index]["y"] if next_index is not None else 10**9
+            extras = []
+            cursor = index + 1
+            while next_index is not None and cursor < next_index:
+                if rows[cursor].get("name") and not rows[cursor].get("phone"):
+                    y = rows[cursor]["y"]
+                    if (y - row["y"]) < (next_y - y):
+                        extras.append(rows[cursor]["name"])
+                cursor += 1
+            if extras:
+                name = f"{name} {' '.join(extras)}".strip()
+            tokens = re.sub(r"\s+", " ", name).replace(",", " ").split()
+            while tokens and tokens[-1].lower() in counties:
+                tokens.pop()
+            name = " ".join(tokens).strip(" ,")
+            match = phone_re.search(row.get("phone") or "")
+            phone = f"({match.group(1)}) {match.group(2)}-{match.group(3)}" if match else ""
+            city = re.sub(r"\s+", " ", row.get("city") or "").strip(" ,")
+            region = (row.get("state") or "").strip().upper()
+            website = ""
+            for top, uri in links:
+                if abs(top - row["y"]) <= 16 and str(uri).startswith("http") and "cleanheatri.com" not in uri:
+                    website = clean_url(uri)
+                    break
+            if not name or not city:
+                skipped["no_name_or_city"] += 1
+                continue
+            if not phone and not website:
+                skipped["no_contact"] += 1
+                continue
+            # The PDF also has an email column. Those addresses are not republished.
+            listings.append(blank_listing(
+                name=name,
+                admin1="RI",
+                city=title_place(city),
+                address_region=region or "RI",
+                outside_program_state=bool(region and region != "RI"),
+                phone=phone,
+                website=website,
+                services=["Heat pump installation"],
+                rebate_programs=[{
+                    "id": "clean_heat_ri_hpin",
+                    "name": "Clean Heat RI Heat Pump Installer Network",
+                    "url": "https://cleanheatri.com/resources/find-an-installer/",
+                }],
+                sources=[source(
+                    "Clean Heat RI Heat Pump Installer Network weekly PDF",
+                    "https://cleanheatri.com/wp-content/uploads/2025/11/NEW-CHRI-HPIN-InClime-Weekly-Export-11-13-2025.pdf",
+                    AS_OF,
+                    "Weekly export revised 11/13/2025, linked from https://cleanheatri.com/resources/find-an-installer/. Columns used: company, municipality, state, phone, and the website link. Email addresses in the file are not republished. Minority-owned and woman-owned checkboxes are not treated as company ownership.",
+                )],
+            ))
+    pdf.close()
+    return listings, skipped
+
+
+def vermont():
+    path = RAW / "vt-een-all.json"
+    payload = load_json(path)
+    listings = []
+    skipped = Counter()
+    for row in payload:
+        attributes = row.get("eenAttributes") or []
+        subservices = []
+        for service in row.get("services") or []:
+            subservices.extend(service.get("subservices") or [])
+        if "Heat Pumps - Ductless" not in subservices:
+            skipped["not_ductless"] += 1
+            continue
+        if not any("Ductless HP" in item for item in attributes):
+            skipped["not_een_ductless_attribute"] += 1
+            continue
+        name = (row.get("name") or "").strip()
+        address = row.get("address") or {}
+        city = (address.get("town") or "").strip()
+        region = (address.get("state") or "").strip().upper()
+        digits = re.sub(r"\D", "", str(row.get("phone") or ""))
+        if len(digits) == 11 and digits.startswith("1"):
+            digits = digits[1:]
+        phone = f"({digits[:3]}) {digits[3:6]}-{digits[6:]}" if len(digits) == 10 else ""
+        website = clean_url(row.get("website"))
+        if not name or not city:
+            skipped["no_name_or_city"] += 1
+            continue
+        if not phone and not website:
+            skipped["no_contact"] += 1
+            continue
+        heat_services = [item for item in subservices if "Heat Pump" in item or "heat pump" in item.lower()]
+        listings.append(blank_listing(
+            name=name,
+            admin1="VT",
+            city=title_place(city),
+            address_region=region or "VT",
+            outside_program_state=bool(region and region != "VT"),
+            street=address.get("street") or "",
+            postal_code=zip5(address.get("zip")),
+            phone=phone,
+            website=website,
+            lat=address.get("lat"),
+            lng=address.get("lng"),
+            services=heat_services or ["Heat Pumps - Ductless"],
+            extra={
+                "een_member": True,
+                "serves_residential": bool(row.get("servesResidential")),
+                "serves_commercial": bool(row.get("servesCommercial")),
+            },
+            rebate_programs=[{
+                "id": "efficiency_vermont_een_ductless",
+                "name": "Efficiency Vermont Efficiency Excellence Network — ductless heat pumps",
+                "url": "https://www.efficiencyvermont.com/find-contractor-retailer",
+            }],
+            sources=[source(
+                "Efficiency Vermont find-a-pro list, Heat Pumps - Ductless",
+                "https://www.efficiencyvermont.com/find-contractor-retailer#/?provider=pro&service=Heating,+Cooling+%26+Ventilation&subservice=Heat+Pumps+-+Ductless&zipcode=",
+                AS_OF,
+                "The finder search for a pro, Heating, Cooling & Ventilation, Heat Pumps - Ductless. Kept rows that also carry the Efficiency Excellence Network HVAC ductless attribute. The page says participating contractors are independent businesses and that Efficiency Vermont does not guarantee the work. Star ratings and award years in the feed are not republished.",
+            )],
+        ))
+    return listings, skipped
+
+
 def prettify_name(name: str) -> str:
     letters = [char for char in name if char.isalpha()]
     if not letters or not all(char.isupper() for char in letters):
@@ -690,6 +953,9 @@ def main():
         "cslb-c20.xlsx",
         "cslb-c36.xlsx",
         "mn-mechanical-contractor-bond.csv",
+        "ct-hpin.json",
+        "ri-hpin.pdf",
+        "vt-een-all.json",
     ] if not (RAW / name).exists()]
     if missing:
         raise SystemExit(
@@ -703,6 +969,9 @@ def main():
         ("ma", mass_save),
         ("me", maine),
         ("ny", nys),
+        ("ct", connecticut),
+        ("ri", rhode_island),
+        ("vt", vermont),
         ("mn", minnesota),
     ):
         rows, skipped = fn()
@@ -712,7 +981,7 @@ def main():
     buckets["ca"] = ca_rows
     skip_report["ca"] = {k: int(v) for k, v in ca_skipped.items()}
     listings = []
-    for key in ("ma", "me", "ny", "ca", "mn"):
+    for key in ("ma", "me", "ny", "ct", "ri", "vt", "ca", "mn"):
         listings.extend(buckets[key])
     for listing in listings:
         if not listing.get("legal_name"):

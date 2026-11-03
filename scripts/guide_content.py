@@ -220,6 +220,9 @@ Mass Save’s ASHP page also points to “Questions to Ask your Installer.”</p
   <li><a href="../../me/">Maine registered vendors</a> · <a href="../rebates/me/">Maine rebates</a> · <a href="../efficiency-maine-heat-pump-rebate/">Efficiency Maine guide</a></li>
   <li><a href="../../ny/">NYS Clean Heat contractors</a> · <a href="../rebates/ny/">NY rebates</a> · official finder: <a href="https://cleanheat.ny.gov/">cleanheat.ny.gov</a></li>
   <li><a href="../../ca/">California TECH contractors</a> · <a href="../rebates/ca/">CA incentives status</a></li>
+  <li><a href="../../ct/">Connecticut Energize CT heat pump installers</a> · <a href="../rebates/ct/">CT rebate notes</a></li>
+  <li><a href="../../ri/">Rhode Island Clean Heat RI installers</a> · <a href="../rebates/ri/">RI rebate notes</a></li>
+  <li><a href="../../vt/">Vermont ductless specialists</a> · <a href="../rebates/vt/">VT rebate notes</a></li>
   <li><a href="../../mn/">Minnesota mechanical-bond listings</a> · <a href="../rebates/mn/">MN rebate status</a> (state approved-contractor list not published as of {as_of})</li>
 </ul>
 <p>Ownership rules: <a href="../how-we-label-ownership/">how we label ownership</a> · <a href="../../../methodology/">methodology</a>.</p>
@@ -749,6 +752,9 @@ def _stubs(as_of: str):
               <li><a href="../rebates/me/">Maine</a> · deep dive: <a href="../efficiency-maine-heat-pump-rebate/">Efficiency Maine heat pump rebate</a></li>
               <li><a href="../rebates/ny/">New York</a></li>
               <li><a href="../rebates/ca/">California</a></li>
+              <li><a href="../rebates/ct/">Connecticut</a></li>
+              <li><a href="../rebates/ri/">Rhode Island</a></li>
+              <li><a href="../rebates/vt/">Vermont</a></li>
               <li><a href="../rebates/mn/">Minnesota</a></li>
             </ul>
             <p>If a program page did not state a dollar amount on the day we checked it, the state page says so and links the official page instead of guessing.</p>

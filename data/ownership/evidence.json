@@ -1,6 +1,6 @@
 {
   "checked": "2026-11-03",
-  "scope": "Top 10 cities by listing count in Massachusetts, Maine, New York, California, and Minnesota. Mailing-address groups outside the state were not part of this pass.",
+  "scope": "Top 10 cities by listing count in Massachusetts, Maine, New York, California, and Minnesota. Mailing-address groups outside the state were not part of this pass. Top 10 cities in Connecticut, Rhode Island, and Vermont were checked the same day: a label was added only when the company\u2019s own site stated family ownership with a year, and the page did not say the company had been sold.",
   "installers_in_scope": 1051,
   "websites_fetched": 283,
   "method": "Every in-scope listing that has a website in the source data had that site fetched and read for an ownership sentence. California and Minnesota source files in this set do not include websites, so those listings were compared by business name to platform and franchise names and were not given a label without a page that states the relationship. A label is stored only with a short quote from a page opened on this date. Family-owned or a named owner-operator, with a year or generation on the same page, is the bar for independent. Locally owned, or in business since a year, without that sentence, stays unverified. A web search on this date for these business names with acquired or private equity did not return a report that one of the independent labels below had been sold.",
@@ -475,6 +475,150 @@
       "parent": null,
       "source_url": "https://www.mastermobilehomeservice.com/",
       "evidence_quote": "Family-Owned & Trusted Since 1963.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-ct-bridgeport-m-m-heating-cooling-llc",
+      "ownership_status": "independent",
+      "parent": null,
+      "source_url": "https://www.mmheatingandcooling.com/",
+      "evidence_quote": "Family-Owned Business Since 2013.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-ct-danbury-landmark-air-systems-inc",
+      "ownership_status": "independent",
+      "parent": null,
+      "source_url": "https://www.landmarkairsystems.com/",
+      "evidence_quote": "Family owned and operated since 1975.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-ct-danbury-total-comfort-inc",
+      "ownership_status": "independent",
+      "parent": null,
+      "source_url": "https://www.totalcomfortct.com/",
+      "evidence_quote": "Family-Owned and -Operated Since 1986.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-ct-bridgeport-santa-energy",
+      "ownership_status": "independent",
+      "parent": null,
+      "source_url": "https://www.santaenergy.com/",
+      "evidence_quote": "Trusted service since 1940. Santa Energy is a family-owned company.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-ct-new-milford-all-service-llc",
+      "ownership_status": "independent",
+      "parent": null,
+      "source_url": "https://www.allservicellc.com/",
+      "evidence_quote": "Your dependable family-owned HVAC contractor. Since 1998, All Service LLC designs, services, installs, and maintains heating and air conditioning.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-ct-southington-ductworks-hvac-services-llc",
+      "ownership_status": "independent",
+      "parent": null,
+      "source_url": "https://getsnazzy.com/",
+      "evidence_quote": "Family owned in Southington since 1992. Formerly Ductworks HVAC Services.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-ct-stamford-absolute-cooling-heating-inc",
+      "ownership_status": "independent",
+      "parent": null,
+      "source_url": "https://www.absolutehvac.com/",
+      "evidence_quote": "Since 1988. Absolute Cooling & Heating is a family owned and operated business based in the Bronx, New York, with a location in Stamford, CT.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-ct-stamford-schede-plumbing-heating",
+      "ownership_status": "independent",
+      "parent": null,
+      "source_url": "https://schedeplumbing.com/",
+      "evidence_quote": "Family owned and operated since 1922, Schede Plumbing & Heating was originally established by Louis C. Schede.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-ri-cranston-ar-heating-cooling-inc",
+      "ownership_status": "independent",
+      "parent": null,
+      "source_url": "https://arheatingncoolinginc.com/about/",
+      "evidence_quote": "Local and family-owned. In 2009, we founded AR Heating & Cooling, Inc.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-ri-portsmouth-ocean-state-air-solutions-inc",
+      "ownership_status": "independent",
+      "parent": null,
+      "source_url": "https://oceanstateair.com/",
+      "evidence_quote": "Family owned. Family operated since 2004.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-ri-portsmouth-aquidneck-services",
+      "ownership_status": "independent",
+      "parent": null,
+      "source_url": "https://www.aquidneckservices.com/",
+      "evidence_quote": "Family-Owned Since 2017, proudly serving Portsmouth and beyond.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-ri-warwick-national-refrigeration-inc",
+      "ownership_status": "independent",
+      "parent": null,
+      "source_url": "https://nhvac.com/",
+      "evidence_quote": "Family Owned Since 1969.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-ri-westerly-d-v-mechanical-inc",
+      "ownership_status": "independent",
+      "parent": "Frank Decaro",
+      "source_url": "https://www.dvmechanicalductless.com/",
+      "evidence_quote": "Founded in 1997 by Frank Decaro, D&V Mechanical is a family owned and operated company.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-vt-fairfax-fmk-heating-and-cooling",
+      "ownership_status": "independent",
+      "parent": null,
+      "source_url": "https://www.fmkvt.com/",
+      "evidence_quote": "FMK Heating and Cooling is family owned. We\u2019ve been servicing clients in Vermont since 2005.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-vt-colchester-laplante-s-plumbing-heating",
+      "ownership_status": "independent",
+      "parent": null,
+      "source_url": "https://www.laplantesplumbing.com/",
+      "evidence_quote": "Family Owned & Operated. Plumbing, heating, and cooling experts since 2004.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-vt-colchester-chuck-s-heating-air-conditioning",
+      "ownership_status": "independent",
+      "parent": null,
+      "source_url": "https://www.chucksheating.com/",
+      "evidence_quote": "Chuck\u2019s Heating and Air Conditioning, Inc. is a family owned business serving the Colchester, VT area since 1977.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-vt-williston-a-cooper-mechanical-inc",
+      "ownership_status": "independent",
+      "parent": null,
+      "source_url": "https://www.coopervt.com/",
+      "evidence_quote": "Family-owned, Vermont-local team. A. Cooper Mechanical has been one of Vermont\u2019s leading plumbing, heating, and air conditioning companies since 1969.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-vt-milton-larry-son-heating-service-llc",
+      "ownership_status": "independent",
+      "parent": null,
+      "source_url": "https://www.larryandsonheatingvt.com/",
+      "evidence_quote": "Family owned and operated since 1981.",
       "checked": "2026-11-03"
     }
   ]

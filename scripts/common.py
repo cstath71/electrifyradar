@@ -15,6 +15,9 @@ STATES = {
     "ma": {"name": "Massachusetts", "code": "MA"},
     "me": {"name": "Maine", "code": "ME"},
     "ny": {"name": "New York", "code": "NY"},
+    "ct": {"name": "Connecticut", "code": "CT"},
+    "ri": {"name": "Rhode Island", "code": "RI"},
+    "vt": {"name": "Vermont", "code": "VT"},
     "ca": {"name": "California", "code": "CA"},
     "mn": {"name": "Minnesota", "code": "MN"},
 }

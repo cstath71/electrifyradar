@@ -1,4 +1,6 @@
 openpyxl==3.1.5
 beautifulsoup4==4.12.3
-# Optional, only for scripts/fetch_sources.py browser steps (CSLB portal, Efficiency Maine locator):
+# Optional, only for scripts/fetch_sources.py browser steps (CSLB portal, Efficiency Maine locator)
+# and for rebuilding the Rhode Island PDF roster in scripts/build_listings.py:
 # playwright==1.49.0
+# pdfplumber==0.11.4

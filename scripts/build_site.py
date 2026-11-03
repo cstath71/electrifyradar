@@ -155,7 +155,7 @@ def shell(from_dir: str, title: str, description: str, body: str, path: str, ext
   <div class="wrap footer-grid">
     <div>
       <strong>ElectrifyRadar</strong>
-      <p class="fine">A public directory of heat pump and ductless mini-split installers in five launch states. Ownership is labeled only when a name matches a documented platform or franchise list. Last data check {esc(AS_OF)}.</p>
+      <p class="fine">A public directory of heat pump and ductless mini-split installers in {len(STATES)} launch states. Ownership is labeled only when a public source supports it. Last data check {esc(AS_OF)}.</p>
     </div>
     <div>
       <p>{footer}</p>
@@ -593,7 +593,7 @@ def write_home(counts):
         ],
     })
     write_page("/", shell("", f"{NAME} | Heat pump installers, with ownership in view",
-                          "US directory of heat pump and ductless mini-split installers in Massachusetts, Maine, New York, California, and Minnesota. Ownership is labeled only from documented platform and franchise lists.",
+                          "US directory of heat pump and ductless mini-split installers in Massachusetts, Maine, New York, Connecticut, Rhode Island, Vermont, California, and Minnesota. Ownership is labeled only from a documented source.",
                           body, "/", extra_head=home_ld, extra_script=extra, breadcrumbs=[("Home", "/")]))
 
 
@@ -607,14 +607,14 @@ def write_country(counts):
 <div class="wrap prose">
   {crumbs("/us", [("Home", "/"), ("United States", "/us/")])}
   <h1>Heat pump installers in the United States</h1>
-  <p class="lede">{total} listings across five launch states, built so another country or another trade can be added without renaming the URL pattern. Paths look like /us/ma/boston/name/.</p>
+  <p class="lede">{total} listings across {len(STATES)} launch states, built so another country or another trade can be added without renaming the URL pattern. Paths look like /us/ma/boston/name/.</p>
   <p>Canada and the UK are not in this release. Electric-vehicle charger installers are not either. The data model already has a country code and a category field so those can be added as their own rosters.</p>
   <ul>{items}</ul>
   <p><a href="guides/">All guides</a> · <a href="guides/independent-vs-pe-hvac/">Independent, platform-owned, and franchise</a> · <a href="rebates/">Rebate guides</a></p>
 </div>
 """
     write_page("/us/", shell("/us", f"US heat pump installer directory | {NAME}",
-                             "State-by-state directory of heat pump installers with ownership labels for Massachusetts, Maine, New York, California, and Minnesota.",
+                             "State-by-state directory of heat pump installers with ownership labels for Massachusetts, Maine, New York, Connecticut, Rhode Island, Vermont, California, and Minnesota.",
                              body, "/us/", breadcrumbs=[("Home", "/"), ("United States", "/us/")]))
 
 
@@ -624,6 +624,9 @@ STATE_INTRO = {
     "ny": "New York listings come from the NYS Clean Heat contractor finder. We used the same public search the site uses, limited to residential contractors offering ASHP installer, air-to-water heat pump installer, ground-source heat pump installer, or heat pump water heater installer services. Email addresses returned by that API are not republished. A jobs-completed field that is zero is not shown.",
     "ca": "California listings are contractors in the TECH Clean California file ContractorProjectData_2026-10-20 who have a city and a phone number. Phones come from a join to the California Contractors State License Board public classification downloads for C-20 (warm-air HVAC) and C-36 (plumbing), matched on license number. The full license lists are not published here. A C-20 license by itself is not treated as heat pump work. Contractors in the TECH file with no phone after that join are left out.",
     "mn": "Minnesota listings are businesses with an issued Mechanical Contractor Bond in the Minnesota Department of Labor and Industry public export, a Minnesota address, and a phone number. This is a mechanical contracting credential, not a heat-pump program roster. The page does not claim that each business installs heat pumps. Email addresses in the state file are not republished.",
+    "ct": "Connecticut listings come from the Energize CT contractor search with Heat Pump Installation selected, checked 3 November 2026. That search returned 658 contractors. The finder says sponsors checked licenses and heat pump training, and it tells customers to get more than one quote. Companies with a mailing address outside Connecticut stay in this section because they are on the Connecticut roster.",
+    "ri": "Rhode Island listings come from the Clean Heat RI Heat Pump Installer Network weekly PDF revised 11/13/2025, the file linked from the program’s find-an-installer page. Phone numbers and website links are copied. Email addresses in the PDF are not republished. A company whose municipality is outside Rhode Island stays in this section because it is on the Rhode Island roster.",
+    "vt": "Vermont listings are Efficiency Excellence Network contractors from the Efficiency Vermont find-a-pro tool, filtered to Heat Pumps - Ductless, checked 3 November 2026. The finder said 210 results for that search. Rows without a phone number and without a website are left out. The page says these are independent businesses and that Efficiency Vermont does not guarantee the work. Star ratings and award years in the feed are not republished.",
 }
 
 
@@ -667,6 +670,30 @@ STATE_SOURCE = {
         "finder_url": "https://dli.mn.gov/license-and-registration-lookup",
         "rebate_name": "Minnesota residential heat pump rebate page",
         "rebate_url": "https://mn.gov/commerce/energy/consumer/energy-programs/heat-pump.jsp",
+    },
+    "ct": {
+        "program": "Energize CT Heat Pump Installer Network",
+        "file_note": "the public contractor search with Heat Pump Installation selected, 658 results on the checked date",
+        "finder_name": "Energize CT find a contractor",
+        "finder_url": "https://www.energizect.com/find-a-professional/contractor",
+        "rebate_name": "Energize CT rebates and incentives",
+        "rebate_url": "https://www.energizect.com/rebates-incentives",
+    },
+    "ri": {
+        "program": "Clean Heat RI Heat Pump Installer Network",
+        "file_note": "the weekly PDF revised 11/13/2025",
+        "finder_name": "Clean Heat RI find an installer",
+        "finder_url": "https://cleanheatri.com/resources/find-an-installer/",
+        "rebate_name": "Clean Heat RI",
+        "rebate_url": "https://cleanheatri.com/",
+    },
+    "vt": {
+        "program": "Efficiency Vermont Efficiency Excellence Network",
+        "file_note": "the find-a-pro search for Heat Pumps - Ductless, which showed 210 results",
+        "finder_name": "Efficiency Vermont find a pro",
+        "finder_url": "https://www.efficiencyvermont.com/find-contractor-retailer",
+        "rebate_name": "Efficiency Vermont rebates",
+        "rebate_url": "https://www.efficiencyvermont.com/rebates",
     },
 }
 
@@ -731,6 +758,21 @@ def rebate_answer(code, rebate_guide):
         return (
             f"Reservation status is printed on {official}. Our {rebate_guide} quotes the dates that page stated when checked {esc(AS_OF)}, including that "
             f"several single-family incentive pools were already reserved. Confirm the live page before you rely on a reservation."
+        )
+    if code == "ct":
+        return (
+            f"Energize Connecticut rebates are on {official}. The installer list we used does not state a dollar amount, so this page does not print one. "
+            f"See the {rebate_guide}."
+        )
+    if code == "ri":
+        return (
+            f"Clean Heat Rhode Island incentives are described on {official}. This directory does not restate a dollar amount from that program. "
+            f"See the {rebate_guide}."
+        )
+    if code == "vt":
+        return (
+            f"Efficiency Vermont rebate offers are on {official}. The ductless specialist list does not state a dollar amount, so this page does not print one. "
+            f"See the {rebate_guide}."
         )
     return (
         f"The <a href=\"{esc(src['rebate_url'])}\">Minnesota Department of Commerce page</a>, checked {esc(AS_OF)}, includes a status update dated 12 October 2026: "
@@ -1138,7 +1180,7 @@ def write_static_pages(counts):
 </div>
 """
     write_page("/us/rebates/", shell("/us/rebates", f"Heat pump rebates | {NAME}",
-                                     "Heat pump rebate guides for Massachusetts, Maine, New York, California, and Minnesota, with official links and a last-checked date.",
+                                     "Heat pump rebate guides for the launch states, with official links and a last-checked date.",
                                      rebates_index, "/us/rebates/", breadcrumbs=[("Home", "/"), ("Rebates", "/us/rebates/")]))
     for code, meta in STATES.items():
         inner = REBATE_COPY[code]
@@ -1166,7 +1208,7 @@ def write_static_pages(counts):
     about = f"""
 <div class="wrap prose">
   <h1>About ElectrifyRadar</h1>
-  <p>ElectrifyRadar is a directory of residential heat pump and ductless mini-split installers. The first release covers Massachusetts, Maine, New York, California, and Minnesota.</p>
+  <p>ElectrifyRadar is a directory of residential heat pump and ductless mini-split installers. It covers Massachusetts, Maine, New York, Connecticut, Rhode Island, Vermont, California, and Minnesota.</p>
   <p>The point of the site is ownership transparency. Other finders emphasize licenses, insurance, and quote requests. This one also says whether a published brand list identifies the business as platform-owned or a franchise. If we cannot support that, the label is “Ownership: unverified.” We do not mark a business independent without evidence.</p>
   <p>Listings are rebuilt from public program files and, for Minnesota, a public license export. Each profile names the source and the date it was checked. We do not invent installers, phone numbers, ratings, or counts.</p>
   <p>Paid featured listings are a field in the data and are turned off. The quote form emails the publisher. It is not a lead sold to a contractor.</p>
@@ -1186,6 +1228,9 @@ def write_static_pages(counts):
     <li>New York: the <a href="https://nyscleanheat-findacontractor.icfsightline.com/">NYS Clean Heat contractor finder</a>, using the same public search the site uses, limited to residential contractors offering ASHP, air-to-water, ground-source, or heat pump water heater installation. Email addresses from that API are not republished.</li>
     <li>California: <a href="https://techcleanca.com/heat-pump-data/contractor-data/">TECH Clean California</a> file ContractorProjectData_2026-10-20. One directory row is one contractor name, CSLB number, and city. Phone and license status are joined from the <a href="https://www.cslb.ca.gov/onlineservices/dataportal/ListByClassification.aspx">CSLB classification downloads</a> for C-20 and C-36 when the license number matches. Contractors with no phone after that join are left out. The full license lists are not published. A C-20 license alone is not treated as heat pump work.</li>
     <li>Minnesota: the <a href="https://dli.mn.gov/license-and-registration-lookup">Minnesota DLI</a> Mechanical Contractor Bond export, status Issued, Minnesota address, with a phone number. This is a mechanical contracting credential, not a heat-pump program roster. Profiles say so. Email addresses in the file are not republished.</li>
+    <li>Connecticut: the <a href="https://www.energizect.com/find-a-professional/contractor">Energize CT contractor search</a> with Heat Pump Installation selected. Checked {esc(AS_OF)}. The search returned 658 contractors that day. An April 2026 program survey had said 680; this directory uses the live search, not that older total.</li>
+    <li>Rhode Island: the <a href="https://cleanheatri.com/wp-content/uploads/2025/11/NEW-CHRI-HPIN-InClime-Weekly-Export-11-13-2025.pdf">Clean Heat RI Heat Pump Installer Network PDF</a> revised 11/13/2025, linked from the <a href="https://cleanheatri.com/resources/find-an-installer/">find-an-installer page</a>. Email addresses in the PDF are not republished.</li>
+    <li>Vermont: the <a href="https://www.efficiencyvermont.com/find-contractor-retailer">Efficiency Vermont find-a-pro tool</a>, Heat Pumps - Ductless, limited to Efficiency Excellence Network ductless specialists. The finder showed 210 results. Star ratings in that feed are not republished.</li>
   </ul>
   <p>OEM dealer locators are not copied. A brand badge is not an ownership label.</p>
   <h2>Ownership labels</h2>
@@ -1346,6 +1391,8 @@ def guide_pages():
     return pages
 
 
+
+
 REBATE_COPY = {
     "ma": """
     <p>Massachusetts heat pump incentives run through Mass Save. The installer network file we use (revised 29 October 2026, downloaded 3 November 2026) says contractors on the list provided EPA certification, insurance in Massachusetts, and heat pump installation training. The same disclaimer says the sponsors do not endorse the contractor or warrant the equipment.</p>
@@ -1375,6 +1422,18 @@ REBATE_COPY = {
       <li>As of 3 July 2025, 3CE incentives are fully reserved.</li>
     </ul>
     <p>A waitlisted project is eligible for a HEEHRA rebate only if the heat pump is installed after the reservation is approved, according to that page. TECH points Californians to <a href="https://www.switchison.org/">Switch Is On</a> for incentive lookup and says San Fernando Valley incentives tied to Aliso Canyon were expected in late summer 2026. Read the current page: <a href="https://techcleanca.com/incentives/single-family-incentives/">TECH single-family incentives</a>.</p>
+    """,
+    "ct": """
+    <p>Connecticut heat pump incentives run through Energize Connecticut. The installer network this directory uses is the public contractor search with Heat Pump Installation selected, checked 3 November 2026, which returned 658 contractors. The finder says sponsors checked licenses and heat pump training. It also says customers should get more than one quote.</p>
+    <p>That search result does not state a rebate dollar amount. Read the current offer on <a href="https://www.energizect.com/rebates-incentives">Energize CT rebates and incentives</a> and the <a href="https://www.energizect.com/find-a-professional/contractor">contractor finder</a>.</p>
+    """,
+    "ri": """
+    <p>Rhode Island listings are the Clean Heat RI Heat Pump Installer Network. The file used here is the weekly PDF revised 11/13/2025, linked from the <a href="https://cleanheatri.com/resources/find-an-installer/">find-an-installer page</a>. Email addresses in that PDF are not republished.</p>
+    <p>This page does not restate a rebate dollar amount. Program rules and current incentives are on <a href="https://cleanheatri.com/">Clean Heat RI</a>.</p>
+    """,
+    "vt": """
+    <p>Vermont listings are ductless heat pump specialists in Efficiency Vermont’s Efficiency Excellence Network. The find-a-pro search for Heat Pumps - Ductless showed 210 results on 3 November 2026. The finder says participating contractors are independent businesses and that Efficiency Vermont does not guarantee the work or the energy savings. Star ratings in the feed are not copied here.</p>
+    <p>The specialist list does not state a rebate dollar amount. Current offers are on <a href="https://www.efficiencyvermont.com/rebates">Efficiency Vermont rebates</a>.</p>
     """,
     "mn": """
     <p>The Minnesota Department of Commerce residential heat pump rebate page, checked 3 November 2026, includes a status update dated 12 October 2026: Save Energy Minnesota has not launched. The state is waiting for formal US Department of Energy approval. There is no estimated launch date. The page says new federal rules change how the HEAR and HOMES rebates will work in Minnesota.</p>
@@ -1456,7 +1515,7 @@ def write_llms(counts):
     summary = [
         "# ElectrifyRadar",
         "",
-        "> Directory of heat pump and ductless mini-split installers in five US states. "
+        f"> Directory of heat pump and ductless mini-split installers in {len(STATES)} US states. "
         "Ownership is labeled only when a business name matches a documented platform or franchise list. "
         f"Checked {AS_OF}.",
         "",
@@ -1501,6 +1560,9 @@ def write_llms(counts):
         "- New York: NYS Clean Heat contractor finder, residential ASHP, air-to-water, ground-source, and heat pump water heater installers. https://nyscleanheat-findacontractor.icfsightline.com/",
         "- California: TECH Clean California ContractorProjectData_2026-10-20. https://techcleanca.com/heat-pump-data/contractor-data/ Phones joined from CSLB C-20 and C-36 downloads. https://www.cslb.ca.gov/onlineservices/dataportal/ListByClassification.aspx",
         "- Minnesota: DLI Mechanical Contractor Bond export, status Issued, Minnesota address, with a phone. Not a heat-pump program roster. https://dli.mn.gov/license-and-registration-lookup",
+        "- Connecticut: Energize CT contractor search, Heat Pump Installation selected, 658 results on the checked date. https://www.energizect.com/find-a-professional/contractor",
+        "- Rhode Island: Clean Heat RI Heat Pump Installer Network PDF revised 11/13/2025. https://cleanheatri.com/resources/find-an-installer/",
+        "- Vermont: Efficiency Vermont find-a-pro, Heat Pumps - Ductless, Efficiency Excellence Network. The finder showed 210 results. https://www.efficiencyvermont.com/find-contractor-retailer",
         "- Platform list: DealSeam HVAC PE roll-up tracker (2026), page last updated 28 July 2026, read on the checked date. https://dealseam.com/hvac-pe-rollup-tracker-2026",
         "- Franchise example: Aire Serv describes itself as a Neighborly company. https://www.aireserv.com/",
         "",

@@ -22,7 +22,7 @@ class ListingsTest(unittest.TestCase):
         counts = {}
         for row in self.rows:
             counts[row["admin1"]] = counts.get(row["admin1"], 0) + 1
-        for code in ("MA", "ME", "NY", "CA", "MN"):
+        for code in ("MA", "ME", "NY", "CT", "RI", "VT", "CA", "MN"):
             self.assertGreater(counts.get(code, 0), 50, code)
 
     def test_required_fields_and_no_invented_labels(self):
@@ -92,7 +92,7 @@ class SiteTest(unittest.TestCase):
             DIST / "claim" / "index.html",
         ]
         rows = json.loads((ROOT / "data" / "listings.json").read_text(encoding="utf-8"))["listings"]
-        for state in ("ma", "me", "ny", "ca", "mn"):
+        for state in ("ma", "me", "ny", "ct", "ri", "vt", "ca", "mn"):
             sample = next(row for row in rows if row["admin1_slug"] == state and not row.get("outside_program_state"))
             pages.append(DIST / sample["path"].strip("/") / "index.html")
             pages.append(DIST / "us" / state / sample["city_slug"] / "index.html")
