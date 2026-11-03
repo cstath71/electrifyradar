@@ -92,6 +92,7 @@ def shell(from_dir: str, title: str, description: str, body: str, path: str, ext
         ("Report a correction", "/report-correction/"),
     ]
     footer_links.insert(1, ("Methodology", "/methodology/"))
+    footer_links.insert(2, ("Platforms", "/platforms/"))
     footer = "".join(
         f'<a href="{esc(rel_url(from_dir, href))}">{esc(label)}</a>' for label, href in footer_links
     )
@@ -266,8 +267,11 @@ def search_block(from_dir: str, preset_state: str = "") -> str:
         <select id="ownership" name="ownership">
           <option value="">Any label</option>
           <option value="unverified">Ownership unverified</option>
-          <option value="platform_owned">PE or platform-owned</option>
+          <option value="independent">Independent</option>
+          <option value="pe_owned">PE or platform-owned</option>
           <option value="franchise">Franchise</option>
+          <option value="utility">Utility-owned</option>
+          <option value="other_corporate">Other corporate owner</option>
         </select>
       </div>
       <div>
@@ -344,19 +348,35 @@ def select_top_cities(by_city, limit=20):
 
 
 def ownership_counts(rows):
-    counts = {"unverified": 0, "platform_owned": 0, "franchise": 0}
+    counts = {
+        "unverified": 0,
+        "independent": 0,
+        "pe_owned": 0,
+        "platform_owned": 0,
+        "franchise": 0,
+        "utility": 0,
+        "other_corporate": 0,
+    }
     for row in rows:
         counts[row["ownership_status"]] = counts.get(row["ownership_status"], 0) + 1
     return counts
 
 
 def ownership_sentence(counts):
+    pe = counts.get("pe_owned", 0) + counts.get("platform_owned", 0)
+    parts = [
+        f"{counts.get('unverified', 0)} labeled Ownership: unverified",
+        f"{counts.get('independent', 0)} independent",
+        f"{pe} PE or platform-owned",
+        f"{counts.get('franchise', 0)} franchise",
+    ]
+    if counts.get("utility"):
+        parts.append(f"{counts['utility']} utility-owned")
+    if counts.get("other_corporate"):
+        parts.append(f"{counts['other_corporate']} other corporate owner")
     return (
-        f"{counts['unverified']} labeled Ownership: unverified, "
-        f"{counts['platform_owned']} PE or platform-owned, and "
-        f"{counts['franchise']} franchise. "
-        "Unverified means no documented private-equity or franchise parent matched the list. "
-        "It is not a finding that the business is independent."
+        ", ".join(parts)
+        + ". These are label counts. Unverified means no documented parent was matched and no positive independent evidence was recorded."
     )
 
 
@@ -377,23 +397,47 @@ def city_title(state_slug: str, city_slug: str, sample: dict) -> str:
 
 
 def ownership_phrase(row) -> str:
-    if row["ownership_status"] == "unverified":
+    status = row["ownership_status"]
+    if status == "unverified":
         return (
             f"Ownership: unverified. No known PE or franchise parent in our dataset as of {AS_OF}. "
             "That is not the same as confirmed independent."
         )
-    kind = "Franchise" if row["ownership_status"] == "franchise" else "PE or platform-owned"
+    labels = {
+        "independent": "Independent",
+        "pe_owned": "PE or platform-owned",
+        "platform_owned": "PE or platform-owned",
+        "franchise": "Franchise",
+        "utility": "Utility-owned",
+        "other_corporate": "Other corporate owner",
+    }
+    kind = labels.get(status, status)
+    parent = row.get("ownership_parent")
+    quote = row.get("ownership_evidence_quote") or ""
+    checked = row.get("ownership_checked") or ""
+    if quote:
+        text = f"{kind}" + (f": {parent}." if parent else ".") + f" {quote}"
+        if checked:
+            text += f" Checked {checked}."
+        return text
     return (
-        f"{kind}: {row['ownership_parent']}. Matched on “{row['ownership_matched_term']}”. "
+        f"{kind}: {parent}. Matched on “{row['ownership_matched_term']}”. "
         f"{row.get('ownership_source_note') or ''}"
     )
 
 
 def badge_html(row) -> str:
-    if row["ownership_status"] == "platform_owned":
+    status = row["ownership_status"]
+    if status in {"platform_owned", "pe_owned"}:
         own = '<span class="badge platform">PE or platform-owned</span>'
-    elif row["ownership_status"] == "franchise":
+    elif status == "franchise":
         own = '<span class="badge franchise">Franchise</span>'
+    elif status == "independent":
+        own = '<span class="badge">Independent</span>'
+    elif status == "utility":
+        own = '<span class="badge platform">Utility-owned</span>'
+    elif status == "other_corporate":
+        own = '<span class="badge platform">Other corporate owner</span>'
     else:
         own = '<span class="badge quiet">Ownership: unverified</span>'
     if row["heat_pump_signal"] == "mechanical_license_only":
@@ -783,7 +827,7 @@ def write_cities(by_city):
             profile = rel_url(from_dir, row["path"])
             place = row["city"] if not row.get("outside_program_state") else f"{row['city']}, {row.get('address_region')}"
             cards.append(
-                f'<article class="card"><h3><a href="{esc(profile)}">{esc(row["name"])}</a></h3>'
+                f'<article class="card" data-ownership="{esc(row["ownership_status"])}"><h3><a href="{esc(profile)}">{esc(row["name"])}</a></h3>'
                 f'<p class="meta">{esc(place)}</p>{badge_html(row)}</article>'
             )
             item_list.append({
@@ -829,8 +873,30 @@ def write_cities(by_city):
   <h1>{esc(heading)}</h1>
   {answer}
   <p class="lede">{esc(lede)}</p>
-  <div class="grid cards">{''.join(cards)}</div>
+  <div class="panel" style="margin:1rem 0">
+    <label for="city-ownership">Ownership</label>
+    <select id="city-ownership">
+      <option value="">Any label</option>
+      <option value="unverified">Ownership unverified</option>
+      <option value="independent">Independent</option>
+      <option value="pe_owned">PE or platform-owned</option>
+      <option value="franchise">Franchise</option>
+      <option value="utility">Utility-owned</option>
+      <option value="other_corporate">Other corporate owner</option>
+    </select>
+  </div>
+  <div id="city-list" class="grid cards">{''.join(cards)}</div>
 </div>
+<script>
+document.getElementById("city-ownership").addEventListener("change", function () {{
+  var value = this.value;
+  document.querySelectorAll("#city-list .card").forEach(function (card) {{
+    var status = card.getAttribute("data-ownership");
+    var show = !value || status === value || (value === "pe_owned" && status === "platform_owned");
+    card.hidden = !show;
+  }});
+}});
+</script>
 """
         desc = f"{len(rows)} heat pump installer listings in {title}, {meta['name']}, checked {AS_OF}."
         write_page(path, shell(from_dir, f"{heading} | {NAME}", desc, body, path, extra_head=extra_ld, breadcrumbs=trail, noindex=thin))
@@ -1085,7 +1151,7 @@ def write_static_pages(counts):
   <h2>Ownership labels</h2>
   <p>Every listing starts as Ownership: unverified. That means no documented private-equity platform or franchise parent matched <a href="https://dealseam.com/hvac-pe-rollup-tracker-2026">DealSeam’s 2026 HVAC roll-up tracker</a> (page last updated 28 July 2026; read {esc(AS_OF)}) or the <a href="https://www.aireserv.com/">Aire Serv</a> site, which describes Aire Serv as a Neighborly company whose work is done by franchise companies. A match stores the parent, the matched words, the source URL, and the day the source was read. The profile links that source.</p>
   <p>Matches are narrow. “Comfort Systems” is not treated as Comfort Systems USA. “Champion” is not treated as Champions Group. The letters ARS alone are not treated as Rescue Rooter. Nexstar membership is not a match. See <a href="https://www.nexstarnetwork.com/about/">Nexstar’s about page</a>. We did not ingest a membership roster.</p>
-  <p>An independent label is not used in this release. Unverified is not a confirmation that a shop is independent.</p>
+  <p>An independent label is used only when the company’s own site states family ownership with a year or generation, or names the owner-operator, and a search on the checked date did not turn up a sale. The quotes are in the evidence file. See <a href="../platforms/">platforms and local brands</a>.</p>
   <h2>What we do not publish</h2>
   <p>No star ratings, review counts, or made-up prices. Manual J is marked only when a source says the installer performed or claimed it. None of the files above say that, so every listing reads “Manual J: not in source.” Rebate dollar amounts appear only when an official page stated them, with that page linked and this checked date. The Minnesota $4,000 figure is one of those, quoted on the <a href="../us/rebates/mn/">Minnesota rebate guide</a> from the Commerce page.</p>
   <h2>Update cadence</h2>
@@ -1096,6 +1162,7 @@ def write_static_pages(counts):
                                       "Sources, ownership labels, and update cadence for the ElectrifyRadar installer directory.",
                                       methodology, "/methodology/",
                                       breadcrumbs=[("Home", "/"), ("Methodology", "/methodology/")]))
+    write_platforms_page()
     privacy = f"""
 <div class="wrap prose">
   <h1>Privacy</h1>
@@ -1130,6 +1197,52 @@ def write_static_pages(counts):
         "Ownership correction",
         """<p>If a listing should be marked platform-owned or franchise, send the business name and a public source (a press release, the platform’s brand list, or the company’s own site). If you believe a platform label is wrong, send the same kind of source. We do not flip a label to “independent” on an email alone.</p>""",
     )
+
+
+def write_platforms_page():
+    catalog = load_json(ROOT / "data" / "ownership" / "platforms.json")
+    evidence = load_json(ROOT / "data" / "ownership" / "evidence.json")
+    blocks = []
+    for record in catalog["records"]:
+        brands = ", ".join(record.get("match_terms") or [])
+        kind = "Franchise" if record["status"] == "franchise" else "PE or platform-owned"
+        blocks.append(
+            f"<h2>{esc(record['parent'])}</h2>"
+            f"<p>{esc(kind)}. {esc(record.get('backer') or '')}</p>"
+            f"<p>Names we match: {esc(brands)}.</p>"
+            f"<p><a href=\"{esc(record['source_url'])}\">{esc(record.get('source_title') or record['source_url'])}</a>. "
+            f"Checked {esc(record.get('source_retrieved') or AS_OF)}. {esc(record.get('source_note') or '')}</p>"
+        )
+    found = []
+    for record in evidence.get("records", []):
+        if record["ownership_status"] == "independent":
+            continue
+        found.append(
+            f"<li><strong>{esc(record.get('parent') or record['ownership_status'])}</strong> — "
+            f"listing {esc(record['listing_id'])}. "
+            f"<a href=\"{esc(record['source_url'])}\">Evidence</a>, checked {esc(record['checked'])}. "
+            f"{esc(record['evidence_quote'])}</li>"
+        )
+    found_html = "".join(found) or "<li>None in the top-50-city check beyond the name list above.</li>"
+    body = f"""
+<div class="wrap prose">
+  {crumbs("/platforms", [("Home", "/"), ("Platforms", "/platforms/")])}
+  <h1>PE platforms and franchise brands</h1>
+  <p>These are the names ElectrifyRadar will match. A listing gets the label only when its business name matches one of these terms, or when a separate evidence record quotes a page. Checked {esc(AS_OF)}. Nexstar is not on this list.</p>
+  {''.join(blocks)}
+  <h2>Corporate parents found in the top-50-city check</h2>
+  <ul>{found_html}</ul>
+  <p><a href="../methodology/">How a label is assigned</a></p>
+</div>
+"""
+    write_page("/platforms/", shell(
+        "/platforms",
+        f"PE platforms and franchise brands | {NAME}",
+        "Documented private-equity platforms and franchise brands, with the local names ElectrifyRadar matches.",
+        body,
+        "/platforms/",
+        breadcrumbs=[("Home", "/"), ("Platforms", "/platforms/")],
+    ))
 
 
 def write_form_page(path, heading, description, subject, intro):
@@ -1328,7 +1441,7 @@ def urlset(paths):
 
 
 def write_sitemap(listings, by_city):
-    pages = ["/", "/us/", "/us/guides/", "/us/rebates/", "/about/", "/privacy/", "/terms/", "/claim/", "/report-correction/", "/methodology/"]
+    pages = ["/", "/us/", "/us/guides/", "/us/rebates/", "/about/", "/privacy/", "/terms/", "/claim/", "/report-correction/", "/methodology/", "/platforms/"]
     for code in STATES:
         pages.append(f"/us/{code}/")
         pages.append(f"/us/rebates/{code}/")

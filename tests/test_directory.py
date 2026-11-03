@@ -32,7 +32,7 @@ class ListingsTest(unittest.TestCase):
             self.assertTrue(row["name"] and row["city"] and row["admin1"])
             self.assertTrue(row["phone"] or row["website"])
             self.assertTrue(row["sources"])
-            self.assertIn(row["ownership_status"], {"unverified", "platform_owned", "franchise"})
+            self.assertIn(row["ownership_status"], {"unverified", "platform_owned", "pe_owned", "franchise", "independent", "utility", "other_corporate"})
             self.assertFalse(row["featured"])
             self.assertIsInstance(row["manual_j_claimed"], bool)
             self.assertNotIn("email", row)
@@ -42,8 +42,10 @@ class ListingsTest(unittest.TestCase):
                 self.assertTrue(source["retrieved"])
             if row["ownership_status"] != "unverified":
                 self.assertTrue(row["ownership_source_url"])
+                self.assertTrue(row.get("ownership_evidence_quote") or row.get("ownership_source_note"))
+            if row["ownership_status"] in {"pe_owned", "platform_owned", "franchise", "utility", "other_corporate"}:
                 self.assertTrue(row["ownership_parent"])
-            else:
+            if row["ownership_status"] == "unverified":
                 self.assertEqual(row["ownership_label"], "Ownership: unverified")
             if row["admin1"] == "MN":
                 self.assertEqual(row["heat_pump_signal"], "mechanical_license_only")

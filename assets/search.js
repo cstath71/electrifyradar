@@ -24,7 +24,7 @@
     var signal = text("signal");
     matches = (window.ER_INDEX || []).filter(function (row) {
       if (state && row.st !== state) return false;
-      if (own && row.o !== own) return false;
+      if (own && row.o !== own && !(own === "pe_owned" && row.o === "platform_owned")) return false;
       if (signal && row.g !== signal) return false;
       if (!q) return true;
       return (row.n + " " + row.c + " " + row.sv + " " + row.rb).toLowerCase().indexOf(q) !== -1;
@@ -39,8 +39,11 @@
   }
 
   function ownBadge(code) {
-    if (code === "platform_owned") return badge("PE or platform-owned", "platform");
+    if (code === "platform_owned" || code === "pe_owned") return badge("PE or platform-owned", "platform");
     if (code === "franchise") return badge("Franchise", "franchise");
+    if (code === "independent") return badge("Independent", "");
+    if (code === "utility") return badge("Utility-owned", "platform");
+    if (code === "other_corporate") return badge("Other corporate owner", "platform");
     return badge("Ownership: unverified", "quiet");
   }
 

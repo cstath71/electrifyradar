@@ -1,0 +1,201 @@
+{
+  "checked": "2026-11-03",
+  "scope": "Top 10 cities by listing count in Massachusetts, Maine, New York, California, and Minnesota. Mailing-address groups outside the state were not part of this pass.",
+  "installers_in_scope": 1051,
+  "websites_fetched": 283,
+  "method": "Every in-scope listing that has a website in the source data had that site fetched and read for an ownership sentence. California and Minnesota source files in this set do not include websites, so those listings were compared by business name to platform and franchise names and were not given a label without a page that states the relationship. A label is stored only with a short quote from a page opened on this date. Family-owned or a named owner-operator, with a year or generation on the same page, is the bar for independent. Locally owned, or in business since a year, without that sentence, stays unverified. A web search on this date for these business names with acquired or private equity did not return a report that one of the independent labels below had been sold.",
+  "records": [
+    {
+      "listing_id": "us-ma-plymouth-dan-maybruck-plumbing-and-heating-inc",
+      "ownership_status": "independent",
+      "parent": null,
+      "source_url": "https://www.maybruckplumbing.com",
+      "evidence_quote": "Family Owned. Licensed and Insured. In Business Since 1994.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-ma-plymouth-northstar-refrigeration-inc",
+      "ownership_status": "independent",
+      "parent": null,
+      "source_url": "https://www.northstarhvacr.com",
+      "evidence_quote": "Serving the Northeast since 2004. Family Owned & Operated. Based in Massachusetts and family-owned for over 20 years.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-ma-billerica-frontier-air",
+      "ownership_status": "independent",
+      "parent": null,
+      "source_url": "https://frontier-hvac.com/",
+      "evidence_quote": "Frontier Air is a family owned and operated company, established in 2014.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-ma-leominster-jay-moody-hvac",
+      "ownership_status": "independent",
+      "parent": null,
+      "source_url": "https://jaymoodyhvac.com/",
+      "evidence_quote": "Quality Care Since 1980. Jay Moody HVAC is a family-owned and operated business.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-ma-woburn-g-n-engineering-inc",
+      "ownership_status": "independent",
+      "parent": null,
+      "source_url": "https://www.gnengineeringinc.com",
+      "evidence_quote": "Serving homes and businesses since 1989. G & N Engineering Inc. has been a family owned Engineering Company for 35+ years.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-ma-woburn-marciano-plumbing-and-heating",
+      "ownership_status": "independent",
+      "parent": null,
+      "source_url": "https://www.marcianoplumbing.com",
+      "evidence_quote": "As a trusted, family-owned business, we've been proudly serving Woburn, MA, and the surrounding areas since 2012.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-ma-fall-river-marc-s-sheet-metal-inc",
+      "ownership_status": "independent",
+      "parent": null,
+      "source_url": "https://marcssheetmetalinc.com/",
+      "evidence_quote": "Based in Fall River, Marc's Sheet Metal has been family-owned and locally run since 1998.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-ma-fall-river-air-masters-a-division-of-the-rise-group",
+      "ownership_status": "other_corporate",
+      "parent": "RISE Group Inc.",
+      "source_url": "https://airmastershvac.com/aboutmore.html",
+      "evidence_quote": "In 2023, Air Masters HVAC of NE Inc. joined RISE Group Inc., an employee-owned leading provider of energy, engineering, laboratory, and field services. This acquisition is part of RISE Group Inc.'s strategic plan to expand its mechanical/HVAC contracting services in the region.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-ma-waltham-burns-mechanical-corp",
+      "ownership_status": "independent",
+      "parent": "Robert Burns",
+      "source_url": "https://www.burnsmechanicalcorp.net/about-us",
+      "evidence_quote": "Burns Mechanical Corp. is family owned and operated. Incorporated in 2000 by Robert Burns.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-ma-waltham-murphy-fuel-corporation",
+      "ownership_status": "independent",
+      "parent": null,
+      "source_url": "https://www.murphyfuel.com",
+      "evidence_quote": "Local & Family Owned Since 1986.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-ma-waltham-genove-oil-air-company",
+      "ownership_status": "independent",
+      "parent": null,
+      "source_url": "https://genoveoil.com/about/",
+      "evidence_quote": "A family-owned business. Providing HVAC and heating oil delivery services since 1977.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-ma-framingham-obie-comfort-solutions",
+      "ownership_status": "independent",
+      "parent": null,
+      "source_url": "https://obiecomfortsolutions.com/",
+      "evidence_quote": "Serving the MetroWest Area Since 2006. At Obie Comfort Solutions, we are a family-owned company.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-ma-wilmington-cubby-oil",
+      "ownership_status": "independent",
+      "parent": null,
+      "source_url": "https://www.cubbyoil.com/about-us/",
+      "evidence_quote": "Founded in 1945, our 80-year old family-owned business.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-ma-wilmington-bright-star-heating-supply-co-inc",
+      "ownership_status": "independent",
+      "parent": null,
+      "source_url": "https://brightstarheating.com/",
+      "evidence_quote": "Since 1973, Bright Star Heating has been dedicated to keeping customers' homes comfortable. We are a family owned and operated business.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-me-scarborough-frederick-bros-oil-propane",
+      "ownership_status": "independent",
+      "parent": null,
+      "source_url": "https://www.frederickbrosoil.com/",
+      "evidence_quote": "As a third-generation, family-owned and operated business. In Business Since 1946.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-me-brunswick-brancato-s-heating-inc",
+      "ownership_status": "independent",
+      "parent": null,
+      "source_url": "https://brancatosheatingandcooling.com/",
+      "evidence_quote": "Brunswick, Maine. Family-Owned Since 2007.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-me-westbrook-horizon-homes",
+      "ownership_status": "independent",
+      "parent": null,
+      "source_url": "https://horizonmaine.com/",
+      "evidence_quote": "Family-owned & operated since 2006.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-me-lyman-perfect-plumbing-heating-inc",
+      "ownership_status": "independent",
+      "parent": "Richard E. Burke Jr.",
+      "source_url": "https://www.perfectheating.com/",
+      "evidence_quote": "Perfect Plumbing and Heating, Inc. is owned and operated by Richard E. Burke Jr., and has been in business since 1988.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-me-augusta-hpa-service-llc",
+      "ownership_status": "independent",
+      "parent": "Caleb Chadbourne",
+      "source_url": "http://www.hpaservice.com/about",
+      "evidence_quote": "HPA Service is a multi-licensed company owned and operated by Caleb Chadbourne.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-ny-brooklyn-solanta-corp-dba-solanta",
+      "ownership_status": "independent",
+      "parent": null,
+      "source_url": "https://solanta.com/",
+      "evidence_quote": "100% Family Owned and Operated.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-ny-bronx-cottam-heating-and-air-conditioning",
+      "ownership_status": "independent",
+      "parent": null,
+      "source_url": "https://cottamhvac.com/",
+      "evidence_quote": "Proudly Serving Westchester County & The Bronx Since 1984. Our Westchester HVAC company is family-owned and operated.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-ny-rochester-hawn-heating-and-air-conditioning-inc",
+      "ownership_status": "independent",
+      "parent": null,
+      "source_url": "https://hawnheating.com/",
+      "evidence_quote": "4th Generation Family-Owned and Operated Since 1931.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-ny-middletown-quality-hvac-inc-dba-quality-heating-and-cooling",
+      "ownership_status": "independent",
+      "parent": null,
+      "source_url": "https://www.qualityheating-cooling.com",
+      "evidence_quote": "Veteran owned and family operated since 2007.",
+      "checked": "2026-11-03"
+    },
+    {
+      "listing_id": "us-ny-kingston-archibald-heating-and-ac",
+      "ownership_status": "independent",
+      "parent": null,
+      "source_url": "https://www.callarch.com",
+      "evidence_quote": "Archibald Heating and Air Conditioning Co. is a family-owned and operated company. We are currently in our third generation of service to our community.",
+      "checked": "2026-11-03"
+    }
+  ]
+}

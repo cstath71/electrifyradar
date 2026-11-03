@@ -528,6 +528,45 @@ def minnesota():
     return listings, skipped
 
 
+LABELS = {
+    "unverified": "Ownership: unverified",
+    "independent": "Independent",
+    "pe_owned": "PE or platform-owned",
+    "platform_owned": "PE or platform-owned",
+    "franchise": "Franchise",
+    "utility": "Utility-owned",
+    "other_corporate": "Other corporate owner",
+}
+
+
+def ownership_label(status: str) -> str:
+    return LABELS.get(status, status)
+
+
+def apply_evidence(listings):
+    path = DATA / "ownership" / "evidence.json"
+    if not path.exists():
+        return 0
+    payload = load_json(path)
+    by_id = {row["listing_id"]: row for row in payload.get("records", [])}
+    applied = 0
+    for listing in listings:
+        evidence = by_id.get(listing["id"])
+        if not evidence:
+            continue
+        status = evidence["ownership_status"]
+        listing["ownership_status"] = status
+        listing["ownership_label"] = ownership_label(status)
+        listing["ownership_parent"] = evidence.get("parent")
+        listing["ownership_source_url"] = evidence["source_url"]
+        listing["ownership_source_note"] = evidence["evidence_quote"]
+        listing["ownership_evidence_quote"] = evidence["evidence_quote"]
+        listing["ownership_checked"] = evidence.get("checked")
+        listing["ownership_matched_term"] = None
+        applied += 1
+    return applied
+
+
 def apply_ownership(listings):
     catalog = load_json(DATA / "ownership" / "platforms.json")
     prepared = []
@@ -564,11 +603,9 @@ def apply_ownership(listings):
                 break
         if not hit:
             continue
-        listing["ownership_status"] = hit["status"]
-        if hit["status"] == "franchise":
-            listing["ownership_label"] = "Franchise"
-        else:
-            listing["ownership_label"] = "PE or platform-owned"
+        status = "pe_owned" if hit["status"] in {"platform_owned", "pe_owned"} else hit["status"]
+        listing["ownership_status"] = status
+        listing["ownership_label"] = ownership_label(status)
         listing["ownership_parent"] = hit["parent"]
         listing["ownership_source_url"] = hit["source_url"]
         listing["ownership_source_note"] = hit["source_note"]
@@ -660,6 +697,7 @@ def main():
         listing["name"] = prettify_name(listing["name"])
     ownership_hits = apply_ownership(listings)
     assign_paths(listings)
+    evidence_applied = apply_evidence(listings)
     listings.sort(key=lambda row: (row["admin1"], row["city_label"], row["name"]))
     out = {
         "generated_from": "scripts/build_listings.py",
@@ -680,6 +718,7 @@ def main():
         "by_state": dict(by_state),
         "by_ownership": dict(by_own),
         "ownership_hits": dict(ownership_hits),
+        "evidence_applied": evidence_applied,
         "by_signal": {f"{a}:{b}": n for (a, b), n in by_signal.items()},
         "skipped": skip_report,
         "cslb_c20_rows": len(c20),
