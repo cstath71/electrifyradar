@@ -12,6 +12,7 @@ from pathlib import Path
 from urllib.parse import quote
 
 from common import ROOT, STATES, load_json
+from guide_content import full_guides
 
 DIST = ROOT / "dist"
 SITE = load_json(ROOT / "config" / "site.json")
@@ -334,6 +335,25 @@ def faq_ld(items):
     }
 
 
+def article_ld(title, description, path, date_reviewed):
+    return {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": title,
+        "description": description,
+        "datePublished": date_reviewed,
+        "dateModified": date_reviewed,
+        "author": {"@type": "Organization", "name": NAME, "url": absolute("/")},
+        "publisher": {
+            "@type": "Organization",
+            "name": NAME,
+            "url": absolute("/"),
+            "logo": {"@type": "ImageObject", "url": absolute("/og.png")},
+        },
+        "mainEntityOfPage": {"@type": "WebPage", "@id": absolute(path)},
+    }
+
+
 def select_top_cities(by_city, limit=20):
     grouped = defaultdict(list)
     for (state_slug, city_slug), rows in by_city.items():
@@ -535,7 +555,7 @@ def write_home(counts):
       <h2>What this directory is for</h2>
       <p>Homeowners shopping for a heat pump or ductless mini-split usually get a lead form, a brand locator, or a star rating. None of those say whether the local truck is still a local company. Private-equity platforms and franchise brands buy and rebadge shops. The name on the door does not always say so.</p>
       <p>We publish the label we can support. A match against our sourced platform and franchise list becomes “PE or platform-owned” or “Franchise,” with the source linked on the profile. No match stays unverified. Nexstar membership is not treated as ownership.</p>
-      <p><a href="us/guides/independent-vs-pe-hvac/">Why the ownership label matters</a> · <a href="us/guides/how-we-label-ownership/">How the label is decided</a></p>
+      <p><a href="us/guides/">Guides</a> on rebates, vetting installers, ownership, and cold-climate heat pumps · <a href="us/guides/independent-vs-pe-hvac/">Why the ownership label matters</a> · <a href="us/guides/how-we-label-ownership/">How the label is decided</a></p>
     </div>
     <aside class="note">
       <p><strong>Manual J</strong> is the load calculation that sizes a heat pump to the house. None of the public files behind this launch state that an installer performed Manual J, so every listing says “Manual J: not in source.” <a href="us/guides/manual-j-load-calculation/">Read the Manual J guide</a>.</p>
@@ -590,7 +610,7 @@ def write_country(counts):
   <p class="lede">{total} listings across five launch states, built so another country or another trade can be added without renaming the URL pattern. Paths look like /us/ma/boston/name/.</p>
   <p>Canada and the UK are not in this release. Electric-vehicle charger installers are not either. The data model already has a country code and a category field so those can be added as their own rosters.</p>
   <ul>{items}</ul>
-  <p><a href="guides/independent-vs-pe-hvac/">Independent, platform-owned, and franchise</a> · <a href="rebates/">Rebate guides</a></p>
+  <p><a href="guides/">All guides</a> · <a href="guides/independent-vs-pe-hvac/">Independent, platform-owned, and franchise</a> · <a href="rebates/">Rebate guides</a></p>
 </div>
 """
     write_page("/us/", shell("/us", f"US heat pump installer directory | {NAME}",
@@ -613,16 +633,16 @@ STATE_SOURCE = {
         "file_note": "the public spreadsheet whose header says Revised: 10-29-2026",
         "finder_name": "Mass Save heat pump installer finder",
         "finder_url": "https://www.masssave.com/residential/find-a-contractor/find-a-heat-pump-installer",
-        "rebate_name": "Mass Save heating and cooling incentives",
-        "rebate_url": "https://www.masssave.com/residential/rebates-and-incentives/heating-and-cooling",
+        "rebate_name": "Mass Save air-source heat pump rebates",
+        "rebate_url": "https://www.masssave.com/residential/rebates-offers-services/heating-and-cooling/heat-pumps/air-source-heat-pumps",
     },
     "me": {
         "program": "Efficiency Maine Residential Registered Vendor locator",
         "file_note": "the Heat Pumps service, distance any, ZIP 04101",
         "finder_name": "Efficiency Maine vendor locator",
         "finder_url": "https://www.efficiencymaine.com/at-home/vendor-locator/",
-        "rebate_name": "Efficiency Maine heat pump rebates",
-        "rebate_url": "https://www.efficiencymaine.com/at-home/residential-rebates/",
+        "rebate_name": "Efficiency Maine residential heat pump rebates",
+        "rebate_url": "https://www.efficiencymaine.com/at-home/residential-heat-pump-rebates/",
     },
     "ny": {
         "program": "NYS Clean Heat contractor finder",
@@ -691,15 +711,16 @@ def rebate_answer(code, rebate_guide):
     src = STATE_SOURCE[code]
     official = f'<a href="{esc(src["rebate_url"])}">{esc(src["rebate_name"])}</a>'
     if code == "ma":
+        deep = f'<a href="{esc(absolute("/us/guides/mass-save-heat-pump-rebate/"))}">Mass Save rebate guide</a>'
         return (
-            f"Read the current offer on {official}. The incentives page checked {esc(AS_OF)} did not state a single dollar amount in the HTML we could read, "
-            f"so this site does not print one. Our {rebate_guide} links the same page."
+            f"Mass Save’s air-source heat pump page, checked {esc(AS_OF)}, publishes 2026 tonnage rebates (whole-home $2,650/ton up to $8,500; partial-home $1,125/ton up to $8,500; basic $250/ton up to $2,500) and requires an HPIN contractor plus ENERGY STAR Cold Climate equipment on the QPL. "
+            f"Re-check {official} before you sign. See also our {rebate_guide} and the {deep}."
         )
     if code == "me":
+        deep = f'<a href="{esc(absolute("/us/guides/efficiency-maine-heat-pump-rebate/"))}">Efficiency Maine rebate guide</a>'
         return (
-            f"Efficiency Maine’s heat pump page, checked {esc(AS_OF)}, says the program offers residential and commercial rebates and that many rebated units "
-            f"heat efficiently down to −22°F or lower. It also says more than 200,000 heat pumps have been installed in Maine homes and businesses, citing the "
-            f"2021 Maine New Construction Baseline Assessment. Dollar amounts are on {official}, not restated here. See the {rebate_guide}."
+            f"Efficiency Maine’s residential heat pump rebates page, checked {esc(AS_OF)}, lists per outdoor-unit amounts of $3,000 (low income), $2,000 (moderate), and $1,000 (any income), with lifetime caps, and requires a Residential Registered Vendor. "
+            f"Multi-zone units are not rebate-eligible on that table. Re-check {official}. See also our {rebate_guide} and the {deep}."
         )
     if code == "ny":
         return (
@@ -1062,13 +1083,15 @@ def write_profiles(listings):
         write_page(path, shell(from_dir, title, desc, body, path, extra_head=ld, breadcrumbs=trail))
 
 
-def guide(slug, title, description, inner):
+def guide(slug, title, description, inner, faqs=None, date_reviewed=None):
     return {
         "path": f"/us/guides/{slug}/",
         "from": f"/us/guides/{slug}",
         "title": title,
         "description": description,
         "inner": inner,
+        "faqs": faqs or [],
+        "date_reviewed": date_reviewed or AS_OF,
     }
 
 
@@ -1082,7 +1105,7 @@ def write_static_pages(counts):
 <div class="wrap prose">
   {crumbs("/us/guides", [("Home", "/"), ("Guides", "/us/guides/")])}
   <h1>Guides</h1>
-  <p>Practical pages for homeowners comparing heat pumps. Dollar figures appear only when an official page we checked on {esc(AS_OF)} stated them.</p>
+  <p>Practical pages for homeowners comparing heat pumps — rebates, vetting installers, ownership labels, and cold-climate performance. Dollar figures appear only when an official page we checked on {esc(AS_OF)} stated them, with that page linked.</p>
   <ul>{index_items}</ul>
 </div>
 """
@@ -1092,9 +1115,15 @@ def write_static_pages(counts):
                                     guide_index, "/us/guides/", breadcrumbs=guide_trail))
     for page in guides:
         trail = [("Home", "/"), ("Guides", "/us/guides/"), (page["title"], page["path"])]
+        faqs = page.get("faqs") or []
+        reviewed = page.get("date_reviewed") or AS_OF
+        faq_html = faq_section(faqs) if faqs else ""
         body = f'''<div class="wrap prose">{crumbs(page["from"], trail)}
-        <h1>{esc(page["title"])}</h1>{page["inner"]}<p class="fine">Last checked {esc(AS_OF)}. Publisher: ElectrifyRadar.</p></div>'''
-        write_page(page["path"], shell(page["from"], f'{page["title"]} | {NAME}', page["description"], body, page["path"], breadcrumbs=trail))
+        <h1>{esc(page["title"])}</h1>{page["inner"]}{faq_html}<p class="fine">Last reviewed {esc(reviewed)}. Publisher: ElectrifyRadar.</p></div>'''
+        extra = json_ld(article_ld(page["title"], page["description"], page["path"], reviewed))
+        if faqs:
+            extra += json_ld(faq_ld(faqs))
+        write_page(page["path"], shell(page["from"], f'{page["title"]} | {NAME}', page["description"], body, page["path"], extra_head=extra, breadcrumbs=trail))
 
     rebate_states = "".join(
         f'<li><a href="{code}/">{esc(STATES[code]["name"])}</a></li>' for code in STATES
@@ -1302,126 +1331,36 @@ def write_form_page(path, heading, description, subject, intro, extra_fields="")
 
 
 def guide_pages():
-    return [
-        guide(
-            "independent-vs-pe-hvac",
-            "Why independent installers",
-            "Why a homeowner comparing heat pump installers should be able to see platform and franchise ownership.",
-            """
-            <p>A heat pump quote is a long relationship with a company: the equipment, the refrigerant circuit, and whoever answers the phone in year six. Roll-ups buy local heating and cooling companies and often keep the local name. Franchise brands put a national trademark on a local owner. Neither fact is automatically bad work. Both are facts a homeowner cannot see on a star rating.</p>
-            <p>ElectrifyRadar exists to show the fact when a public list supports it. The label is “PE or platform-owned” or “Franchise” only after a name match against a list we cite. Otherwise the label is “Ownership: unverified.” We do not print “Independent” just because a name missed the list.</p>
-            <p>DealSeam’s July 2026 HVAC roll-up tracker, which we read on 3 November 2026, describes private equity as a large buyer of HVAC, plumbing, and electrical companies and points to outside sources (WSJ/PitchBook, IBISWorld, Forbes, Capstone Partners) for market counts. Those are DealSeam’s citations, not a census we performed. The tracker’s named platforms are the list we match. <a href="how-we-label-ownership/">How a name gets a label</a>.</p>
-            <p>Coaching networks are not on that list. Nexstar, for example, describes itself as a network for contractors. We do not treat membership as private-equity ownership, and we do not publish a membership badge because we did not ingest a membership roster. See <a href="https://www.nexstarnetwork.com/about/">Nexstar’s about page</a>.</p>
-            """,
-        ),
-        guide(
-            "how-we-label-ownership",
-            "How we label ownership",
-            "The rules ElectrifyRadar uses before it calls an installer platform-owned, a franchise, or unverified.",
-            """
-            <p>Every listing starts as <strong>Ownership: unverified</strong>. That sentence means: no documented private-equity platform or franchise parent was matched in our dataset as of the date on the page. It does not mean we investigated the company’s owners, and it does not mean the company is independent.</p>
-            <p>A listing becomes <strong>PE or platform-owned</strong> or <strong>Franchise</strong> only when the business name matches a term in our platform file. The file records the parent, the match term, the source URL, and the day we read the source. The profile links that source. The current source for platforms is <a href="https://dealseam.com/hvac-pe-rollup-tracker-2026">DealSeam’s 2026 PE roll-up tracker</a> (page last updated 28 July 2026; we read it 3 November 2026). Aire Serv is labeled a franchise because <a href="https://www.aireserv.com/">aireserv.com</a> describes Aire Serv as a Neighborly company whose work is done by franchise companies.</p>
-            <p>Matches are conservative. “Comfort Systems” is a common local name and is not treated as Comfort Systems USA. “Champion” is not treated as Champions Group. “ARS” alone is not treated as Rescue Rooter. “Service Experts” counts only when the name starts with those words, so a sentence like “heating service experts” does not match. Nexstar is not a match term.</p>
-            <p>An independent label is used only when the company’s own site states family ownership with a year or generation, or names the owner-operator, and we record the quote and the page. A claim form answer is not that source. If we later publish what a business submitted, it is shown as self-reported by the business, in a different style from a sourced label. See the <a href="../../../methodology/">methodology</a>.</p>
-            <p>Featured placement exists as a data flag and is false on every row. Paying for a label is not offered.</p>
-            """,
-        ),
-        guide(
-            "manual-j-load-calculation",
-            "Manual J load calculation",
-            "What a Manual J load calculation is, and why this directory does not award the badge unless a source says so.",
-            """
-            <p>Manual J is the Air Conditioning Contractors of America procedure for estimating a home’s heating and cooling load. The result is what a heat pump should be sized to. A unit that is too large short-cycles. A unit that is too small runs continuously and still misses the design temperature. Ductless heads in the wrong rooms have the same problem at the scale of one room.</p>
-            <p>A serious installer can show the load calculation, the outdoor design temperature they used, and how the capacity at that temperature compares with the load. “We put in what the last house got” is not a load calculation.</p>
-            <p>This directory has a Manual J field. It is true only when the public source says the installer performed or claimed Manual J. The Mass Save network file, the Efficiency Maine locator, the NYS Clean Heat finder, the TECH Clean California contractor file, and the Minnesota mechanical-bond export do not say that. Every launch listing therefore reads “Manual J: not in source.” An empty badge is not an accusation. It is the absence of a record.</p>
-            """,
-        ),
-        guide(
-            "heat-pump-installation-cost",
-            "Heat pump installation cost",
-            "Why ElectrifyRadar does not publish an unsourced heat pump installation price.",
-            """
-            <p>People search for a single heat pump installation cost. The public files behind this directory do not support one. A ductless single zone, a cold-climate ducted system with new ductwork, and a heat pump water heater are different projects. Electrical panel work may or may not be in the price.</p>
-            <p>The TECH Clean California contractor file we publish from (ContractorProjectData_2026-10-20) does not include project cost. TECH’s separate anonymized installation datasets do, and those downloads are behind a request form on <a href="https://techcleanca.com/heat-pump-data/download-data/">TECH’s download page</a>. We did not ingest that file, so we do not reprint a cost range from it.</p>
-            <p>What we can cite is an operating-cost comparison, not an install price. Efficiency Maine’s heat pump page, checked 3 November 2026, says its home heating cost comparison was current as of 11 September 2026 and lists these assumptions: propane at $3.20 a gallon, 93% combustion efficiency, 90% distribution efficiency, electricity at $0.26 per kWh, and a heat pump COP of 3.15 with 100% distribution efficiency. The page says your results may differ. See <a href="https://www.efficiencymaine.com/heat-pumps/">Efficiency Maine’s heat pump page</a>.</p>
-            <p>Ask two or three installers for a price that names the equipment, the load calculation, electrical work, and what happens to the old furnace or boiler. Use the <a href="../rebates/">rebate guides</a> for the program that actually applies to the house.</p>
-            """,
-        ),
-        guide(
-            "cold-climate-heat-pumps",
-            "Cold-climate heat pumps",
-            "What cold-climate heat pump performance means in the northern launch states, using figures from program pages.",
-            """
-            <p>A cold-climate heat pump is sized and selected for capacity at a low outdoor temperature, not only for the mild-weather efficiency number on a yellow label. Capacity falls as the air outside gets colder. The useful question is whether the machine still covers the house at the design temperature, and what backs it up if it does not.</p>
-            <p>Efficiency Maine’s heat pump page, checked 3 November 2026, says many heat pumps provide efficient heating down to −22°F or lower, regardless of windchill, and that Efficiency Maine rebates only the highest performing units. The same page says more than 200,000 heat pumps have been installed in Maine homes and businesses and that they are now more common than oil heat in new homes, citing the 2021 Maine New Construction Baseline Assessment. <a href="https://www.efficiencymaine.com/heat-pumps/">Read it on Efficiency Maine</a>.</p>
-            <p>Minnesota’s residential heat pump rebate statute, as described by the Department of Commerce on the page checked 3 November 2026, defines an eligible heat pump for that state rebate as an ENERGY STAR certified, cold-climate rated air-source heat pump. Ground-source, air-to-water, and heat pump water heaters are called out as not eligible for that particular state rebate. <a href="https://mn.gov/commerce/energy/consumer/energy-programs/heat-pump.jsp">Minnesota program page</a>.</p>
-            <p><a href="../../me/">Maine installers</a> · <a href="../../mn/">Minnesota listings</a> · <a href="../../ny/">New York installers</a></p>
-            """,
-        ),
-        guide(
-            "heat-pump-vs-furnace",
-            "Heat pump vs furnace",
-            "How a heat pump differs from a furnace, without an unsourced savings promise.",
-            """
-            <p>A furnace makes heat by burning fuel, or by electric resistance, and pushes it through ducts. A heat pump moves heat. In heating season it moves heat from outdoors in. In cooling season the same machine moves heat out. There is no flue on a heat-pump-only system.</p>
-            <p>In a cold climate the comparison is not “heat pump versus a furnace that ran last year.” It is capacity at the design temperature, the backup you keep, the ductwork you already have, and the price of electricity versus the fuel you would have burned. Efficiency Maine publishes a comparison with stated fuel and electricity assumptions. Those assumptions are on our <a href="heat-pump-installation-cost/">cost page</a>, dated, and they are not a promise about your house.</p>
-            <p>Some Mass Save Heat Pump Installer Network contractors also list conventional furnaces and boilers in the equipment field of the state file. That is a service the file records. It is not a recommendation to keep a furnace.</p>
-            """,
-        ),
-        guide(
-            "ductless-mini-split-installers",
-            "Ductless mini-split installers",
-            "What a ductless mini-split is, and where this directory shows installers who list that work.",
-            """
-            <p>A ductless mini-split is a heat pump with an outdoor unit and one or more indoor heads, connected by refrigerant lines, with no ducts. It is the usual retrofit where a house has radiators, baseboard, or no ductwork worth keeping. A ducted heat pump uses the same refrigeration cycle and sends air through ducts.</p>
-            <p>The Mass Save network file has an equipment field. Contractors who checked “Ductless Air Source Heat Pumps” carry that phrase on their profile under services. The Efficiency Maine locator’s Heat Pumps category includes contractors who showed a heat pump service; the profile lists the services the locator printed for that vendor. NYS Clean Heat’s ASHP installer service covers air-source heat pumps, ducted and ductless, and the profile names the service the finder returned.</p>
-            <p>We do not publish a ductless installation price. The files we used do not state one. Start with the city pages in <a href="../../ma/">Massachusetts</a>, <a href="../../me/">Maine</a>, and <a href="../../ny/">New York</a>, and ask for a load calculation. See <a href="manual-j-load-calculation/">Manual J</a>.</p>
-            """,
-        ),
-        guide(
-            "heat-pump-rebates",
-            "Heat pump rebates",
-            "How state heat pump rebates differ, and where to read the official page for each launch state.",
-            """
-            <p>There is no single national heat pump rebate with one dollar amount. A state program, a utility, a federal tax credit, and a local air-quality grant can stack, expire, or pause independently. This site keeps a page per launch state and a last-checked date.</p>
-            <ul>
-              <li><a href="../rebates/ma/">Massachusetts</a></li>
-              <li><a href="../rebates/me/">Maine</a></li>
-              <li><a href="../rebates/ny/">New York</a></li>
-              <li><a href="../rebates/ca/">California</a></li>
-              <li><a href="../rebates/mn/">Minnesota</a></li>
-            </ul>
-            <p>If a program page did not state a dollar amount on the day we checked it, the state page says so and links the official page instead of guessing.</p>
-            """,
-        ),
-        guide(
-            "best-heat-pump-brands",
-            "Heat pump brands",
-            "Why this site does not rank heat pump brands.",
-            """
-            <p>ElectrifyRadar does not publish a best-brands ranking. A ranking would need a method, a dataset, and a date. We do not have a test lab, and we do not take manufacturer placement.</p>
-            <p>What a homeowner can verify: the equipment is on the rebate program’s qualified list, the capacity at the design temperature covers the Manual J load, and the installer is willing to name the model on the quote. Efficiency Maine points contractors and homeowners to its rebate-eligible equipment list from the <a href="https://www.efficiencymaine.com/at-home/residential-forms/">residential forms page</a>. Cold-climate criteria for the Minnesota state rebate are on the <a href="https://mn.gov/commerce/energy/consumer/energy-programs/heat-pump.jsp">Commerce program page</a>.</p>
-            <p>An installer profile may later show an OEM affiliation when that affiliation comes from a public source. This release does not copy OEM locator results. Those sites generally prohibit scraping, and a brand badge is not an ownership label.</p>
-            """,
-        ),
-    ]
+    pages = []
+    for item in full_guides(AS_OF):
+        pages.append(
+            guide(
+                item["slug"],
+                item["title"],
+                item["description"],
+                item["inner"],
+                faqs=item.get("faqs") or [],
+                date_reviewed=AS_OF,
+            )
+        )
+    return pages
 
 
 REBATE_COPY = {
     "ma": """
     <p>Massachusetts heat pump incentives run through Mass Save. The installer network file we use (revised 29 October 2026, downloaded 3 November 2026) says contractors on the list provided EPA certification, insurance in Massachusetts, and heat pump installation training. The same disclaimer says the sponsors do not endorse the contractor or warrant the equipment.</p>
-    <p>The heating-and-cooling incentives page we opened the same day is a program shell and did not state a single rebate dollar amount in the HTML we could read. We are not filling that gap with a number from somewhere else. Check the current offer on <a href="https://www.masssave.com/residential/rebates-and-incentives/heating-and-cooling">Mass Save’s heating and cooling incentives</a> and the <a href="https://www.masssave.com/residential/find-a-contractor/find-a-heat-pump-installer">heat pump installer finder</a>.</p>
+    <p>Mass Save’s <a href="https://www.masssave.com/residential/rebates-offers-services/heating-and-cooling/heat-pumps/air-source-heat-pumps">Air Source Heat Pumps page</a>, checked 3 November 2026, publishes 2026 tonnage rebates: whole-home $2,650 per ton up to $8,500; partial-home $1,125 per ton up to $8,500; basic $250 per ton up to $2,500; income-based enhanced incentives up to $16,000. Equipment must be ENERGY STAR Cold Climate on the Mass Save QPL and installed by an HPIN contractor. Re-check that page before you sign — 2027 amounts are lower. Full walkthrough: <a href="../../guides/mass-save-heat-pump-rebate/">Mass Save heat pump rebate guide</a>. Finder: <a href="https://www.masssave.com/residential/find-a-contractor/find-a-heat-pump-installer">heat pump installer finder</a>.</p>
     <p>The network file has its own “Instant rebate” and “HPLN” columns. Those values are copied onto installer profiles when the file contains them. They are the file’s fields, not a price quote.</p>
     """,
     "me": """
     <p>Efficiency Maine rebates heat pumps installed by a Residential Registered Vendor. The heat pump page checked 3 November 2026 says the program offers residential and commercial rebates, that many rebated units heat efficiently down to −22°F or lower, and that the program rebates only the highest performing units. It also says more than 200,000 heat pumps have been installed in Maine homes and businesses, citing the 2021 Maine New Construction Baseline Assessment.</p>
-    <p>The residential rebate index checked the same day does not print one dollar figure. It links separate offers:</p>
+    <p>The <a href="https://www.efficiencymaine.com/at-home/residential-heat-pump-rebates/">residential heat pump rebates page</a>, checked 3 November 2026, lists per outdoor-unit amounts of $3,000 (low income, lifetime cap $9,000), $2,000 (moderate income, cap $6,000), and $1,000 (any income, cap $3,000). Multi-zone units are not rebate-eligible on that table; single-zone units on Efficiency Maine’s list are. Re-check the official page before you apply. Full walkthrough: <a href="../../guides/efficiency-maine-heat-pump-rebate/">Efficiency Maine heat pump rebate guide</a>.</p>
     <ul>
-      <li><a href="https://www.efficiencymaine.com/at-home/residential-rebates/">Residential heat pump rebates</a></li>
+      <li><a href="https://www.efficiencymaine.com/at-home/residential-heat-pump-rebates/">Residential heat pump rebates</a></li>
       <li><a href="https://www.efficiencymaine.com/heat-pumps/">Heat pumps overview</a></li>
       <li><a href="https://www.efficiencymaine.com/at-home/vendor-locator/">Find a registered vendor</a></li>
     </ul>
-    <p>Use those pages for the current whole-home, mobile-home, low-income supplemental, and multifamily amounts. The operating-cost assumptions printed on the heat pump page (propane $3.20 per gallon, electricity $0.26 per kWh, heat pump COP 3.15, comparison dated 11 September 2026) are inputs to their calculator, not an installation price.</p>
+    <p>The operating-cost assumptions printed on the heat pump page (propane $3.20 per gallon, electricity $0.26 per kWh, heat pump COP 3.15, comparison dated 11 September 2026) are inputs to their calculator, not an installation price.</p>
     """,
     "ny": """
     <p>NYS Clean Heat is the statewide heat pump program behind the contractor finder this directory uses. The program site <a href="https://cleanheat.ny.gov/">cleanheat.ny.gov</a>, checked 3 November 2026, says rebates and financing are available and that NYS Clean Heat rebates can be combined with federal tax credits included in the Inflation Reduction Act. Federal credit rules change. Confirm the current credit before you rely on it. This page is not tax advice.</p>
@@ -1532,6 +1471,12 @@ def write_llms(counts):
         "## Key URLs",
         f"- Home: {absolute('/')}",
         f"- Methodology: {absolute('/methodology/')}",
+        f"- Guides index: {absolute('/us/guides/')}",
+        f"- Mass Save rebate guide: {absolute('/us/guides/mass-save-heat-pump-rebate/')}",
+        f"- Vetting checklist: {absolute('/us/guides/questions-to-ask-heat-pump-installer/')}",
+        f"- Efficiency Maine rebate guide: {absolute('/us/guides/efficiency-maine-heat-pump-rebate/')}",
+        f"- Ownership / PE guide: {absolute('/us/guides/independent-vs-pe-hvac/')}",
+        f"- Cold-climate heat pumps: {absolute('/us/guides/cold-climate-heat-pumps/')}",
         f"- Ownership rules: {absolute('/us/guides/how-we-label-ownership/')}",
         f"- Manual J: {absolute('/us/guides/manual-j-load-calculation/')}",
         f"- Rebates: {absolute('/us/rebates/')}",
@@ -1563,6 +1508,10 @@ def write_llms(counts):
     ]
     for code in STATES:
         full.append(f"- {STATES[code]['name']}: {absolute('/us/rebates/' + code + '/')}")
+    full.append("")
+    full.append("## Guides")
+    for page in guide_pages():
+        full.append(f"- {page['title']}: {absolute(page['path'])}")
     full.append("")
     (DIST / "llms-full.txt").write_text("\n".join(full), encoding="utf-8")
 

@@ -243,3 +243,9 @@ dd { margin: 0; }
 @media (max-width: 719px) {
   .menu-btn { display: inline-block; }
 }
+
+.prose table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.95rem; }
+.prose th, .prose td { border: 1px solid var(--line); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
+.prose th { background: var(--paper-2); font-weight: 600; }
+.prose ol { padding-left: 1.3rem; }
+.prose ol li, .prose ul li { margin: 0.35rem 0; }
