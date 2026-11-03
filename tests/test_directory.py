@@ -64,7 +64,8 @@ class SiteTest(unittest.TestCase):
         self.assertTrue((DIST / "sitemap.xml").exists())
         self.assertTrue((DIST / "robots.txt").exists())
         self.assertTrue((DIST / "404.html").exists())
-        self.assertFalse((DIST / "CNAME").exists(), "CNAME must stay out of the Pages artifact until DNS works")
+        cfg = json.loads((ROOT / "config" / "site.json").read_text(encoding="utf-8"))
+        self.assertEqual((DIST / "CNAME").exists(), bool(cfg.get("publish_cname")), "CNAME presence must follow config publish_cname")
 
     def test_every_listing_page_exists(self):
         rows = json.loads((ROOT / "data" / "listings.json").read_text(encoding="utf-8"))["listings"]
