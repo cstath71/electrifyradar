@@ -2,9 +2,11 @@
 
 A static directory of heat pump and ductless mini-split installers in Massachusetts, Maine, New York, California, and Minnesota. The public label on each listing is ownership: unverified, PE or platform-owned, or franchise. “Independent” is not applied without a source.
 
-The site is plain HTML. GitHub Actions publishes the `dist/` folder to GitHub Pages on every push to `main`.
+The site is plain HTML. GitHub Actions builds `dist/` and publishes it to GitHub Pages on every push to `main`.
 
 Live URL while the custom domain is not attached: `https://cstath71.github.io/electrifyradar/`
+
+**One-time Pages switch.** The GitHub App that pushes this repo cannot create the Pages site (`POST /pages` returns 403 “Resource not accessible by integration”). The workflow build and tests pass; the deploy step fails until Pages exists. In the repo, open Settings → Pages → Build and deployment → Source → **GitHub Actions**, save, then re-run “Deploy to GitHub Pages” (or push any commit). After that, the same workflow publishes on every push to `main`.
 
 Planned domain: `electrifyradar.com`. The repository root `CNAME` file contains that hostname. It is **not** copied into the Pages artifact until `publish_cname` is true in `config/site.json`. Publishing it earlier would make GitHub redirect the github.io URL to a domain that does not resolve yet. Internal links are relative, so the same HTML works at either host.
 

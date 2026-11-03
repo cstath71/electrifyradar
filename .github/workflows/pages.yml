@@ -20,9 +20,10 @@ jobs:
           python-version: "3.12"
       - run: python3 scripts/build_site.py
       - run: python3 -m unittest discover -s tests -v
-      - uses: actions/configure-pages@v5
-        with:
-          enablement: true
+      # configure-pages enablement needs permission to create the Pages site.
+      # This app token gets 403 on that call. deploy-pages uses the workflow's
+      # pages:write permission, which is enough once Pages exists and is also
+      # the call that publishes the artifact.
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
