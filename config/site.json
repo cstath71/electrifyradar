@@ -11,6 +11,9 @@
   "currency": "USD",
   "category": "heat_pump",
   "data_as_of": "2026-11-03",
+  "branch_groups": {
+    "fast_mode": false
+  },
   "form_endpoint": "https://api.web3forms.com/submit",
   "future_categories": [
     "ev_charger"

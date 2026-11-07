@@ -143,6 +143,20 @@ textarea { min-height: 8rem; }
   font-style: italic;
   font-weight: 650;
 }
+.badge.locations {
+  background: #e7f2ea;
+  color: var(--pine);
+  border: 1px solid #b7d4c2;
+}
+.listed-locations {
+  border: 1px solid var(--line);
+  background: var(--paper-2);
+  border-radius: 16px;
+  padding: 0.2rem 1rem 0.9rem;
+  margin: 1rem 0 1.2rem;
+}
+.listed-locations h2 { font-size: 1.35rem; }
+.branch-links { margin: 0.45rem 0 0; font-size: 0.92rem; line-height: 1.45; }
 
 .state-grid { display: grid; gap: 0.8rem; margin: 1.2rem 0 2rem; }
 .state-card {

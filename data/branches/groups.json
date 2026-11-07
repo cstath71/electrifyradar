@@ -1,0 +1,59 @@
+{
+  "fast_mode": false,
+  "checked": "2026-11-07",
+  "method": "A branch group is applied only when this file names the listing ids and cites a public page with a quote and the day the page was read. Each member must match that page on city, ZIP, and street number. fast_mode would cluster listings by similar names. It is false. The site config branch_groups.fast_mode is also false. The builder stops if either flag is not false, because that clustering is not implemented. The same name, a shared website, or a franchise or platform label does not create a group. A group does not change the ownership label. listed_location_count is the number of directory records in the group, which are the locations the cited page lists that this directory carries. It is not an exhaustive national total.",
+  "groups": [
+    {
+      "id": "daves-world",
+      "name": "Dave's World",
+      "source_url": "https://www.davesworld.com/locations",
+      "evidence_quote": "Proudly Serving All of Maine Out of Our 7 Locations",
+      "checked": "2026-11-07",
+      "scope": "Dave's World locations page lists these seven Maine addresses as its locations. Each directory record matched that page on city, ZIP, and street number. Dover-Foxcroft and Presque Isle phones in the Efficiency Maine roster are general numbers the same page also prints (800.432.8786 and 207-432-8786); the page lists a local phone at those two addresses as well (207.802.1029 and 207.554.5120). Edgecomb is 31 US-1 on the page and 31 Route One in the roster. The count is these matched directory records. It is not a separate census of every place the company might operate.",
+      "members": [
+        {
+          "listing_id": "us-me-augusta-dave-s-world-augusta",
+          "page_city": "Augusta",
+          "page_street": "103 Leighton Road",
+          "page_postal": "04330"
+        },
+        {
+          "listing_id": "us-me-dover-foxcroft-dave-s-world-dover-foxcroft",
+          "page_city": "Dover-Foxcroft",
+          "page_street": "27 Summer Street",
+          "page_postal": "04426"
+        },
+        {
+          "listing_id": "us-me-edgecomb-dave-s-world-edgecomb",
+          "page_city": "Edgecomb",
+          "page_street": "31 US-1",
+          "page_postal": "04556"
+        },
+        {
+          "listing_id": "us-me-ellsworth-dave-s-world-ellsworth",
+          "page_city": "Ellsworth",
+          "page_street": "44 Downeast Highway, Suite 2",
+          "page_postal": "04605"
+        },
+        {
+          "listing_id": "us-me-presque-isle-dave-s-world-presque-isle",
+          "page_city": "Presque Isle",
+          "page_street": "621 Main Street",
+          "page_postal": "04769"
+        },
+        {
+          "listing_id": "us-me-scarborough-dave-s-world-scarborough",
+          "page_city": "Scarborough",
+          "page_street": "237 Gorham Road",
+          "page_postal": "04074"
+        },
+        {
+          "listing_id": "us-me-windham-dave-s-world-windham",
+          "page_city": "Windham",
+          "page_street": "359 Roosevelt Trail",
+          "page_postal": "04062"
+        }
+      ]
+    }
+  ]
+}

@@ -38,6 +38,21 @@
     return '<span class="badge ' + cls + '">' + label + "</span>";
   }
 
+  function locationsBadge(row) {
+    if (!row.lc || row.lc < 2) return "";
+    return badge(row.lc + " listed locations", "locations");
+  }
+
+  function branchLinks(row) {
+    if (!row.lc || row.lc < 2 || !row.br || !row.br.length) return "";
+    var links = row.br.map(function (peer) {
+      return '<a href="' + base + peer.p + '">' + escapeHtml(peer.c) + "</a>";
+    }).join(" · ");
+    return '<p class="branch-links"><a href="' + base + row.p + '#listed-locations">' +
+      row.lc + " listed locations</a> in this directory · " + links +
+      '<span class="source-note">Matched to one cited location page. Not an ownership label. Not a national total.</span></p>';
+  }
+
   function ownBadge(code) {
     if (code === "platform_owned" || code === "pe_owned") return badge("PE or platform-owned", "platform");
     if (code === "franchise") return badge("Franchise", "franchise");
@@ -58,7 +73,8 @@
       article.innerHTML =
         "<h3><a href=\"" + base + row.p + "\">" + escapeHtml(row.n) + "</a></h3>" +
         '<p class="meta">' + escapeHtml(row.c) + ", " + escapeHtml(row.sn) + "</p>" +
-        '<p class="badges">' + ownBadge(row.o) + signal + "</p>";
+        '<p class="badges">' + ownBadge(row.o) + signal + locationsBadge(row) + "</p>" +
+        branchLinks(row);
       out.appendChild(article);
     });
     shown += slice.length;
