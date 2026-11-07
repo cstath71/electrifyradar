@@ -11,6 +11,7 @@ from collections import defaultdict
 from pathlib import Path
 from urllib.parse import quote
 
+from branches import attach_branch_groups
 from common import ROOT, STATES, load_json
 from guide_content import full_guides
 
@@ -468,7 +469,55 @@ def badge_html(row) -> str:
         signal = '<span class="badge">Heat pump program roster</span>'
     manuals = '<span class="badge quiet">Manual J: not in source</span>'
     rebates = "".join(f'<span class="badge">{esc(item["name"])}</span>' for item in row["rebate_programs"])
-    return f'<p class="badges">{own}{signal}{manuals}{rebates}</p>'
+    locations = ""
+    info = row.get("_branch")
+    if info:
+        locations = f'<span class="badge locations">{info["listed_location_count"]} listed locations</span>'
+    return f'<p class="badges">{own}{signal}{manuals}{rebates}{locations}</p>'
+
+
+def branch_directory_html(row, from_dir: str) -> str:
+    info = row.get("_branch")
+    if not info:
+        return ""
+    links = []
+    for peer in info["locations"]:
+        if peer["listing_id"] == row["id"]:
+            links.append(f'<span>{esc(peer["city"])} (this listing)</span>')
+            continue
+        href = rel_url(from_dir, peer["path"])
+        links.append(f'<a href="{esc(href)}">{esc(peer["city"])}</a>')
+    count_href = rel_url(from_dir, row["path"]) + "#listed-locations"
+    return (
+        f'<p class="branch-links"><a href="{esc(count_href)}">{info["listed_location_count"]} listed locations</a> '
+        f'in this directory · {" · ".join(links)}'
+        f'<span class="source-note">Matched to one cited location page. Not an ownership label. Not a national total.</span></p>'
+    )
+
+
+def listed_locations_section(row, from_dir: str) -> str:
+    info = row.get("_branch")
+    if not info:
+        return ""
+    items = []
+    for peer in info["locations"]:
+        label = f'{peer["name"]} — {peer["city"]}, {peer["admin1"]}'
+        if peer["listing_id"] == row["id"]:
+            items.append(f"<li>{esc(label)} (this listing)</li>")
+        else:
+            href = rel_url(from_dir, peer["path"])
+            items.append(f'<li><a href="{esc(href)}">{esc(label)}</a></li>')
+    return f"""
+<section id="listed-locations" class="listed-locations">
+  <h2>Listed locations</h2>
+  <p><strong>{info["listed_location_count"]} listed locations</strong> in this directory. The count is directory records matched to addresses on the cited page, checked {esc(info["checked"])}. It is not an exhaustive national total, and it is not an ownership label.</p>
+  <p>{esc(info["scope"])}</p>
+  <p><a href="{esc(info["source_url"])}">Location page</a>. “{esc(info["evidence_quote"])}”</p>
+  <ul>
+    {''.join(items)}
+  </ul>
+</section>
+"""
 
 
 def build():
@@ -488,6 +537,7 @@ def build():
 
     payload = load_json(ROOT / "data" / "listings.json")
     listings = payload["listings"]
+    attach_branch_groups(listings, SITE)
     by_state, by_city = group_listings(listings)
     counts = {code: len(rows) for code, rows in by_state.items()}
 
@@ -504,6 +554,14 @@ def build():
             "sv": ", ".join(row["services"][:6]),
             "rb": " ".join(item["name"] for item in row["rebate_programs"]),
         })
+        info = row.get("_branch")
+        index[-1]["lc"] = info["listed_location_count"] if info else 0
+        if info:
+            index[-1]["br"] = [
+                {"c": peer["city"], "p": peer["path"].lstrip("/")}
+                for peer in info["locations"]
+                if peer["listing_id"] != row["id"]
+            ]
     (DIST / "search-index.json").write_text(json.dumps(index, ensure_ascii=False), encoding="utf-8")
 
     global TOP_CITIES
@@ -864,7 +922,8 @@ def write_states(by_state, by_city):
   <h1>Heat pump installers in {esc(meta["name"])}</h1>
   <p class="quick-answer"><strong>Quick answer.</strong> {esc(quick)}</p>
   <div class="prose"><p>{esc(STATE_INTRO[code])}</p>
-  <p><a href="../rebates/{code}/">Rebate guide for {esc(meta["name"])}</a></p></div>
+  <p><a href="../rebates/{code}/">Rebate guide for {esc(meta["name"])}</a></p>
+  {('<p>Some city listings link other listed locations of the same business. The count is directory records matched to a cited location page. It is not an ownership label and it is not an exhaustive national total.</p>' if any(row.get("_branch") for row in rows) else '')}</div>
   {faq_section(questions)}
   {search_block(from_dir, code.upper())}
   <h2>Cities and mailing-address groups</h2>
@@ -893,7 +952,7 @@ def write_cities(by_city):
             place = row["city"] if not row.get("outside_program_state") else f"{row['city']}, {row.get('address_region')}"
             cards.append(
                 f'<article class="card" data-ownership="{esc(row["ownership_status"])}"><h3><a href="{esc(profile)}">{esc(row["name"])}</a></h3>'
-                f'<p class="meta">{esc(place)}</p>{badge_html(row)}</article>'
+                f'<p class="meta">{esc(place)}</p>{badge_html(row)}{branch_directory_html(row, from_dir)}</article>'
             )
             item_list.append({
                 "@type": "ListItem",
@@ -921,6 +980,12 @@ def write_cities(by_city):
         else:
             heading = f"Heat pump installers in {title}, {meta['name']}"
             lede = f"{len(rows)} listings with a {title} address in the public source for {meta['name']}."
+        branch_note = ""
+        if any(row.get("_branch") for row in rows):
+            branch_note = (
+                "<p>A listed-location line on a card counts directory records matched to one cited location page. "
+                "It is separate from the ownership label, and it is not a national total.</p>"
+            )
         if enriched:
             src = STATE_SOURCE[state_slug]
             own = ownership_counts(rows)
@@ -938,6 +1003,7 @@ def write_cities(by_city):
   <h1>{esc(heading)}</h1>
   {answer}
   <p class="lede">{esc(lede)}</p>
+  {branch_note}
   <div class="panel" style="margin:1rem 0">
     <label for="city-ownership">Ownership</label>
     <select id="city-ownership">
@@ -1078,6 +1144,7 @@ def write_profiles(listings):
   <p class="meta">{esc(address_line)}</p>
   {badge_html(row)}
   <div class="note"><p>{esc(ownership_phrase(row))}{own_link}</p></div>
+  {listed_locations_section(row, from_dir)}
   <dl class="facts">
     <div><dt>Phone</dt><dd>{phone}</dd></div>
     <div><dt>Website</dt><dd>{website}</dd></div>
@@ -1237,6 +1304,10 @@ def write_static_pages(counts):
   <p>Every listing starts as Ownership: unverified. That means no documented private-equity platform or franchise parent matched <a href="https://dealseam.com/hvac-pe-rollup-tracker-2026">DealSeam’s 2026 HVAC roll-up tracker</a> (page last updated 28 July 2026; read {esc(AS_OF)}) or the <a href="https://www.aireserv.com/">Aire Serv</a> site, which describes Aire Serv as a Neighborly company whose work is done by franchise companies. A match stores the parent, the matched words, the source URL, and the day the source was read. The profile links that source.</p>
   <p>Matches are narrow. “Comfort Systems” is not treated as Comfort Systems USA. “Champion” is not treated as Champions Group. The letters ARS alone are not treated as Rescue Rooter. Nexstar membership is not a match. See <a href="https://www.nexstarnetwork.com/about/">Nexstar’s about page</a>. We did not ingest a membership roster.</p>
   <p>An independent label is used only when the company’s own site states family ownership with a year or generation, or names the owner-operator, and a search on the checked date did not turn up a sale. The quotes are in the evidence file. See <a href="../platforms/">platforms and local brands</a>.</p>
+  <h2>Listed locations</h2>
+  <p>A location count is not an ownership label. Most listings have none. A count is added only when a public page — for this release, the business’s own locations page — names the addresses, and each directory record matches that page on city, ZIP, and street number. The file stores the page URL, a short quote, and the day the page was read. The count is how many of those listed locations are records in this directory. It is not a claim that we enumerated every location the company has, and it is not a national total. The same name on two listings is not enough. A shared brand or a franchise badge is not enough. Profiles, canonical URLs, and ungrouped listings stay as they were.</p>
+  <p>Automatic grouping by similar names is switched off. Site configuration <code>branch_groups.fast_mode</code> is false, and the groups file sets the same flag to false. The build stops if either flag is not false, because that mode is not implemented.</p>
+  <p>The first group is Dave’s World. Its locations page, read 7 November 2026, says “Proudly Serving All of Maine Out of Our 7 Locations” and lists the Augusta, Dover-Foxcroft, Edgecomb, Ellsworth, Presque Isle, Scarborough, and Windham addresses that match seven Maine records (<a href="https://www.davesworld.com/locations">davesworld.com/locations</a>). Those seven profiles stay Ownership: unverified. The locations page and the company story page do not state family ownership with a year or name an owner, so they do not meet the independent-label rule. The story page does say “With 7 locations across Maine,” which agrees with the locations page and is not used as an ownership source.</p>
   <p>Some California and Minnesota rows in the ten largest cities had no website in the state file. When a public web search on {esc(AS_OF)} found an official site, and the page matched the business name plus the phone, the street address and ZIP, or the license number, that URL is added to the profile with the note “Website found by ElectrifyRadar” and the match basis. A directory page is not treated as the business’s site. Finding a site does not by itself change the ownership label.</p>
   <h2>What a business tells us</h2>
   <p>The <a href="../claim/">claim form</a> asks the business to describe ownership: independent or family-owned, a franchise, part of a larger company or a private-equity-backed platform (with the name), or not sure. An optional field asks for the owner name or parent company. The form emails {esc(EMAIL)} through Web3Forms. It does not write the answer into the listing file.</p>
@@ -1331,7 +1402,7 @@ def write_platforms_page():
 <div class="wrap prose">
   {crumbs("/platforms", [("Home", "/"), ("Platforms", "/platforms/")])}
   <h1>PE platforms and franchise brands</h1>
-  <p>These are the names ElectrifyRadar will match. A listing gets the label only when its business name matches one of these terms, or when a separate evidence record quotes a page. Checked {esc(AS_OF)}. Nexstar is not on this list.</p>
+  <p>These are the names ElectrifyRadar will match. A listing gets the label only when its business name matches one of these terms, or when a separate evidence record quotes a page. Checked {esc(AS_OF)}. Nexstar is not on this list. A franchise or platform label does not group those listings into one business. Shared brand names stay separate records unless a cited location page names the addresses.</p>
   {''.join(blocks)}
   <h2>Corporate parents found in the top-50-city check</h2>
   <ul>{found_html}</ul>
@@ -1550,7 +1621,10 @@ def write_llms(counts):
         "No installer, phone number, rating, review, or price is invented. "
         "Manual J is true only when a source says so. In this release every listing says Manual J is not in the source.",
         "Ownership starts as unverified. PE or platform-owned and Franchise require a name match against a sourced list, with the source URL stored on the profile. "
-        "Nexstar membership is not an ownership label. Unverified is not a confirmation of independent ownership.",
+        "Nexstar membership is not an ownership label. Unverified is not a confirmation of independent ownership. "
+        "A listed-location count is separate from ownership. It counts directory records matched to addresses on one cited page. "
+        "It is not an exhaustive national total. Similar-name grouping is off (branch_groups.fast_mode is false). "
+        "Dave's World has 7 listed Maine locations from https://www.davesworld.com/locations (read 2026-11-07); those profiles stay Ownership: unverified.",
         "City pages with fewer than three listings are noindex and omitted from the sitemap. Installer profiles on those pages stay in the sitemap.",
         "There is no automatic daily crawl. An operator reruns the pipeline and commits the listings file. Profile dates are the day the source was checked.",
         "",

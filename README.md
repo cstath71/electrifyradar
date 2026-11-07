@@ -57,6 +57,8 @@ OEM dealer locators were not copied. Their terms generally prohibit scraping, an
 
 `data/ownership/platforms.json` matches documented platform and franchise names. `data/ownership/evidence.json` stores a label only with a quote, a URL, and the day the page was read. Nexstar is not a match term. `data/ownership/discovered_websites.json` adds an official site for a California or Minnesota top-city listing when a page matched the name plus the phone, address, or license. The profile says “Website found by ElectrifyRadar” and keeps the match basis. A discovered site does not change ownership unless that evidence file has a quote.
 
+Listed locations are separate from ownership. `data/branches/groups.json` names listing ids only when a public page lists those addresses, with the URL, a quote, and the day the page was read. The count on a profile is how many of those listed locations are records in this directory, not a national total. The same name or a shared franchise brand does not create a group. `branch_groups.fast_mode` in `config/site.json` is false. That flag would be similar-name clustering. It is not implemented, and the build stops if it is not false. The first group is Dave’s World: seven Maine records matched to https://www.davesworld.com/locations on 2026-11-07. Their ownership label stays unverified.
+
 Featured placement is a boolean on every row and is false. The quote form emails the publisher. It does not send the message to the installer and it is not a sold lead.
 
 ## Forms
