@@ -336,14 +336,15 @@ def faq_ld(items):
     }
 
 
-def article_ld(title, description, path, date_reviewed):
+def article_ld(title, description, path, date_published, date_modified=None):
+    modified = date_modified or date_published
     return {
         "@context": "https://schema.org",
         "@type": "Article",
         "headline": title,
         "description": description,
-        "datePublished": date_reviewed,
-        "dateModified": date_reviewed,
+        "datePublished": date_published,
+        "dateModified": modified,
         "author": {"@type": "Organization", "name": NAME, "url": absolute("/")},
         "publisher": {
             "@type": "Organization",
@@ -1192,7 +1193,8 @@ def write_profiles(listings):
         write_page(path, shell(from_dir, title, desc, body, path, extra_head=ld, breadcrumbs=trail))
 
 
-def guide(slug, title, description, inner, faqs=None, date_reviewed=None):
+def guide(slug, title, description, inner, faqs=None, date_reviewed=None, date_published=None):
+    reviewed = date_reviewed or AS_OF
     return {
         "path": f"/us/guides/{slug}/",
         "from": f"/us/guides/{slug}",
@@ -1200,14 +1202,18 @@ def guide(slug, title, description, inner, faqs=None, date_reviewed=None):
         "description": description,
         "inner": inner,
         "faqs": faqs or [],
-        "date_reviewed": date_reviewed or AS_OF,
+        "date_reviewed": reviewed,
+        "date_published": date_published or reviewed,
     }
 
 
 def write_static_pages(counts):
     guides = guide_pages()
     index_items = "".join(
-        f'<li><a href="{esc(page["path"].split("/us/guides/")[1])}">{esc(page["title"])}</a></li>'
+        "<li>"
+        f'<a href="{esc(page["path"].split("/us/guides/")[1])}">{esc(page["title"])}</a>'
+        f'<p class="meta">{esc(page["description"])}</p>'
+        "</li>"
         for page in guides
     )
     guide_index = f"""
@@ -1226,10 +1232,11 @@ def write_static_pages(counts):
         trail = [("Home", "/"), ("Guides", "/us/guides/"), (page["title"], page["path"])]
         faqs = page.get("faqs") or []
         reviewed = page.get("date_reviewed") or AS_OF
+        published = page.get("date_published") or reviewed
         faq_html = faq_section(faqs) if faqs else ""
         body = f'''<div class="wrap prose">{crumbs(page["from"], trail)}
         <h1>{esc(page["title"])}</h1>{page["inner"]}{faq_html}<p class="fine">Last reviewed {esc(reviewed)}. Publisher: ElectrifyRadar.</p></div>'''
-        extra = json_ld(article_ld(page["title"], page["description"], page["path"], reviewed))
+        extra = json_ld(article_ld(page["title"], page["description"], page["path"], published, reviewed))
         if faqs:
             extra += json_ld(faq_ld(faqs))
         write_page(page["path"], shell(page["from"], f'{page["title"]} | {NAME}', page["description"], body, page["path"], extra_head=extra, breadcrumbs=trail))
@@ -1456,7 +1463,8 @@ def guide_pages():
                 item["description"],
                 item["inner"],
                 faqs=item.get("faqs") or [],
-                date_reviewed=AS_OF,
+                date_reviewed=item.get("date_modified") or AS_OF,
+                date_published=item.get("date_published"),
             )
         )
     return pages
@@ -1522,7 +1530,8 @@ REBATE_COPY = {
 }
 
 
-def urlset(paths):
+def urlset(paths, lastmods=None):
+    lastmods = lastmods or {}
     urls = []
     seen = set()
     for path in paths:
@@ -1530,7 +1539,7 @@ def urlset(paths):
             continue
         seen.add(path)
         loc = absolute(path if path.endswith(".html") else path)
-        urls.append(f"  <url><loc>{esc(loc)}</loc><lastmod>{AS_OF}</lastmod></url>")
+        urls.append(f"  <url><loc>{esc(loc)}</loc><lastmod>{esc(lastmods.get(path, AS_OF))}</lastmod></url>")
     body = "\n".join(urls)
     return (
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
@@ -1544,8 +1553,10 @@ def write_sitemap(listings, by_city):
     for code in STATES:
         pages.append(f"/us/{code}/")
         pages.append(f"/us/rebates/{code}/")
+    page_lastmod = {}
     for page in guide_pages():
         pages.append(page["path"])
+        page_lastmod[page["path"]] = page.get("date_reviewed") or AS_OF
     cities = [f"/us/{state_slug}/{city_slug}/" for state_slug, city_slug in by_city]
     installers = [row["path"] for row in listings]
     files = {
@@ -1553,12 +1564,15 @@ def write_sitemap(listings, by_city):
         "sitemap-cities.xml": cities,
         "sitemap-installers.xml": installers,
     }
+    lastmods_by_file = {"sitemap-pages.xml": page_lastmod}
     for name, paths in files.items():
-        (DIST / name).write_text(urlset(paths), encoding="utf-8")
+        (DIST / name).write_text(urlset(paths, lastmods_by_file.get(name)), encoding="utf-8")
     entries = []
-    for name in files:
+    for name, paths in files.items():
+        mods = lastmods_by_file.get(name) or {}
+        file_lastmod = max((mods.get(path, AS_OF) for path in paths), default=AS_OF)
         entries.append(
-            f"  <sitemap><loc>{esc(absolute('/' + name))}</loc><lastmod>{AS_OF}</lastmod></sitemap>"
+            f"  <sitemap><loc>{esc(absolute('/' + name))}</loc><lastmod>{esc(file_lastmod)}</lastmod></sitemap>"
         )
     index = (
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
@@ -1603,7 +1617,7 @@ def write_llms(counts):
         f"- Methodology: {absolute('/methodology/')}",
         f"- Guides index: {absolute('/us/guides/')}",
         f"- Mass Save rebate guide: {absolute('/us/guides/mass-save-heat-pump-rebate/')}",
-        f"- Vetting checklist: {absolute('/us/guides/questions-to-ask-heat-pump-installer/')}",
+        f"- How to compare heat pump installers before requesting quotes: {absolute('/us/guides/questions-to-ask-heat-pump-installer/')}",
         f"- Efficiency Maine rebate guide: {absolute('/us/guides/efficiency-maine-heat-pump-rebate/')}",
         f"- Ownership / PE guide: {absolute('/us/guides/independent-vs-pe-hvac/')}",
         f"- Cold-climate heat pumps: {absolute('/us/guides/cold-climate-heat-pumps/')}",

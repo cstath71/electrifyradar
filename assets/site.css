@@ -218,6 +218,8 @@ dd { margin: 0; }
 }
 .site-footer a { color: #f4f0e6; }
 .footer-grid { display: grid; gap: 1rem; }
+.footer-grid > * { min-width: 0; max-width: 100%; }
+.site-footer p a + a::before { content: "\200b"; }
 .fine { color: #d9d0c0; font-size: 0.92rem; }
 .source-note { display: block; color: var(--muted); font-size: 0.88rem; margin-top: 0.2rem; }
 
@@ -261,5 +263,17 @@ dd { margin: 0; }
 .prose table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.95rem; }
 .prose th, .prose td { border: 1px solid var(--line); padding: 0.5rem 0.65rem; text-align: left; vertical-align: top; }
 .prose th { background: var(--paper-2); font-weight: 600; }
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 1rem 0;
+  max-width: 100%;
+}
+.table-scroll table { width: 100%; margin: 0; table-layout: fixed; }
+.table-scroll th, .table-scroll td { overflow-wrap: anywhere; }
+@media (max-width: 719px) {
+  .prose .table-scroll th,
+  .prose .table-scroll td { padding: 0.45rem 0.5rem; }
+}
 .prose ol { padding-left: 1.3rem; }
 .prose ol li, .prose ul li { margin: 0.35rem 0; }
