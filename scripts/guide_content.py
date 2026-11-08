@@ -19,14 +19,16 @@ def full_guides(as_of: str):
     ]
 
 
-def _g(slug, title, description, inner, faqs):
-    return {
+def _g(slug, title, description, inner, faqs, **extra):
+    page = {
         "slug": slug,
         "title": title,
         "description": description,
         "inner": inner,
         "faqs": faqs,
     }
+    page.update(extra)
+    return page
 
 
 def _mass_save(as_of: str):
@@ -146,149 +148,67 @@ Ownership labels follow our <a href="../../../methodology/">methodology</a>. Col
     )
 
 
-def _vet_installer(as_of: str):
-    faqs = [
-        (
-            "What is Manual J and why does it matter?",
-            "Manual J is the Air Conditioning Contractors of America procedure for estimating a home’s heating and cooling load. "
-            "A heat pump that is too large short-cycles; one that is too small runs constantly and can still miss design temperature. "
-            "ElectrifyRadar marks Manual J on a listing only when a public source says the installer performed or claimed it — and none of the launch-state files say that. "
-            "See our <a href=\"../manual-j-load-calculation/\">Manual J guide</a>.",
-        ),
-        (
-            "How many quotes should I get?",
-            "Mass Save’s air-source heat pump page recommends proposals from at least two or three Heat Pump Installer Network contractors. "
-            "Use the same written questions for each bid so you can compare equipment, capacity at design temperature, and rebate paperwork side by side.",
-        ),
-        (
-            "Should I care if the company is PE- or platform-owned?",
-            "Ownership is a fact about who answers the phone in year six, not a star rating. ElectrifyRadar labels PE or platform-owned and Franchise only from cited public lists; otherwise the label is Ownership: unverified. "
-            "Read <a href=\"../independent-vs-pe-hvac/\">independent vs PE-owned HVAC</a> and still compare Manual J bids either way.",
-        ),
-        (
-            "Does a program badge (HPIN / Efficiency Maine / Clean Heat) guarantee quality?",
-            "No. Program networks document training, insurance, or registration rules the sponsor publishes — Mass Save, for example, says HPIN participation is not an endorsement. "
-            "Treat the badge as a rebate-eligibility filter, then interview the contractor with the checklist on this page.",
-        ),
-        (
-            "What paperwork should I keep after install?",
-            "Keep the signed contract, equipment model and serial numbers (photos of nameplates help), Manual J or load sheet, permit finals, warranty registration, and the rebate application confirmation. "
-            "Mass Save applications filed on or after 1 October 2026 require outdoor-unit serial photos. Efficiency Maine asks for claims within six months of project completion.",
-        ),
-    ]
-    inner = f"""
-<p class="quick-answer"><strong>Quick answer.</strong> A serious heat pump bid names the equipment models, shows a Manual J (or equivalent) load calculation with your town’s design outdoor temperature, explains capacity at that temperature, states permits and electrical work, and says who handles rebate paperwork. Square-footage-only sizing is a red flag. Pull program-qualified installers from ElectrifyRadar’s state directories, then interview them with the same list.</p>
+def _vet_installer(_as_of: str):
+    # Approved body has no dated program figures, so the data-as-of stamp is not interpolated.
+    faqs = []
+    inner = """
+<p>Start with businesses that serve your home and have experience with the kind of system you need. Then ask each bidder to explain its sizing approach and put the same scope of work in writing. A directory listing, familiar brand or low headline price cannot answer those questions for you.</p>
+<p>The aim is a shortlist you understand and proposals you can compare, not a ranking based on badges or company size.</p>
 
-<h2>Steps</h2>
-<ol>
-  <li><strong>Gather house facts:</strong> recent utility bills, existing heat type, duct condition, electrical panel amp rating, and comfort problems by room.</li>
-  <li><strong>Shortlist three program-roster installers</strong> in your city from
-  <a href="../../ma/">Massachusetts (HPIN)</a>,
-  <a href="../../me/">Maine (Efficiency Maine registered vendors)</a>,
-  <a href="../../ny/">New York (NYS Clean Heat)</a>,
-  <a href="../../ca/">California (TECH Clean California)</a>, or
-  <a href="../../mn/">Minnesota (mechanical-bond listings)</a>.
-  Confirm rebate eligibility on the matching
-  <a href="../rebates/">rebate guide</a>.</li>
-  <li><strong>Ask every bidder the same questions</strong> from the table below. ENERGY STAR’s HVAC Quality Installation bid comparison sheet is a useful parallel checklist.</li>
-  <li><strong>Compare on paper,</strong> not on a hallway handshake. Reject bids that only quote “X tons for Y square feet.”</li>
-  <li><strong>Verify license, insurance, and program registration</strong> on the official finder, not only on our copy of the roster.</li>
-  <li><strong>Sign only when</strong> Manual J (or equivalent), model numbers, warranty terms, and rebate responsibilities are written into the contract.</li>
-</ol>
+<h2>Prepare a short description of your home</h2>
+<p>Before contacting installers, note your existing heating system, uncomfortable rooms, recent energy use and any planned insulation or window work. Explain whether you want whole-home heating, help for particular rooms or a replacement cooling system with heating capability.</p>
+<p><a href="https://www.energystar.gov/saveathome/heating-cooling/10-tips-hiring">ENERGY STAR's contractor-hiring guidance</a> recommends knowing your existing system and its maintenance history, noting comfort problems and expecting a home evaluation. Give bidders the same starting information. Ask what they need to inspect before providing a firm proposal.</p>
 
-<h2>Questions checklist</h2>
+<h2>Shortlist businesses, not just directory entries</h2>
+<p>Confirm service coverage for your address and ask which office would handle installation and later service. Check whether multiple listings are branches of a business you have already contacted. A second branch is not automatically a separate competitor.</p>
+<p>Ask about recent work on similar homes and the proposed system type, such as ducted or ductless equipment. Request references and ask about installation and follow-up service. Experience with one type of project does not establish suitability for every home.</p>
+<p>Verify applicable licensing and insurance requirements through the relevant state or local authority. If you plan to use an incentive, separately check the program administrator's current contractor requirements. Not every jurisdiction or program uses the same credentials.</p>
+<p>Read the source behind a directory entry. ElectrifyRadar's Minnesota mechanical-bond listings are not a heat-pump-qualified installer roster. A mechanical contracting credential alone does not establish heat-pump experience or rebate eligibility. Our <a href="https://electrifyradar.com/methodology/">methodology</a> explains these source differences.</p>
+
+<h2>Ask how the proposed system will be sized</h2>
+<p>Ask the installer to explain the home's heating and cooling loads and how those loads inform equipment selection. ENERGY STAR's <a href="https://www.energystar.gov/products/energy_star_home_upgrade/clean_heating_cooling">heat pump buying guidance</a> recommends verifying system size with a Manual J calculation and discusses component matching, duct assessment and onsite inspection.</p>
+<p>Ask how the proposal accounts for your local winter conditions, room distribution and any retained backup heat. A statement based only on floor area or the old equipment size needs more explanation. You do not need to perform the design yourself, but you should understand the basis of the recommendation and what documentation you will receive.</p>
+
+<h2>Request a comparable written scope</h2>
+<p>Ask each bidder to identify what is included, excluded and still subject to inspection. Use the same questions for each proposal:</p>
+<div class="table-scroll">
 <table>
-  <thead><tr><th>Question</th><th>Good answer</th><th>Red flag</th></tr></thead>
+  <thead><tr><th>Ask about</th><th>What to request in writing</th></tr></thead>
   <tbody>
-    <tr><td>Did you run Manual J (or equivalent) for this house?</td><td>Yes — and they can show the load, rooms, and design outdoor temperature</td><td>“We size by square footage” or “same as the last job”</td></tr>
-    <tr><td>What heating capacity do you claim at design temperature?</td><td>A BTU number at a stated outdoor °F, compared with the load</td><td>Only mild-weather efficiency talk (SEER2/HSPF2) with no cold capacity</td></tr>
-    <tr><td>Exact models and AHRI reference?</td><td>Written on the quote; match your state’s QPL / ENERGY STAR Cold Climate list</td><td>“We’ll pick something equivalent later”</td></tr>
-    <tr><td>Ducts or refrigerant layout?</td><td>Static pressure / duct plan, or head placement and line-set path</td><td>No site visit before the final number</td></tr>
-    <tr><td>Permits and electrical?</td><td>Who pulls the permit; panel or circuit work as line items</td><td>Cash price that “skips the permit”</td></tr>
-    <tr><td>Backup heat plan?</td><td>Clear statement: remove, disconnect, or integrated control with switchover temp</td><td>Vague “leave the furnace, you’ll be fine”</td></tr>
-    <tr><td>Who files the rebate?</td><td>Named party, required photos/serials, and the program deadline</td><td>“You figure out the rebate”</td></tr>
-    <tr><td>Who services this in year five?</td><td>Local dispatch path; ownership label on ElectrifyRadar if sourced</td><td>Pressure to sign today with no service story</td></tr>
+    <tr><td>Equipment and sizing</td><td>Indoor and outdoor model numbers, sizing basis and intended heating coverage</td></tr>
+    <tr><td>Distribution</td><td>Proposed duct work or indoor-unit placement, refrigerant routing and relevant airflow checks</td></tr>
+    <tr><td>Electrical and ancillary work</td><td>Circuits, any proposed panel work, mounting, drainage, removal and making good disturbed areas</td></tr>
+    <tr><td>Existing heat</td><td>What stays, what changes and how backup heat or controls would operate</td></tr>
+    <tr><td>Installation responsibilities</td><td>Who performs the work, handles applicable permits and documents commissioning checks</td></tr>
+    <tr><td>Warranty and service</td><td>Equipment and labor coverage, exclusions, registration responsibilities and service contact</td></tr>
+    <tr><td>Timing and price</td><td>Schedule, itemized costs, exclusions and how changes will be agreed</td></tr>
   </tbody>
 </table>
-<p>ENERGY STAR publishes a printable HVAC Quality Installation bid sheet at
-<a href="https://www.energystar.gov/sites/default/files/asset/document/HVAC_QI_bidsheet.pdf">energystar.gov (PDF)</a>.
-Mass Save’s ASHP page also points to “Questions to Ask your Installer.”</p>
+</div>
+<p>Some items will not apply to your project. Ask bidders to mark those explicitly rather than leaving gaps. ENERGY STAR recommends written, itemized estimates and a written proposal covering costs, model numbers, schedule and warranty information.</p>
 
-<h2>Where to find roster installers</h2>
+<h2>Keep rebates separate from the installation promise</h2>
+<p>Ask which program a quoted incentive refers to, what equipment and contractor conditions apply, whether approval is needed before work and who submits the documents. Verify the answer with the current program administrator before relying on it.</p>
+<p>Keep the full project price visible beside any assumed incentive. A contractor's estimate is not a guarantee of a rebate or tax benefit. Eligibility can depend on the household, equipment, work scope, application timing and program rules. This guide does not establish your eligibility.</p>
+
+<h2>Compare the proposals before choosing</h2>
 <ul>
-  <li><a href="../../ma/">Massachusetts HPIN listings</a> · rebates: <a href="../rebates/ma/">/us/rebates/ma/</a> · deep dive: <a href="../mass-save-heat-pump-rebate/">Mass Save guide</a></li>
-  <li><a href="../../me/">Maine registered vendors</a> · <a href="../rebates/me/">Maine rebates</a> · <a href="../efficiency-maine-heat-pump-rebate/">Efficiency Maine guide</a></li>
-  <li><a href="../../ny/">NYS Clean Heat contractors</a> · <a href="../rebates/ny/">NY rebates</a> · official finder: <a href="https://cleanheat.ny.gov/">cleanheat.ny.gov</a></li>
-  <li><a href="../../ca/">California TECH contractors</a> · <a href="../rebates/ca/">CA incentives status</a></li>
-  <li><a href="../../ct/">Connecticut Energize CT heat pump installers</a> · <a href="../rebates/ct/">CT rebate notes</a></li>
-  <li><a href="../../ri/">Rhode Island Clean Heat RI installers</a> · <a href="../rebates/ri/">RI rebate notes</a></li>
-  <li><a href="../../vt/">Vermont ductless specialists</a> · <a href="../rebates/vt/">VT rebate notes</a></li>
-  <li><a href="../../mn/">Minnesota mechanical-bond listings</a> · <a href="../rebates/mn/">MN rebate status</a> (state approved-contractor list not published as of {as_of})</li>
+  <li>Check that the bidders are offering the same intended heating coverage.</li>
+  <li>Resolve missing equipment details, electrical work and exclusions before comparing totals.</li>
+  <li>Ask why sizing or backup-heat recommendations differ.</li>
+  <li>Compare warranty and service responsibilities as well as purchase cost.</li>
+  <li>Keep written answers and request a revised proposal when the scope changes.</li>
 </ul>
-<p>Ownership rules: <a href="../how-we-label-ownership/">how we label ownership</a> · <a href="../../../methodology/">methodology</a>.</p>
-
-<h2>What a written bid should include</h2>
-<p>Ask for the following in the email or PDF before you pay a deposit. If an item is missing, ask for a revision rather than filling gaps from memory after the crew leaves.</p>
-<ul class="checklist">
-  <li>Site address and date of the visit</li>
-  <li>Heating and cooling loads from Manual J (or equivalent), with the outdoor design temperature named</li>
-  <li>Indoor and outdoor model numbers, and the AHRI reference if your rebate program needs it</li>
-  <li>Heating capacity (BTU/h) at the design outdoor temperature, not only at 47 °F</li>
-  <li>Whether the system is full displacement, partial displacement, or cooling-led with optional heat</li>
-  <li>Electrical scope: panel work, new circuits, disconnects, who pulls the permit</li>
-  <li>Duct sealing or refrigerant line-set path, length, and insulation</li>
-  <li>Plan for the existing furnace, boiler, or oil tank</li>
-  <li>Who files rebate paperwork, which photos or serials are required, and the claim deadline</li>
-  <li>Parts, labor, and compressor warranty lengths in writing</li>
-  <li>Service phone number and typical response window after the first heating season</li>
-</ul>
-
-<h2>How to run the same script on every bid</h2>
-<p>Print or paste the questions table into a notes app. For each company, fill Bid A / Bid B columns in the meeting. Do not rely on a hallway summary. Mass Save’s air-source heat pump page recommends proposals from at least two or three Heat Pump Installer Network contractors; the same habit helps in Maine, New York, California, and Minnesota even when the program name differs.</p>
-<table>
-  <thead><tr><th>Item</th><th>Bid A</th><th>Bid B</th><th>Bid C</th></tr></thead>
-  <tbody>
-    <tr><td>On official finder? (yes/no + date checked)</td><td></td><td></td><td></td></tr>
-    <tr><td>Load calc shared?</td><td></td><td></td><td></td></tr>
-    <tr><td>Design outdoor °F</td><td></td><td></td><td></td></tr>
-    <tr><td>Heating capacity at that °F</td><td></td><td></td><td></td></tr>
-    <tr><td>Backup heat plan</td><td></td><td></td><td></td></tr>
-    <tr><td>Electrical included?</td><td></td><td></td><td></td></tr>
-    <tr><td>Rebate filing included?</td><td></td><td></td><td></td></tr>
-    <tr><td>Labor warranty (years)</td><td></td><td></td><td></td></tr>
-  </tbody>
-</table>
-<p>The lower total is not automatically the better system if one bid omitted electrical work, used a warmer design day, or left rebate filing to you.</p>
-
-<h2>Red flags that deserve a second look</h2>
-<ul>
-  <li>No load calculation, or “we always install 3-ton units on this street.”</li>
-  <li>Capacity discussed only at 47 °F in a cold-climate town — see <a href="../cold-climate-heat-pumps/">cold-climate heat pumps</a>.</li>
-  <li>Pressure to sign the same day to “lock a rebate” without written terms.</li>
-  <li>Company name on the quote that does not match the official finder.</li>
-  <li>Refusal to name subcontractors or the electrical permit holder.</li>
-  <li>Cash price that “skips the permit.”</li>
-</ul>
-<p>None of those alone proves a bad actor. Together they mean you should get another bid before you pay a deposit. Ownership labels on ElectrifyRadar (<a href="../how-we-label-ownership/">how we label ownership</a>) are facts about who owns the company when we have a source — not star ratings and not a substitute for the questions above.</p>
-
-<h2>Where ElectrifyRadar helps — and where it stops</h2>
-<p>We publish free directory pages built from official lists, with methodology notes and ownership labels when sourced. We do not sell leads, invent star ratings, or take payment to reorder names. After you shortlist from <a href="../../">state and city pages</a>, the interview is yours. For rebate amounts and rules, use the dated program pages linked from <a href="../rebates/">rebate guides</a>, including <a href="../mass-save-heat-pump-rebate/">Mass Save</a> and <a href="../efficiency-maine-heat-pump-rebate/">Efficiency Maine</a>.</p>
-
-<h2>Sources (as of Nov 2026)</h2>
-<ul>
-  <li><a href="https://www.energystar.gov/sites/default/files/asset/document/HVAC_QI_bidsheet.pdf">ENERGY STAR HVAC Quality Installation bid comparison sheet (PDF)</a></li>
-  <li><a href="https://www.masssave.com/residential/rebates-offers-services/heating-and-cooling/heat-pumps/air-source-heat-pumps">Mass Save ASHP page</a> (2–3 HPIN proposals; Questions to Ask your Installer)</li>
-  <li><a href="https://www.acca.org/standards/technical-manuals">ACCA technical manuals</a> (Manual J overview)</li>
-  <li><a href="https://www.efficiencymaine.com/at-home/vendor-locator/">Efficiency Maine vendor locator</a></li>
-  <li><a href="https://cleanheat.ny.gov/">NYS Clean Heat</a></li>
-</ul>
+<p>Ownership information is separate context, not a workmanship score. Our <a href="https://electrifyradar.com/us/guides/independent-vs-pe-hvac/">ownership-label guide</a> explains what sourced labels mean. Whether the business has one location or several, compare its written proposal and answers for your home. None of these checks guarantees performance, but they make unresolved questions visible before you commit.</p>
 """
     return _g(
         "questions-to-ask-heat-pump-installer",
-        "Questions to ask a heat pump installer before you sign (Manual J, quotes, rebates)",
-        "A homeowner checklist for vetting heat pump installers: Manual J, design temperature capacity, QPL models, permits, rebates, and ownership. No fake ratings.",
+        "How to compare heat pump installers before requesting quotes",
+        "Build a useful heat pump installer shortlist, ask about sizing and service, and compare written quotes without assuming credentials or rebates guarantee results.",
         inner,
         faqs,
+        date_published="2026-11-03",
+        date_modified="2026-11-08",
     )
 
 

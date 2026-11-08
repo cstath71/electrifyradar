@@ -88,6 +88,8 @@ class SiteTest(unittest.TestCase):
             DIST / "us" / "ma" / "index.html",
             DIST / "us" / "rebates" / "mn" / "index.html",
             DIST / "us" / "guides" / "how-we-label-ownership" / "index.html",
+            DIST / "us" / "guides" / "questions-to-ask-heat-pump-installer" / "index.html",
+            DIST / "us" / "guides" / "index.html",
             DIST / "about" / "index.html",
             DIST / "claim" / "index.html",
         ]
