@@ -277,3 +277,9 @@ dd { margin: 0; }
 }
 .prose ol { padding-left: 1.3rem; }
 .prose ol li, .prose ul li { margin: 0.35rem 0; }
+.directory-names { padding-left: 1.2rem; margin: 0 0 1.5rem; }
+.directory-names li { margin: 0.15rem 0; }
+@media (min-width: 720px) {
+  .directory-names { columns: 2; }
+  .directory-names li { break-inside: avoid; }
+}

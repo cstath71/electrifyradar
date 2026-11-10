@@ -6,6 +6,14 @@ official page checked on AS_OF stated them; the prose always links that page.
 
 from __future__ import annotations
 
+from geo_answers import (
+    CONTENT_UPDATED,
+    efficiency_maine_faqs,
+    efficiency_maine_lead,
+    mass_save_rebate_faqs,
+    mass_save_rebate_lead,
+)
+
 
 def full_guides(as_of: str):
     """Return the five expanded guides first, then remaining stubs."""
@@ -32,54 +40,13 @@ def _g(slug, title, description, inner, faqs, **extra):
 
 
 def _mass_save(as_of: str):
-    faqs = [
-        (
-            "Whole-home vs partial-home — what’s the difference?",
-            "On the Mass Save air-source heat pump page checked "
-            f"{as_of}, whole-home rebates are for customers who install heat pumps as the sole source for heating and cooling. "
-            "Partial-home rebates are for customers who keep an existing boiler or furnace to supplement a new heat pump system, "
-            "and those projects generally need an integrated control from Mass Save’s Integrated Control Qualified Product List "
-            "where propane, oil, or natural gas will remain in use. Basic rebates cover installs that are not displacing fossil fuel "
-            "or electric resistance heat. Re-check "
-            '<a href="https://www.masssave.com/residential/rebates-offers-services/heating-and-cooling/heat-pumps/air-source-heat-pumps">the official ASHP page</a> '
-            "before you sign.",
-        ),
-        (
-            "Do I need insulation done first?",
-            "For the whole-home rebate, Mass Save requires the home to be sufficiently weatherized and a Whole-Home Heat Pump Verification Form "
-            "to be completed and signed. Sufficient weatherization can be shown by at least one of: the home was built during or after 2000; "
-            "a Home Energy Assessment report recommends less than $1,000 of weatherization; or weatherization recommendations made during or after "
-            "2013 have been completed. Heat pumps that do not meet that weatherization rule may still be eligible for partial-home amounts. "
-            "Partial-home projects can earn a $500 weatherization bonus when assessment and recommended weatherization fall in the window Mass Save publishes. "
-            "Details are on "
-            '<a href="https://www.masssave.com/residential/rebates-offers-services/heating-and-cooling/heat-pumps/air-source-heat-pumps">Mass Save’s ASHP page</a>.',
-        ),
-        (
-            "Does my installer have to be on HPIN?",
-            "Yes for these Mass Save air-source heat pump rebates. The program page states that equipment must be installed by a contractor participating "
-            "in the Mass Save Heat Pump Installer Network. ElectrifyRadar’s "
-            '<a href="../../ma/">Massachusetts directory</a> '
-            "is built from that public network file (header Revised: 10-29-2026, checked "
-            f"{as_of}). Confirm the company on "
-            '<a href="https://www.masssave.com/residential/find-a-contractor/find-a-heat-pump-installer">Mass Save’s installer finder</a> '
-            "before you rely on a listing.",
-        ),
-        (
-            "Where do I check if my model is on the QPL?",
-            "Mass Save requires ENERGY STAR Cold Climate equipment and points to the Mass Save Heat Pump Qualified Products List from "
-            '<a href="https://www.masssave.com/residential/rebates-offers-services/heating-and-cooling/heat-pumps/air-source-heat-pumps">the ASHP rebate page</a>. '
-            "Ask every bidder to write the exact outdoor and indoor model numbers and the AHRI reference number on the quote, then match those to the QPL yourself.",
-        ),
-        (
-            "How does the Mass Save HEAT loan relate to the rebate?",
-            "The rebate and the HEAT loan are separate paths. Mass Save’s program materials point homeowners to the HEAT loan portal at "
-            '<a href="https://www.myheatloan.com/">myheatloan.com</a> '
-            "for financing questions. Loan eligibility, rates, and whether a project can combine both change. Treat the portal and your HPIN contractor as the source of truth; this page is not lending advice.",
-        ),
-    ]
+    lead = mass_save_rebate_lead(as_of)
+    faqs = mass_save_rebate_faqs(lead, as_of)
+    opening = f"""
+<p class="meta">Last updated {_long_date(as_of)}.</p>
+<p class="quick-answer"><strong>Quick answer.</strong> {lead}</p>
+"""
     inner = f"""
-<p class="quick-answer"><strong>Quick answer.</strong> Mass Save air-source heat pump rebates in 2026 are tonnage-based (whole-home, partial-home, and basic), require ENERGY STAR Cold Climate equipment on the Mass Save Qualified Products List, and must be installed by a Heat Pump Installer Network (HPIN) contractor. The 2026 amounts published on Mass Save’s ASHP page (checked {as_of}) are $2,650 per ton up to $8,500 for whole-home, $1,125 per ton up to $8,500 for partial-home, and $250 per ton up to $2,500 for basic, with income-based enhanced incentives up to $16,000. Those figures change — re-check the official page before you sign. ElectrifyRadar lists HPIN contractors from the public network file.</p>
-
 <h2>What Mass Save published for 2026 (and the 2027 cut)</h2>
 <p>Figures below are copied from
 <a href="https://www.masssave.com/residential/rebates-offers-services/heating-and-cooling/heat-pumps/air-source-heat-pumps">Mass Save’s Air Source Heat Pumps page</a>,
@@ -141,10 +108,15 @@ Ownership labels follow our <a href="../../../methodology/">methodology</a>. Col
 """
     return _g(
         "mass-save-heat-pump-rebate",
-        "Mass Save heat pump rebate (2026): whole-home vs partial, QPL, and HPIN installers",
-        "2026 Mass Save air-source heat pump rebates, HPIN rules, QPL equipment, and how to find qualifying Massachusetts installers. Figures dated Nov 2026 from Mass Save.",
+        "Mass Save heat pump rebate 2026 whole-home vs partial amount",
+        "2026 Mass Save whole-home versus partial-home heat pump rebate amounts, from the Mass Save air-source heat pump page checked on the data date.",
         inner,
         faqs,
+        opening=opening,
+        faq_first=True,
+        faq_plain=True,
+        date_published=as_of,
+        date_modified=CONTENT_UPDATED,
     )
 
 
@@ -203,12 +175,12 @@ def _vet_installer(_as_of: str):
 """
     return _g(
         "questions-to-ask-heat-pump-installer",
-        "How to compare heat pump installers before requesting quotes",
-        "Build a useful heat pump installer shortlist, ask about sizing and service, and compare written quotes without assuming credentials or rebates guarantee results.",
+        "Questions to ask a heat pump installer before getting quotes",
+        "Questions to ask a heat pump installer before getting quotes, including sizing, written scope, rebates, and ownership.",
         inner,
         faqs,
         date_published="2026-11-03",
-        date_modified="2026-11-08",
+        date_modified=CONTENT_UPDATED,
     )
 
 
@@ -232,55 +204,11 @@ def _long_date(iso: str) -> str:
 
 
 def _efficiency_maine(as_of: str):
-    rebate_answer = (
-        f"Efficiency Maine's residential heat pump rebates page, checked {as_of}, lists per outdoor unit amounts of "
-        "$3,000 for low income (lifetime cap $9,000 per housing unit), $2,000 for moderate income (cap $6,000), "
-        "and $1,000 for any income (cap $3,000). Multi-zone outdoor units are not rebate-eligible on that table. "
-        "Single-zone units on Efficiency Maine's list are rebate-eligible. "
-        "Read the official table at https://www.efficiencymaine.com/at-home/residential-heat-pump-rebates/ before you apply."
-    )
-    faqs = [
-        (
-            "What does Efficiency Maine pay for a residential heat pump?",
-            "Efficiency Maine pays a residential heat pump rebate only when a Residential Registered Vendor installs eligible equipment "
-            f"under the rules on its rebate page (income tiers, primary heat use, and sizing). {rebate_answer}",
-        ),
-        (
-            "Who must install the system for the rebate?",
-            "Efficiency Maine's residential heat pump rebate page states the system must be installed by an Efficiency Maine Residential Registered Vendor for heat pumps. "
-            f"ElectrifyRadar's Maine directory (https://electrifyradar.com/us/me/) is built from that locator, checked {as_of}. "
-            "Confirm the vendor on https://www.efficiencymaine.com/at-home/vendor-locator/.",
-        ),
-        (
-            "Do multi-zone systems qualify?",
-            "On the eligibility table Efficiency Maine published (checked "
-            f"{as_of}), multi-zone heat pumps are not rebate-eligible, though their design-temperature heating capacity can still count toward total heating capacity of all heat pumps. "
-            "Single-zone units on Efficiency Maine's list are rebate-eligible. Dual-fuel heat pump / furnace packages are not rebate-eligible and their capacity does not count. "
-            "Re-read https://www.efficiencymaine.com/at-home/residential-heat-pump-rebates/ before you buy.",
-        ),
-        (
-            "What does primary heating system mean if I keep oil or propane?",
-            "The rebate page requires heat pumps to be used as the primary heating system throughout the heating season. "
-            "For existing construction, any furnace or boiler must be reserved for emergency backup only, for example by turning thermostats all the way down, covering the power switch, or connecting the fossil system only to a generator. "
-            "Primary systems can back you up in an emergency, but their heating capacity cannot be counted toward the 100% sizing requirement. "
-            f"New construction rules tighten further on 1 January 2027 (no furnace or boiler). Page checked {as_of}.",
-        ),
-        (
-            "How long do I have to submit the claim?",
-            f"Efficiency Maine says the rebate claim form must be emailed or postmarked within six months of project completion (page checked {as_of}). Incomplete information can delay or disqualify the rebate.",
-        ),
-        (
-            "Where do I find registered vendors near Portland, Bangor, or Augusta?",
-            "Start on ElectrifyRadar city pages for Portland (https://electrifyradar.com/us/me/portland/), "
-            "Bangor (https://electrifyradar.com/us/me/bangor/), Augusta (https://electrifyradar.com/us/me/augusta/), "
-            "and Brunswick (https://electrifyradar.com/us/me/brunswick/), then confirm each company on "
-            "https://www.efficiencymaine.com/at-home/vendor-locator/. "
-            "Names matched to a private equity platform are listed at https://electrifyradar.com/us/me/private-equity/.",
-        ),
-    ]
+    lead = efficiency_maine_lead(as_of)
+    faqs = efficiency_maine_faqs(lead, as_of)
     opening = f"""
 <p class="meta">Last updated {_long_date(as_of)}.</p>
-<p class="quick-answer"><strong>Quick answer.</strong> {rebate_answer} Use the Maine directory to shortlist a Residential Registered Vendor, then confirm that vendor on Efficiency Maine.</p>
+<p class="quick-answer"><strong>Quick answer.</strong> {lead}</p>
 <p><a href="../../me/">Maine installer directory</a>. <a href="../../me/private-equity/">Which Maine HVAC companies are owned by private equity platforms</a>. <a href="https://www.efficiencymaine.com/at-home/residential-heat-pump-rebates/">Efficiency Maine residential heat pump rebates</a>.</p>
 """
     inner = f"""
@@ -372,14 +300,15 @@ For cold-weather capacity language, see
 """
     return _g(
         "efficiency-maine-heat-pump-rebate",
-        "Efficiency Maine heat pump rebate: eligibility, registered vendors, and how to apply",
-        "Efficiency Maine residential heat pump rebate tiers, single-zone vs multi-zone rules, and registered vendors. Figures dated Nov 2026 from Efficiency Maine.",
+        "Efficiency Maine heat pump rebate 2026 amount",
+        "Efficiency Maine heat pump rebate 2026 amounts by income tier, from the official residential rebate page checked on the data date.",
         inner,
         faqs,
         opening=opening,
         faq_first=True,
         faq_plain=True,
-        date_modified=as_of,
+        date_published=as_of,
+        date_modified=CONTENT_UPDATED,
     )
 
 
@@ -414,8 +343,6 @@ def _independent_vs_pe(as_of: str):
         ),
     ]
     inner = f"""
-<p class="quick-answer"><strong>Quick answer.</strong> Private-equity and platform roll-ups buy local HVAC brands and often keep the old name. That is not automatically bad work — and it is not visible on star ratings. ElectrifyRadar labels <strong>PE or platform-owned</strong> or <strong>Franchise</strong> only from a cited public match list; otherwise <strong>Ownership: unverified</strong>. We do not print “Independent” without a source.</p>
-
 <h2>What each label means</h2>
 <table>
   <thead><tr><th>Label</th><th>What it means</th><th>What it does not mean</th></tr></thead>
@@ -497,10 +424,14 @@ for the full sizing and rebate script.</p>
 """
     return _g(
         "independent-vs-pe-hvac",
-        "PE-owned vs independent HVAC: what homeowners should know (and how we label it)",
-        "What PE or platform-owned, franchise, independent, and unverified mean on ElectrifyRadar — sourced labels only, no paid badges.",
+        "Is my HVAC heat pump installer owned by private equity: how to tell",
+        "How to tell if an HVAC heat pump installer is owned by private equity, using sourced ElectrifyRadar labels checked on the data date.",
         inner,
         faqs,
+        faq_first=True,
+        faq_plain=True,
+        date_published=as_of,
+        date_modified=CONTENT_UPDATED,
     )
 
 

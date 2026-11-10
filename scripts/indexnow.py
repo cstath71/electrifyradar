@@ -63,6 +63,7 @@ def page_urls(dist: Path):
 def main():
     parser = argparse.ArgumentParser(description="Ping IndexNow with sitemap URLs")
     parser.add_argument("--dry-run", action="store_true", help="Print the payload size and do not send it")
+    parser.add_argument("--url", action="append", default=[], help="Submit only these absolute URLs")
     args = parser.parse_args()
     site = load_json(ROOT / "config" / "site.json")
     key = (site.get("indexnow_key") or "").strip()
@@ -70,8 +71,8 @@ def main():
     host = origin.split("://", 1)[-1]
     if not key:
         raise SystemExit("config/site.json indexnow_key is empty")
-    urls = page_urls(ROOT / "dist")
-    print(f"{len(urls)} URLs from dist sitemaps, host {host}")
+    urls = args.url or page_urls(ROOT / "dist")
+    print(f"{len(urls)} URLs, host {host}")
     if args.dry_run:
         print(urls[0])
         print(urls[-1])

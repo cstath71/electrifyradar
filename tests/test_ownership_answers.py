@@ -121,7 +121,7 @@ class OwnershipAnswerTest(unittest.TestCase):
         self.assertIn("data_as_of: 2026-11-03", llms)
         self.assertIn("data/listings.json", llms)
         self.assertIn("data/ownership/platforms.json", llms)
-        self.assertIn("How to compare heat pump installers before requesting quotes", llms)
+        self.assertIn("Questions to ask a heat pump installer before getting quotes", llms)
         self.assertNotIn("Vetting checklist", llms)
         for code in STATES:
             url = f"{ORIGIN}/us/{code}/private-equity/"

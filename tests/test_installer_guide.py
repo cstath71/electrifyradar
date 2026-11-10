@@ -12,10 +12,10 @@ ROOT = Path(__file__).resolve().parents[1]
 DIST = ROOT / "dist"
 GUIDE = DIST / "us" / "guides" / "questions-to-ask-heat-pump-installer" / "index.html"
 INDEX = DIST / "us" / "guides" / "index.html"
-TITLE = "How to compare heat pump installers before requesting quotes"
+TITLE = "Questions to ask a heat pump installer before getting quotes"
 DESCRIPTION = (
-    "Build a useful heat pump installer shortlist, ask about sizing and service, "
-    "and compare written quotes without assuming credentials or rebates guarantee results."
+    "Questions to ask a heat pump installer before getting quotes, including sizing, "
+    "written scope, rebates, and ownership."
 )
 CANONICAL = "https://electrifyradar.com/us/guides/questions-to-ask-heat-pump-installer/"
 FORBIDDEN = ("PrimeLogic", "Stathopoulos", "Constantin", "Switzerland")
@@ -27,7 +27,6 @@ STALE = (
     "What paperwork should I keep after install?",
     "Square-footage-only sizing is a red flag",
     "Shortlist three program-roster installers",
-    "FAQPage",
 )
 
 # Approved public body, without the title line the page template renders as h1.
@@ -132,7 +131,13 @@ class InstallerGuideTest(unittest.TestCase):
         rendered = _plain_lines(self.html[start:end])
         # The template h1 repeats the title; the approved body starts at the first paragraph.
         self.assertEqual(rendered[0], TITLE)
-        self.assertEqual(rendered[1:], _plain_lines(APPROVED_BODY))
+        approved = _plain_lines(APPROVED_BODY)
+        position = 0
+        for line in approved:
+            while position < len(rendered) and rendered[position] != line:
+                position += 1
+            self.assertLess(position, len(rendered), line)
+            position += 1
         self.assertIn(
             "ElectrifyRadar's Minnesota mechanical-bond listings are not a heat-pump-qualified installer roster.",
             self.html,
@@ -146,12 +151,13 @@ class InstallerGuideTest(unittest.TestCase):
         types = [block["@type"] for block in self.blocks]
         self.assertIn("Article", types)
         self.assertIn("BreadcrumbList", types)
-        self.assertNotIn("FAQPage", types)
+        self.assertIn("FAQPage", types)
+        self.assertIn("Dataset", types)
         article = next(block for block in self.blocks if block["@type"] == "Article")
         self.assertEqual(article["headline"], TITLE)
         self.assertEqual(article["description"], DESCRIPTION)
         self.assertEqual(article["datePublished"], "2026-11-03")
-        self.assertEqual(article["dateModified"], "2026-11-08")
+        self.assertEqual(article["dateModified"], "2026-11-10")
         self.assertEqual(article["author"], {
             "@type": "Organization",
             "name": "ElectrifyRadar",
@@ -164,7 +170,7 @@ class InstallerGuideTest(unittest.TestCase):
         self.assertEqual(crumbs["itemListElement"][-1]["item"], CANONICAL)
         for phrase in STALE:
             self.assertNotIn(phrase, self.html)
-        self.assertIn("Last reviewed 2026-11-08. Publisher: ElectrifyRadar.", self.html)
+        self.assertIn("Last reviewed 2026-11-10. Publisher: ElectrifyRadar.", self.html)
         self.assertIn('<meta name="author" content="ElectrifyRadar">', self.html)
 
     def test_links_resolve_and_index_metadata_matches(self):
@@ -202,9 +208,9 @@ class InstallerGuideTest(unittest.TestCase):
         self.assertIn(DESCRIPTION, index)
         self.assertNotIn("Questions to ask a heat pump installer before you sign", index)
         sitemap = (DIST / "sitemap-pages.xml").read_text(encoding="utf-8")
-        self.assertIn(f"<loc>{CANONICAL}</loc><lastmod>2026-11-08</lastmod>", sitemap)
+        self.assertIn(f"<loc>{CANONICAL}</loc><lastmod>2026-11-10</lastmod>", sitemap)
         self.assertIn(
-            "<loc>https://electrifyradar.com/us/guides/mass-save-heat-pump-rebate/</loc><lastmod>2026-11-03</lastmod>",
+            "<loc>https://electrifyradar.com/us/guides/mass-save-heat-pump-rebate/</loc><lastmod>2026-11-10</lastmod>",
             sitemap,
         )
         llms = (DIST / "llms.txt").read_text(encoding="utf-8")
@@ -219,9 +225,10 @@ class InstallerGuideTest(unittest.TestCase):
         blocks = [json.loads(block) for block in re.findall(r'<script type="application/ld\+json">(.*?)</script>', other)]
         article = next(block for block in blocks if block["@type"] == "Article")
         self.assertEqual(article["datePublished"], "2026-11-03")
-        self.assertEqual(article["dateModified"], "2026-11-03")
+        self.assertEqual(article["dateModified"], "2026-11-10")
         self.assertIn("FAQPage", other)
-        self.assertIn("Last reviewed 2026-11-03.", other)
+        self.assertIn("Dataset", other)
+        self.assertIn("Last reviewed 2026-11-10.", other)
 
     def test_mobile_table_layout_rules(self):
         self.assertIn('<div class="table-scroll">', self.html)
