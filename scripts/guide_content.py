@@ -212,25 +212,58 @@ def _vet_installer(_as_of: str):
     )
 
 
+def _long_date(iso: str) -> str:
+    months = (
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+    )
+    year, month, day = iso.split("-")
+    return f"{int(day)} {months[int(month) - 1]} {year}"
+
+
 def _efficiency_maine(as_of: str):
+    rebate_answer = (
+        f"Efficiency Maine's residential heat pump rebates page, checked {as_of}, lists per outdoor unit amounts of "
+        "$3,000 for low income (lifetime cap $9,000 per housing unit), $2,000 for moderate income (cap $6,000), "
+        "and $1,000 for any income (cap $3,000). Multi-zone outdoor units are not rebate-eligible on that table. "
+        "Single-zone units on Efficiency Maine's list are rebate-eligible. "
+        "Read the official table at https://www.efficiencymaine.com/at-home/residential-heat-pump-rebates/ before you apply."
+    )
     faqs = [
         (
+            "What does Efficiency Maine pay for a residential heat pump?",
+            "Efficiency Maine pays a residential heat pump rebate only when a Residential Registered Vendor installs eligible equipment "
+            f"under the rules on its rebate page (income tiers, primary heat use, and sizing). {rebate_answer}",
+        ),
+        (
             "Who must install the system for the rebate?",
-            "Efficiency Maine’s residential heat pump rebate page states the system must be installed by an Efficiency Maine Residential Registered Vendor for heat pumps. "
-            f"ElectrifyRadar’s <a href=\"../../me/\">Maine directory</a> is built from that locator (checked {as_of}). Confirm the vendor on "
-            '<a href="https://www.efficiencymaine.com/at-home/vendor-locator/">Efficiency Maine’s vendor locator</a>.',
+            "Efficiency Maine's residential heat pump rebate page states the system must be installed by an Efficiency Maine Residential Registered Vendor for heat pumps. "
+            f"ElectrifyRadar's Maine directory (https://electrifyradar.com/us/me/) is built from that locator, checked {as_of}. "
+            "Confirm the vendor on https://www.efficiencymaine.com/at-home/vendor-locator/.",
         ),
         (
             "Do multi-zone systems qualify?",
             "On the eligibility table Efficiency Maine published (checked "
-            f"{as_of}), multi-zone heat pumps are listed as <strong>not</strong> rebate-eligible, though their design-temperature heating capacity can still count toward total heating capacity of all heat pumps. "
-            "Single-zone units on Efficiency Maine’s list are rebate-eligible. Dual-fuel heat pump / furnace packages are not rebate-eligible and their capacity does not count. Re-read "
-            '<a href="https://www.efficiencymaine.com/at-home/residential-heat-pump-rebates/">the official table</a> before you buy.',
+            f"{as_of}), multi-zone heat pumps are not rebate-eligible, though their design-temperature heating capacity can still count toward total heating capacity of all heat pumps. "
+            "Single-zone units on Efficiency Maine's list are rebate-eligible. Dual-fuel heat pump / furnace packages are not rebate-eligible and their capacity does not count. "
+            "Re-read https://www.efficiencymaine.com/at-home/residential-heat-pump-rebates/ before you buy.",
         ),
         (
-            "What does “primary heating system” mean if I keep oil or propane?",
-            "The rebate page requires heat pumps to be used as the primary heating system throughout the heating season. For existing construction, any furnace or boiler must be reserved for emergency backup only — for example by turning thermostats all the way down, covering the power switch, or connecting the fossil system only to a generator. "
-            "Primary systems can back you up in an emergency, but their heating capacity cannot be counted toward the 100% sizing requirement. New-construction rules tighten further on 1 January 2027 (no furnace or boiler).",
+            "What does primary heating system mean if I keep oil or propane?",
+            "The rebate page requires heat pumps to be used as the primary heating system throughout the heating season. "
+            "For existing construction, any furnace or boiler must be reserved for emergency backup only, for example by turning thermostats all the way down, covering the power switch, or connecting the fossil system only to a generator. "
+            "Primary systems can back you up in an emergency, but their heating capacity cannot be counted toward the 100% sizing requirement. "
+            f"New construction rules tighten further on 1 January 2027 (no furnace or boiler). Page checked {as_of}.",
         ),
         (
             "How long do I have to submit the claim?",
@@ -238,13 +271,19 @@ def _efficiency_maine(as_of: str):
         ),
         (
             "Where do I find registered vendors near Portland, Bangor, or Augusta?",
-            'Start on ElectrifyRadar city pages such as <a href="../../me/portland/">Portland</a>, <a href="../../me/bangor/">Bangor</a>, <a href="../../me/augusta/">Augusta</a>, and <a href="../../me/brunswick/">Brunswick</a>, then confirm each company on '
-            '<a href="https://www.efficiencymaine.com/at-home/vendor-locator/">the official locator</a>.',
+            "Start on ElectrifyRadar city pages for Portland (https://electrifyradar.com/us/me/portland/), "
+            "Bangor (https://electrifyradar.com/us/me/bangor/), Augusta (https://electrifyradar.com/us/me/augusta/), "
+            "and Brunswick (https://electrifyradar.com/us/me/brunswick/), then confirm each company on "
+            "https://www.efficiencymaine.com/at-home/vendor-locator/. "
+            "Names matched to a private equity platform are listed at https://electrifyradar.com/us/me/private-equity/.",
         ),
     ]
+    opening = f"""
+<p class="meta">Last updated {_long_date(as_of)}.</p>
+<p class="quick-answer"><strong>Quick answer.</strong> {rebate_answer} Use the Maine directory to shortlist a Residential Registered Vendor, then confirm that vendor on Efficiency Maine.</p>
+<p><a href="../../me/">Maine installer directory</a>. <a href="../../me/private-equity/">Which Maine HVAC companies are owned by private equity platforms</a>. <a href="https://www.efficiencymaine.com/at-home/residential-heat-pump-rebates/">Efficiency Maine residential heat pump rebates</a>.</p>
+"""
     inner = f"""
-<p class="quick-answer"><strong>Quick answer.</strong> Efficiency Maine pays residential heat pump rebates only when a Residential Registered Vendor installs eligible equipment under current rules (income tiers, primary-heat use, and sizing). As of {as_of}, the program page lists up to $3,000 per rebate-eligible outdoor unit for low income (lifetime cap $9,000 per housing unit), $2,000 for moderate income (cap $6,000), and $1,000 for any income (cap $3,000). Multi-zone outdoor units are treated differently from single-zone on the rebate-eligible column — read the official table. Use our Maine directory to shortlist, then confirm on Efficiency Maine.</p>
-
 <h2>Rebate amounts Efficiency Maine published</h2>
 <p>Copied from
 <a href="https://www.efficiencymaine.com/at-home/residential-heat-pump-rebates/">Residential Heat Pump Rebates</a>,
@@ -337,6 +376,10 @@ For cold-weather capacity language, see
         "Efficiency Maine residential heat pump rebate tiers, single-zone vs multi-zone rules, and registered vendors. Figures dated Nov 2026 from Efficiency Maine.",
         inner,
         faqs,
+        opening=opening,
+        faq_first=True,
+        faq_plain=True,
+        date_modified=as_of,
     )
 
 

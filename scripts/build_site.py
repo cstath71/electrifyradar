@@ -321,6 +321,14 @@ def faq_section(items):
     return f'<section class="faq"><h2>Questions</h2>{blocks}</section>'
 
 
+def faq_section_plain(items):
+    """FAQ HTML whose visible text is the same string stored in FAQPage JSON-LD."""
+    blocks = "".join(
+        f"<h3>{esc(question)}</h3><p>{esc(answer)}</p>" for question, answer in items
+    )
+    return f'<section class="faq"><h2>Questions</h2>{blocks}</section>'
+
+
 def faq_ld(items):
     return {
         "@context": "https://schema.org",
@@ -400,6 +408,262 @@ def ownership_sentence(counts):
         ", ".join(parts)
         + ". These are label counts. Unverified means no documented parent was matched and no positive independent evidence was recorded."
     )
+
+
+_MONTHS = (
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+)
+
+
+def long_date(iso: str) -> str:
+    year, month, day = iso.split("-")
+    return f"{int(day)} {_MONTHS[int(month) - 1]} {year}"
+
+
+def join_clauses(items) -> str:
+    items = [item for item in items if item]
+    if not items:
+        return ""
+    if len(items) == 1:
+        return items[0]
+    if len(items) == 2:
+        return f"{items[0]} and {items[1]}"
+    return ", ".join(items[:-1]) + ", and " + items[-1]
+
+
+def pe_count(counts) -> int:
+    return counts.get("pe_owned", 0) + counts.get("platform_owned", 0)
+
+
+def is_pe(row) -> bool:
+    return row["ownership_status"] in {"pe_owned", "platform_owned"}
+
+
+def load_platform_records():
+    catalog = load_json(ROOT / "data" / "ownership" / "platforms.json")
+    return catalog.get("records") or []
+
+
+def platform_for(row, records):
+    parent = row.get("ownership_parent")
+    term = (row.get("ownership_matched_term") or "").strip().lower()
+    if parent:
+        for record in records:
+            if record.get("parent") == parent:
+                return record
+    if term:
+        for record in records:
+            terms = [(item or "").lower() for item in record.get("match_terms") or []]
+            if term in terms:
+                return record
+    return None
+
+
+def owner_bits(row, record) -> str:
+    parent = row.get("ownership_parent") or "documented owner"
+    backer = (record or {}).get("backer") or ""
+    if backer:
+        return f"{parent}, {backer}"
+    return parent
+
+
+def named_owner(row, record) -> str:
+    state = row.get("state_name") or STATES[row["admin1_slug"]]["name"]
+    return f"{row['name']} in {row['city']}, {state} ({owner_bits(row, record)})"
+
+
+def ownership_path(code: str) -> str:
+    return f"/us/{code}/private-equity/"
+
+
+def ownership_source_note() -> str:
+    return (
+        f"Source note: labels are name matches against a documented platform and franchise list read on {AS_OF} "
+        "(DealSeam HVAC PE roll-up tracker, https://dealseam.com/hvac-pe-rollup-tracker-2026) "
+        "or a quoted page stored for that listing. Franchise matches such as Aire Serv use https://www.aireserv.com/ "
+        "and are not private equity labels. Only matched names are labeled. "
+        "Every other listing stays Ownership: unverified, which means no documented parent was matched and no positive independent evidence was recorded. "
+        "Unverified is not a confirmation that the company is independent. "
+        "This list is the public roster ElectrifyRadar publishes for the state, not every HVAC company in the state."
+    )
+
+
+def webpage_ld(title: str, description: str, path: str):
+    return {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": title,
+        "description": description,
+        "url": absolute(path),
+        "dateModified": AS_OF,
+        "datePublished": AS_OF,
+        "isPartOf": {"@type": "WebSite", "name": NAME, "url": absolute("/")},
+        "publisher": {"@type": "Organization", "name": NAME, "url": absolute("/")},
+    }
+
+
+def state_pe_summary(code: str, rows, records) -> str:
+    meta = STATES[code]
+    own = ownership_counts(rows)
+    src = STATE_SOURCE[code]
+    pe_rows = sorted((row for row in rows if is_pe(row)), key=lambda row: row["name"].lower())
+    if pe_rows:
+        named = join_clauses(named_owner(row, platform_for(row, records)) for row in pe_rows)
+        named_sentence = f"The PE or platform-owned names are {named}."
+    else:
+        named_sentence = "No listing in this state matched a documented private equity or platform owner."
+    others = sorted(
+        (row for row in rows if row["ownership_status"] in {"franchise", "utility", "other_corporate"}),
+        key=lambda row: row["name"].lower(),
+    )
+    kind_labels = {
+        "franchise": "a franchise label, not private equity",
+        "utility": "a utility owner, not private equity",
+        "other_corporate": "another corporate owner, not private equity",
+    }
+    if others:
+        bits = [
+            f"{named_owner(row, platform_for(row, records))}, {kind_labels[row['ownership_status']]}"
+            for row in others
+        ]
+        other_sentence = "Other sourced owners in this state: " + join_clauses(bits) + "."
+    else:
+        other_sentence = "No franchise, utility, or other corporate owner was matched in this state."
+    return (
+        f"As of {long_date(AS_OF)} ({AS_OF}), ElectrifyRadar lists {len(rows)} heat pump installer records in {meta['name']}, "
+        f"from the {src['program']} ({src['file_note']}). "
+        f"{ownership_sentence(own)} "
+        f"{named_sentence} {other_sentence} "
+        "Only matched names are labeled."
+    )
+
+
+def state_pe_faq(code: str, rows, records):
+    meta = STATES[code]
+    own = ownership_counts(rows)
+    summary = state_pe_summary(code, rows, records)
+    return [
+        (
+            f"Which HVAC companies in {meta['name']} are owned by private equity platforms?",
+            summary,
+        ),
+        (
+            f"How many {meta['name']} listings are PE or platform-owned, and how many are unverified?",
+            f"{pe_count(own)} of {len(rows)} {meta['name']} records are labeled PE or platform-owned as of {AS_OF}. "
+            f"{own.get('unverified', 0)} are Ownership: unverified. Only matched names are labeled.",
+        ),
+        (
+            "Does Ownership: unverified mean the company is independent?",
+            "No. Ownership: unverified means no documented private equity, franchise, or other parent was matched, "
+            "and no positive independent evidence was recorded. It is not a confirmation that the company is independent.",
+        ),
+        (
+            "What source supports these ownership labels?",
+            ownership_source_note(),
+        ),
+    ]
+
+
+def homepage_summary(listings, state_counts, records) -> str:
+    own = ownership_counts(listings)
+    pe_rows = sorted(
+        (row for row in listings if is_pe(row)),
+        key=lambda row: (row["admin1_slug"], row["name"].lower()),
+    )
+    named = join_clauses(named_owner(row, platform_for(row, records)) for row in pe_rows)
+    state_bits = [f"{STATES[code]['name']} {state_counts.get(code, 0)}" for code in STATES]
+    return (
+        f"As of {long_date(AS_OF)} ({AS_OF}), ElectrifyRadar lists {len(listings)} heat pump and ductless installer records in 8 states: "
+        f"{join_clauses(state_bits)}. "
+        f"{pe_count(own)} are labeled PE or platform-owned, {own.get('franchise', 0)} franchise, "
+        f"{own.get('independent', 0)} independent, {own.get('other_corporate', 0)} other corporate owner, "
+        f"and {own.get('unverified', 0)} Ownership: unverified. "
+        f"The PE or platform-owned names are {named}. "
+        "Only matched names are labeled. Unverified is not a confirmation of independent ownership."
+    )
+
+
+def homepage_faq(listings, state_counts, records):
+    own = ownership_counts(listings)
+    summary = homepage_summary(listings, state_counts, records)
+    list_line = "; ".join(
+        f"{STATES[code]['name']} {absolute(ownership_path(code))}" for code in STATES
+    )
+    mn = state_counts.get("mn", 0)
+    return [
+        (
+            "How many heat pump installers does ElectrifyRadar list, and when was the list checked?",
+            summary,
+        ),
+        (
+            "Which HVAC companies in the directory are owned by private equity platforms?",
+            f"As of {AS_OF}, {pe_count(own)} listings are labeled PE or platform-owned. {summary} "
+            f"State lists: {list_line}.",
+        ),
+        (
+            "What does Ownership: unverified mean?",
+            "Ownership: unverified means no documented private equity, franchise, or other parent was matched, "
+            "and no positive independent evidence was recorded. It is not a confirmation that the company is independent. "
+            "Only matched names are labeled.",
+        ),
+        (
+            "Are the Minnesota listings a heat pump program roster?",
+            f"No. Minnesota's {mn} records are businesses with an issued Mechanical Contractor Bond, a Minnesota address, "
+            f"and a phone number in the Minnesota Department of Labor and Industry public export, checked {AS_OF}. "
+            "That file does not say each business installs heat pumps. Massachusetts, Maine, New York, Connecticut, "
+            "Rhode Island, Vermont, and California listings are copied from heat pump program rosters.",
+        ),
+    ]
+
+
+def maine_directory_faq(rows, own):
+    franchises = sorted(
+        (row["name"] for row in rows if row["ownership_status"] == "franchise"),
+        key=str.lower,
+    )
+    if franchises:
+        franchise_sentence = "The franchise label is " + join_clauses(franchises) + ", which is not a private equity label."
+    else:
+        franchise_sentence = "No franchise label was matched."
+    return [
+        (
+            "How many heat pump installers does ElectrifyRadar list in Maine?",
+            f"ElectrifyRadar lists {len(rows)} Maine heat pump installer records as of {AS_OF}. "
+            f"{ownership_sentence(own)} Only matched names are labeled.",
+        ),
+        (
+            "Which HVAC companies in Maine are owned by private equity platforms?",
+            f"{pe_count(own)} of {len(rows)} Maine records are labeled PE or platform-owned as of {AS_OF}. "
+            f"{franchise_sentence} "
+            f"{own.get('unverified', 0)} are Ownership: unverified and {own.get('independent', 0)} are independent. "
+            "Only matched names are labeled. "
+            f"The named list is {absolute('/us/me/private-equity/')}.",
+        ),
+        (
+            "What are the Efficiency Maine residential heat pump rebate amounts?",
+            "Efficiency Maine's residential heat pump rebates page, checked "
+            f"{AS_OF}, lists per outdoor-unit amounts of $3,000 (low income, lifetime cap $9,000), "
+            "$2,000 (moderate income, cap $6,000), and $1,000 (any income, cap $3,000). "
+            "Multi-zone units are not rebate-eligible on that table. "
+            "Confirm the current table at https://www.efficiencymaine.com/at-home/residential-heat-pump-rebates/ before you apply.",
+        ),
+        (
+            "What does Ownership: unverified mean on the Maine page?",
+            "Ownership: unverified means no documented parent was matched and no positive independent evidence was recorded. "
+            "It is not a confirmation that the company is independent. Only matched names are labeled.",
+        ),
+    ]
 
 
 def group_listings(listings):
@@ -568,13 +832,14 @@ def build():
     global TOP_CITIES
     NOINDEX_PATHS.clear()
     TOP_CITIES = select_top_cities(by_city)
-    write_home(counts)
+    write_home(counts, listings)
     write_country(counts)
     write_states(by_state, by_city)
     write_cities(by_city)
     write_profiles(listings)
-    write_static_pages(counts)
-    write_llms(counts)
+    write_static_pages(counts, by_state)
+    write_ownership_pages(by_state)
+    write_llms(counts, listings)
     write_robots()
     write_sitemap(listings, by_city)
     NOINDEX_PATHS.add("/404.html")
@@ -592,15 +857,35 @@ def build():
     )
 
 
-def write_home(counts):
+def write_home(counts, listings):
     cards = "".join(
         f'<a class="state-card" href="us/{code}/"><strong>{esc(STATES[code]["name"])}</strong><span>{counts.get(code, 0)} listings</span></a>'
         for code in STATES
+    )
+    records = load_platform_records()
+    summary = homepage_summary(listings, counts, records)
+    questions = homepage_faq(listings, counts, records)
+    own = ownership_counts(listings)
+    ownership_links = "".join(
+        f'<li><a href="us/{code}/private-equity/">{esc(STATES[code]["name"])}</a>: '
+        f'{pe_count(ownership_counts([row for row in listings if row["admin1_slug"] == code]))} PE or platform-owned '
+        f'of {counts.get(code, 0)} listings.</li>'
+        for code in STATES
+    )
+    desc = (
+        f"As of {AS_OF}, ElectrifyRadar lists {len(listings)} heat pump installer records in 8 states. "
+        f"{pe_count(own)} are PE or platform-owned and {own.get('unverified', 0)} are Ownership: unverified. "
+        "Only matched names are labeled."
     )
     body = f"""
 <div class="wrap hero">
   <p class="eyebrow">United States · heat pumps and ductless mini-splits</p>
   <h1>Find the installer. See who owns them.</h1>
+  <p class="meta">Last updated {esc(long_date(AS_OF))}.</p>
+  <p class="quick-answer"><strong>Quick answer.</strong> {esc(summary)}</p>
+  {faq_section_plain(questions)}
+  <h2>Private equity ownership lists</h2>
+  <ul>{ownership_links}</ul>
   <p class="lede">ElectrifyRadar lists heat pump contractors from public program rosters and one state license file. Each listing says Independent only when we have evidence. Right now the honest default is <strong>Ownership: unverified</strong>, unless the name matches a documented private-equity platform or franchise.</p>
 </div>
 <div class="wrap">
@@ -649,11 +934,22 @@ def write_home(counts):
                     "query-input": "required name=search_term_string",
                 },
             },
+            {
+                "@type": "WebPage",
+                "@id": absolute("/#webpage"),
+                "url": absolute("/"),
+                "name": f"{NAME} | Heat pump installers, with ownership in view",
+                "description": desc,
+                "dateModified": AS_OF,
+                "datePublished": AS_OF,
+                "isPartOf": {"@id": absolute("/#website")},
+                "publisher": {"@id": absolute("/#organization")},
+            },
         ],
     })
     write_page("/", shell("", f"{NAME} | Heat pump installers, with ownership in view",
-                          "US directory of heat pump and ductless mini-split installers in Massachusetts, Maine, New York, Connecticut, Rhode Island, Vermont, California, and Minnesota. Ownership is labeled only from a documented source.",
-                          body, "/", extra_head=home_ld, extra_script=extra, breadcrumbs=[("Home", "/")]))
+                          desc,
+                          body, "/", extra_head=home_ld + json_ld(faq_ld(questions)), extra_script=extra, breadcrumbs=[("Home", "/")]))
 
 
 def write_country(counts):
@@ -900,7 +1196,24 @@ def write_states(by_state, by_city):
             f"from the {src['program']} ({src['file_note']}). "
             f"{ownership_sentence(own)}"
         )
-        questions = state_faq(code, len(rows), own)
+        updated = ""
+        faq_html = ""
+        if code == "me":
+            quick = (
+                f"As of {long_date(AS_OF)} ({AS_OF}), ElectrifyRadar lists {len(rows)} heat pump installer records in Maine, "
+                f"from the {src['program']} ({src['file_note']}). "
+                f"{ownership_sentence(own)} "
+                "Efficiency Maine's residential heat pump rebates page, checked "
+                f"{AS_OF}, lists per outdoor-unit amounts of $3,000 (low income, lifetime cap $9,000), "
+                "$2,000 (moderate income, cap $6,000), and $1,000 (any income, cap $3,000). "
+                "Multi-zone units are not rebate-eligible on that table. Only matched names are labeled."
+            )
+            questions = maine_directory_faq(rows, own)
+            faq_html = faq_section_plain(questions)
+            updated = f'<p class="meta">Last updated {esc(long_date(AS_OF))}.</p>'
+        else:
+            questions = state_faq(code, len(rows), own)
+            faq_html = faq_section(questions)
         city_items = []
         for position, (title, slug, count) in enumerate(cities, start=1):
             city_items.append({
@@ -909,6 +1222,8 @@ def write_states(by_state, by_city):
                 "name": title,
                 "url": absolute(f"/us/{code}/{slug}/"),
             })
+        desc = f"{len(rows)} heat pump installer listings in {meta['name']}, from the {src['program']}, checked {AS_OF}."
+        page_title = f"Heat pump installers in {meta['name']} | {NAME}"
         ld = json_ld({
             "@context": "https://schema.org",
             "@type": "ItemList",
@@ -916,26 +1231,44 @@ def write_states(by_state, by_city):
             "numberOfItems": len(cities),
             "itemListElement": city_items,
         }) + json_ld(faq_ld(questions))
+        if code == "me":
+            ld += json_ld(webpage_ld(page_title, desc, f"/us/{code}/"))
+        branch_note = (
+            "<p>Some city listings link other listed locations of the same business. The count is directory records matched to a cited location page. It is not an ownership label and it is not an exhaustive national total.</p>"
+            if any(row.get("_branch") for row in rows)
+            else ""
+        )
+        ownership_link = (
+            f'<p><a href="private-equity/">Which {esc(meta["name"])} HVAC companies are owned by private equity platforms</a> '
+            f"({pe_count(own)} labeled PE or platform-owned as of {esc(AS_OF)}).</p>"
+        )
+        intro = f"""<div class="prose"><p>{esc(STATE_INTRO[code])}</p>
+  <p><a href="../rebates/{code}/">Rebate guide for {esc(meta["name"])}</a></p>
+  {ownership_link}
+  {branch_note}</div>"""
+        quick_html = f'<p class="quick-answer"><strong>Quick answer.</strong> {esc(quick)}</p>'
+        if code == "me":
+            opening = updated + quick_html + faq_html
+            middle = intro
+        else:
+            opening = quick_html
+            middle = intro + faq_html
         body = f"""
 <div class="wrap">
   {crumbs(from_dir, trail)}
   <p class="eyebrow">{esc(meta["code"])}</p>
   <h1>Heat pump installers in {esc(meta["name"])}</h1>
-  <p class="quick-answer"><strong>Quick answer.</strong> {esc(quick)}</p>
-  <div class="prose"><p>{esc(STATE_INTRO[code])}</p>
-  <p><a href="../rebates/{code}/">Rebate guide for {esc(meta["name"])}</a></p>
-  {('<p>Some city listings link other listed locations of the same business. The count is directory records matched to a cited location page. It is not an ownership label and it is not an exhaustive national total.</p>' if any(row.get("_branch") for row in rows) else '')}</div>
-  {faq_section(questions)}
+  {opening}
+  {middle}
   {search_block(from_dir, code.upper())}
   <h2>Cities and mailing-address groups</h2>
   <ul>{city_links}</ul>
 </div>
 """
         script = f'<script src="{esc(rel_url(from_dir, "/assets/search.js"))}"></script>'
-        desc = f"{len(rows)} heat pump installer listings in {meta['name']}, from the {src['program']}, checked {AS_OF}."
         write_page(
             f"/us/{code}/",
-            shell(from_dir, f"Heat pump installers in {meta['name']} | {NAME}", desc, body, f"/us/{code}/",
+            shell(from_dir, page_title, desc, body, f"/us/{code}/",
                   extra_head=ld, extra_script=script, breadcrumbs=trail),
         )
 
@@ -1193,7 +1526,7 @@ def write_profiles(listings):
         write_page(path, shell(from_dir, title, desc, body, path, extra_head=ld, breadcrumbs=trail))
 
 
-def guide(slug, title, description, inner, faqs=None, date_reviewed=None, date_published=None):
+def guide(slug, title, description, inner, faqs=None, date_reviewed=None, date_published=None, opening="", faq_first=False, faq_plain=False):
     reviewed = date_reviewed or AS_OF
     return {
         "path": f"/us/guides/{slug}/",
@@ -1204,10 +1537,13 @@ def guide(slug, title, description, inner, faqs=None, date_reviewed=None, date_p
         "faqs": faqs or [],
         "date_reviewed": reviewed,
         "date_published": date_published or reviewed,
+        "opening": opening,
+        "faq_first": faq_first,
+        "faq_plain": faq_plain,
     }
 
 
-def write_static_pages(counts):
+def write_static_pages(counts, by_state):
     guides = guide_pages()
     index_items = "".join(
         "<li>"
@@ -1233,9 +1569,19 @@ def write_static_pages(counts):
         faqs = page.get("faqs") or []
         reviewed = page.get("date_reviewed") or AS_OF
         published = page.get("date_published") or reviewed
-        faq_html = faq_section(faqs) if faqs else ""
+        if faqs and page.get("faq_plain"):
+            faq_html = faq_section_plain(faqs)
+        elif faqs:
+            faq_html = faq_section(faqs)
+        else:
+            faq_html = ""
+        opening = page.get("opening") or ""
+        if page.get("faq_first"):
+            content = opening + faq_html + page["inner"]
+        else:
+            content = opening + page["inner"] + faq_html
         body = f'''<div class="wrap prose">{crumbs(page["from"], trail)}
-        <h1>{esc(page["title"])}</h1>{page["inner"]}{faq_html}<p class="fine">Last reviewed {esc(reviewed)}. Publisher: ElectrifyRadar.</p></div>'''
+        <h1>{esc(page["title"])}</h1>{content}<p class="fine">Last reviewed {esc(reviewed)}. Publisher: ElectrifyRadar.</p></div>'''
         extra = json_ld(article_ld(page["title"], page["description"], page["path"], published, reviewed))
         if faqs:
             extra += json_ld(faq_ld(faqs))
@@ -1329,7 +1675,7 @@ def write_static_pages(counts):
                                       "Sources, ownership labels, and update cadence for the ElectrifyRadar installer directory.",
                                       methodology, "/methodology/",
                                       breadcrumbs=[("Home", "/"), ("Methodology", "/methodology/")]))
-    write_platforms_page()
+    write_platforms_page(by_state)
     privacy = f"""
 <div class="wrap prose">
   <h1>Privacy</h1>
@@ -1380,7 +1726,94 @@ def write_static_pages(counts):
     )
 
 
-def write_platforms_page():
+def write_ownership_pages(by_state):
+    records = load_platform_records()
+    for code, meta in STATES.items():
+        rows = by_state.get(code, [])
+        path = ownership_path(code)
+        from_dir = path.rstrip("/")
+        summary = state_pe_summary(code, rows, records)
+        questions = state_pe_faq(code, rows, records)
+        pe_rows = [row for row in rows if is_pe(row)]
+        other_rows = [row for row in rows if row["ownership_status"] in {"franchise", "utility", "other_corporate"}]
+        pe_items = _owner_list_html(pe_rows, records, from_dir, "Platform")
+        other_items = _owner_list_html(other_rows, records, from_dir, "Owner")
+        if pe_items:
+            pe_block = f"<h2>PE or platform-owned companies</h2><ul>{pe_items}</ul>"
+        else:
+            pe_block = "<h2>PE or platform-owned companies</h2><p>No listing in this state matched a documented private equity or platform owner.</p>"
+        if other_items:
+            other_block = f"<h2>Other sourced owners, not private equity</h2><ul>{other_items}</ul>"
+        else:
+            other_block = "<h2>Other sourced owners, not private equity</h2><p>No franchise, utility, or other corporate owner was matched in this state.</p>"
+        item_list = []
+        for position, row in enumerate(sorted(pe_rows, key=lambda item: item["name"].lower()), start=1):
+            parent = row.get("ownership_parent") or "documented platform"
+            item_list.append({
+                "@type": "ListItem",
+                "position": position,
+                "name": f"{row['name']} ({parent})",
+                "url": absolute(row["path"]),
+            })
+        title = f"Which HVAC companies in {meta['name']} are owned by private equity platforms"
+        desc = (
+            f"{pe_count(ownership_counts(rows))} of {len(rows)} {meta['name']} heat pump installer records "
+            f"are labeled PE or platform-owned as of {AS_OF}. Only matched names are labeled. The rest are unverified."
+        )
+        trail = [("Home", "/"), (meta["name"], f"/us/{code}/"), ("Private equity ownership", path)]
+        ld = (
+            json_ld({
+                "@context": "https://schema.org",
+                "@type": "ItemList",
+                "name": f"PE or platform-owned HVAC installers in {meta['name']}",
+                "numberOfItems": len(pe_rows),
+                "itemListElement": item_list,
+            })
+            + json_ld(faq_ld(questions))
+            + json_ld(webpage_ld(title, desc, path))
+        )
+        state_href = rel_url(from_dir, f"/us/{code}/")
+        platforms_href = rel_url(from_dir, "/platforms/")
+        method_href = rel_url(from_dir, "/methodology/")
+        body = f"""
+<div class="wrap prose">
+  {crumbs(from_dir, trail)}
+  <h1>{esc(title)}</h1>
+  <p class="meta">Last updated {esc(long_date(AS_OF))}.</p>
+  <p class="quick-answer"><strong>Quick answer.</strong> {esc(summary)}</p>
+  {faq_section_plain(questions)}
+  {pe_block}
+  {other_block}
+  <p>{esc(ownership_source_note())}</p>
+  <p><a href="{esc(state_href)}">All {esc(meta["name"])} listings</a>. <a href="{esc(platforms_href)}">Platform and franchise name list</a>. <a href="{esc(method_href)}">Methodology</a>.</p>
+</div>
+"""
+        write_page(
+            path,
+            shell(from_dir, f"{title} | {NAME}", desc, body, path, extra_head=ld, breadcrumbs=trail),
+        )
+
+
+def _owner_list_html(rows, records, from_dir, kind_label):
+    items = []
+    for row in sorted(rows, key=lambda item: item["name"].lower()):
+        record = platform_for(row, records)
+        parent = row.get("ownership_parent") or "Not recorded"
+        backer = (record or {}).get("backer") or ""
+        backer_html = f" Backer: {esc(backer)}." if backer else ""
+        note = row.get("ownership_source_note") or row.get("ownership_evidence_quote") or ""
+        source = ""
+        if row.get("ownership_source_url"):
+            source = f' <a href="{esc(row["ownership_source_url"])}">Source</a>.'
+        profile = rel_url(from_dir, row["path"])
+        items.append(
+            f'<li><a href="{esc(profile)}">{esc(row["name"])}</a>, {esc(row["city"])}. '
+            f"{esc(kind_label)}: {esc(parent)}.{backer_html}{source} {esc(note)}</li>"
+        )
+    return "".join(items)
+
+
+def write_platforms_page(by_state):
     catalog = load_json(ROOT / "data" / "ownership" / "platforms.json")
     evidence = load_json(ROOT / "data" / "ownership" / "evidence.json")
     blocks = []
@@ -1405,11 +1838,23 @@ def write_platforms_page():
             f"{esc(record['evidence_quote'])}</li>"
         )
     found_html = "".join(found) or "<li>None in the top-50-city check beyond the name list above.</li>"
+    state_links = []
+    for code in STATES:
+        rows = by_state.get(code, [])
+        matched = pe_count(ownership_counts(rows))
+        href = rel_url("/platforms", ownership_path(code))
+        state_links.append(
+            f'<li><a href="{esc(href)}">{esc(STATES[code]["name"])}</a>: '
+            f"{matched} PE or platform-owned out of {len(rows)} listings, checked {esc(AS_OF)}.</li>"
+        )
     body = f"""
 <div class="wrap prose">
   {crumbs("/platforms", [("Home", "/"), ("Platforms", "/platforms/")])}
   <h1>PE platforms and franchise brands</h1>
   <p>These are the names ElectrifyRadar will match. A listing gets the label only when its business name matches one of these terms, or when a separate evidence record quotes a page. Checked {esc(AS_OF)}. Nexstar is not on this list. A franchise or platform label does not group those listings into one business. Shared brand names stay separate records unless a cited location page names the addresses.</p>
+  <h2>Which installers in each state matched a private equity or platform owner</h2>
+  <p>Only matched names are labeled. Every other listing in that state stays Ownership: unverified. Unverified is not a confirmation that the company is independent.</p>
+  <ul>{''.join(state_links)}</ul>
   {''.join(blocks)}
   <h2>Corporate parents found in the top-50-city check</h2>
   <ul>{found_html}</ul>
@@ -1465,6 +1910,9 @@ def guide_pages():
                 faqs=item.get("faqs") or [],
                 date_reviewed=item.get("date_modified") or AS_OF,
                 date_published=item.get("date_published"),
+                opening=item.get("opening") or "",
+                faq_first=bool(item.get("faq_first")),
+                faq_plain=bool(item.get("faq_plain")),
             )
         )
     return pages
@@ -1553,6 +2001,7 @@ def write_sitemap(listings, by_city):
     for code in STATES:
         pages.append(f"/us/{code}/")
         pages.append(f"/us/rebates/{code}/")
+        pages.append(ownership_path(code))
     page_lastmod = {}
     for page in guide_pages():
         pages.append(page["path"])
@@ -1591,30 +2040,77 @@ def write_robots():
     (DIST / "robots.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
-def write_llms(counts):
-    total = sum(counts.values())
-    state_lines = [
-        f"- {STATES[code]['name']}: {counts.get(code, 0)} listings — {absolute('/us/' + code + '/')}"
-        for code in STATES
-    ]
+def write_llms(counts, listings):
+    records = load_platform_records()
+    total = len(listings)
+    own = ownership_counts(listings)
+    coverage = []
+    ownership_urls = []
+    for code in STATES:
+        rows = [row for row in listings if row["admin1_slug"] == code]
+        row_counts = ownership_counts(rows)
+        coverage.append(
+            f"- {STATES[code]['name']}: {len(rows)} listings, "
+            f"{pe_count(row_counts)} PE or platform-owned, {row_counts.get('franchise', 0)} franchise, "
+            f"{row_counts.get('independent', 0)} independent, {row_counts.get('other_corporate', 0)} other corporate, "
+            f"{row_counts.get('unverified', 0)} unverified. "
+            f"Directory: {absolute('/us/' + code + '/')}. "
+            f"Ownership list: {absolute(ownership_path(code))}."
+        )
+        ownership_urls.append(
+            f"- {STATES[code]['name']}: {absolute(ownership_path(code))}"
+        )
+    pe_rows = sorted(
+        (row for row in listings if is_pe(row)),
+        key=lambda row: (row["admin1_slug"], row["name"].lower()),
+    )
+    pe_lines = [
+        f"- {named_owner(row, platform_for(row, records))}. Profile: {absolute(row['path'])}."
+        for row in pe_rows
+    ] or ["- None."]
     summary = [
         "# ElectrifyRadar",
         "",
         f"> Directory of heat pump and ductless mini-split installers in {len(STATES)} US states. "
-        "Ownership is labeled only when a business name matches a documented platform or franchise list. "
-        f"Checked {AS_OF}.",
+        "Ownership is labeled only when a business name matches a documented platform or franchise list, "
+        "or a quoted page states a parent. "
+        f"Checked {AS_OF}. Only matched names are labeled.",
         "",
         "Publisher: ElectrifyRadar",
         f"data_as_of: {AS_OF}",
         f"canonical: {ORIGIN}/",
         "",
-        "## Counts",
-        *state_lines,
+        "## Dataset",
+        f"{total} US heat pump installer records checked {AS_OF}.",
+        f"Ownership labels: {own.get('unverified', 0)} unverified, {own.get('independent', 0)} independent, "
+        f"{own.get('franchise', 0)} franchise, {pe_count(own)} PE or platform-owned, "
+        f"{own.get('other_corporate', 0)} other corporate owner.",
+        "PE or platform-owned means a name match to a documented private equity or platform owner. "
+        "Franchise is a separate label (Aire Serv is a Neighborly franchise) and is not private equity.",
+        "An independent label is used only when a quoted page states family ownership or a named owner.",
+        "Unverified means no documented parent was matched and no positive independent evidence was recorded. "
+        "It is not a confirmation that the company is independent.",
+        "The directory is the public roster used for each state. Minnesota is a mechanical contractor bond file, not a heat pump program roster. "
+        "The set is not a complete census of every HVAC company in a state.",
+        "Files behind the published pages: data/listings.json (rows), data/stats.json (counts), "
+        "data/ownership/platforms.json (platform and franchise match terms), "
+        "data/ownership/evidence.json (quoted pages), data/branches/groups.json (listed locations, separate from ownership).",
+        "",
+        "## Coverage by state",
+        *coverage,
         f"- Total: {total}",
+        "",
+        "## PE or platform-owned names",
+        *pe_lines,
+        "",
+        "## Ownership lists",
+        "Each page answers which HVAC or heat pump installers in that state are owned by private equity or platforms, with the count, the matched names, the platform or owner, the checked date, and the source note.",
+        *ownership_urls,
         "",
         "## Key URLs",
         f"- Home: {absolute('/')}",
         f"- Methodology: {absolute('/methodology/')}",
+        f"- Platforms: {absolute('/platforms/')}",
         f"- Guides index: {absolute('/us/guides/')}",
         f"- Mass Save rebate guide: {absolute('/us/guides/mass-save-heat-pump-rebate/')}",
         f"- How to compare heat pump installers before requesting quotes: {absolute('/us/guides/questions-to-ask-heat-pump-installer/')}",
@@ -1629,6 +2125,14 @@ def write_llms(counts):
         "",
     ]
     (DIST / "llms.txt").write_text("\n".join(summary), encoding="utf-8")
+    franchise_rows = sorted(
+        (row for row in listings if row["ownership_status"] == "franchise"),
+        key=lambda row: (row["admin1_slug"], row["name"].lower()),
+    )
+    other_rows = sorted(
+        (row for row in listings if row["ownership_status"] in {"other_corporate", "utility"}),
+        key=lambda row: (row["admin1_slug"], row["name"].lower()),
+    )
     full = summary + [
         "## Method",
         "Listings are copied from public program files and, for Minnesota, a public license export. "
@@ -1654,8 +2158,45 @@ def write_llms(counts):
         "- Platform list: DealSeam HVAC PE roll-up tracker (2026), page last updated 28 July 2026, read on the checked date. https://dealseam.com/hvac-pe-rollup-tracker-2026",
         "- Franchise example: Aire Serv describes itself as a Neighborly company. https://www.aireserv.com/",
         "",
-        "## Rebate pages",
+        "## PE or platform-owned records",
+        "Franchise rows are listed separately and are not private equity labels.",
     ]
+    for row in pe_rows:
+        record = platform_for(row, records)
+        note = row.get("ownership_source_note") or ""
+        full.append(
+            f"- {row['name']}, {row['city']}, {STATES[row['admin1_slug']]['name']}. "
+            f"Platform: {row.get('ownership_parent') or 'not recorded'}. "
+            f"Backer: {(record or {}).get('backer') or 'not recorded on the platform list'}. "
+            f"Source: {row.get('ownership_source_url') or 'not recorded'}. "
+            f"Profile: {absolute(row['path'])}. {note}"
+        )
+    full.append("")
+    full.append("## Franchise records")
+    for row in franchise_rows:
+        full.append(
+            f"- {row['name']}, {row['city']}, {STATES[row['admin1_slug']]['name']}. "
+            f"Franchise: {row.get('ownership_parent') or 'not recorded'}. "
+            f"Source: {row.get('ownership_source_url') or 'not recorded'}. "
+            f"Profile: {absolute(row['path'])}."
+        )
+    full.append("")
+    full.append("## Other corporate owners")
+    if other_rows:
+        for row in other_rows:
+            full.append(
+                f"- {row['name']}, {row['city']}, {STATES[row['admin1_slug']]['name']}. "
+                f"Owner: {row.get('ownership_parent') or 'not recorded'}. "
+                f"This is not a private equity label. "
+                f"Source: {row.get('ownership_source_url') or 'not recorded'}. "
+                f"Profile: {absolute(row['path'])}."
+            )
+    else:
+        full.append("- None.")
+    full.extend([
+        "",
+        "## Rebate pages",
+    ])
     for code in STATES:
         full.append(f"- {STATES[code]['name']}: {absolute('/us/rebates/' + code + '/')}")
     full.append("")
