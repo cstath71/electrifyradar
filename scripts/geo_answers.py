@@ -440,7 +440,6 @@ def maine_vendor_lead(rows, records, as_of: str | None = None) -> str:
         f"{franchise_sentence} "
         f"{ind} {verb(ind)} independent, and that label is used only when a quoted page supports it. "
         f"{counts.get('unverified', 0)} are Ownership: unverified. "
-        f"{ownership_sentence(counts)} "
         "The Efficiency Maine residential heat pump rebates page, checked "
         f"{as_of}, lists per outdoor-unit amounts of $3,000 (low income, lifetime cap $9,000), "
         "$2,000 (moderate income, cap $6,000), and $1,000 (any income, cap $3,000). "
