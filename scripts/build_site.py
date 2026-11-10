@@ -13,6 +13,27 @@ from urllib.parse import quote
 
 from branches import attach_branch_groups
 from common import ROOT, STATES, load_json
+from geo_answers import (
+    CONTENT_UPDATED,
+    DEALSEAM,
+    EFFICIENCY_MAINE_LOCATOR,
+    MASS_SAVE_FINDER,
+    MN_COMMERCE,
+    answer_catalog,
+    answer_link_pairs,
+    how_to_tell_faqs,
+    how_to_tell_lead,
+    maine_vendor_faqs,
+    maine_vendor_lead,
+    mass_save_network_faqs,
+    mass_save_network_lead,
+    mass_save_rebate_lead,
+    minnesota_faqs,
+    minnesota_lead,
+    questions_faqs,
+    questions_lead,
+    state_pe_lead,
+)
 from guide_content import full_guides
 
 DIST = ROOT / "dist"
@@ -393,21 +414,9 @@ def ownership_counts(rows):
 
 
 def ownership_sentence(counts):
-    pe = counts.get("pe_owned", 0) + counts.get("platform_owned", 0)
-    parts = [
-        f"{counts.get('unverified', 0)} labeled Ownership: unverified",
-        f"{counts.get('independent', 0)} independent",
-        f"{pe} PE or platform-owned",
-        f"{counts.get('franchise', 0)} franchise",
-    ]
-    if counts.get("utility"):
-        parts.append(f"{counts['utility']} utility-owned")
-    if counts.get("other_corporate"):
-        parts.append(f"{counts['other_corporate']} other corporate owner")
-    return (
-        ", ".join(parts)
-        + ". These are label counts. Unverified means no documented parent was matched and no positive independent evidence was recorded."
-    )
+    from geo_answers import ownership_sentence as geo_ownership_sentence
+
+    return geo_ownership_sentence(counts)
 
 
 _MONTHS = (
@@ -499,6 +508,67 @@ def ownership_source_note() -> str:
     )
 
 
+def dataset_ld(name: str, description: str, path: str, source_url: str | None = None):
+    data = {
+        "@context": "https://schema.org",
+        "@type": "Dataset",
+        "name": name,
+        "description": description,
+        "url": absolute(path),
+        "dateModified": AS_OF,
+        "datePublished": AS_OF,
+        "creator": {"@type": "Organization", "name": NAME, "url": absolute("/")},
+        "license": absolute("/terms/"),
+        "isAccessibleForFree": True,
+    }
+    if source_url:
+        data["isBasedOn"] = source_url
+    return data
+
+
+def answer_nav(from_dir: str) -> str:
+    items = "".join(
+        f'<li><a href="{esc(rel_url(from_dir, path))}">{esc(title)}</a></li>'
+        for title, path in answer_link_pairs()
+    )
+    return f'<h2>Answers</h2><ul class="answer-links">{items}</ul>'
+
+
+def _sorted_installers(rows):
+    return sorted(rows, key=lambda row: (row["city"].lower(), row["name"].lower()))
+
+
+def installer_directory_html(rows, from_dir: str) -> str:
+    items = []
+    for row in _sorted_installers(rows):
+        href = rel_url(from_dir, row["path"])
+        items.append(
+            f'<li><a href="{esc(href)}">{esc(row["name"])}</a>, {esc(row["city"])}. {esc(row["ownership_label"])}.</li>'
+        )
+    return (
+        f'<h2>Contractors on this list ({len(rows)})</h2>'
+        f'<ul class="directory-names">{"".join(items)}</ul>'
+    )
+
+
+def installer_item_list(rows, name: str):
+    elements = []
+    for position, row in enumerate(_sorted_installers(rows), start=1):
+        elements.append({
+            "@type": "ListItem",
+            "position": position,
+            "name": f"{row['name']}, {row['city']}",
+            "url": absolute(row["path"]),
+        })
+    return {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "name": name,
+        "numberOfItems": len(rows),
+        "itemListElement": elements,
+    }
+
+
 def webpage_ld(title: str, description: str, path: str):
     return {
         "@context": "https://schema.org",
@@ -515,38 +585,8 @@ def webpage_ld(title: str, description: str, path: str):
 
 def state_pe_summary(code: str, rows, records) -> str:
     meta = STATES[code]
-    own = ownership_counts(rows)
     src = STATE_SOURCE[code]
-    pe_rows = sorted((row for row in rows if is_pe(row)), key=lambda row: row["name"].lower())
-    if pe_rows:
-        named = join_clauses(named_owner(row, platform_for(row, records)) for row in pe_rows)
-        named_sentence = f"The PE or platform-owned names are {named}."
-    else:
-        named_sentence = "No listing in this state matched a documented private equity or platform owner."
-    others = sorted(
-        (row for row in rows if row["ownership_status"] in {"franchise", "utility", "other_corporate"}),
-        key=lambda row: row["name"].lower(),
-    )
-    kind_labels = {
-        "franchise": "a franchise label, not private equity",
-        "utility": "a utility owner, not private equity",
-        "other_corporate": "another corporate owner, not private equity",
-    }
-    if others:
-        bits = [
-            f"{named_owner(row, platform_for(row, records))}, {kind_labels[row['ownership_status']]}"
-            for row in others
-        ]
-        other_sentence = "Other sourced owners in this state: " + join_clauses(bits) + "."
-    else:
-        other_sentence = "No franchise, utility, or other corporate owner was matched in this state."
-    return (
-        f"As of {long_date(AS_OF)} ({AS_OF}), ElectrifyRadar lists {len(rows)} heat pump installer records in {meta['name']}, "
-        f"from the {src['program']} ({src['file_note']}). "
-        f"{ownership_sentence(own)} "
-        f"{named_sentence} {other_sentence} "
-        "Only matched names are labeled."
-    )
+    return state_pe_lead(meta["name"], rows, records, src["program"], src["file_note"], AS_OF)
 
 
 def state_pe_faq(code: str, rows, records):
@@ -837,7 +877,7 @@ def build():
     write_states(by_state, by_city)
     write_cities(by_city)
     write_profiles(listings)
-    write_static_pages(counts, by_state)
+    write_static_pages(counts, by_state, listings)
     write_ownership_pages(by_state)
     write_llms(counts, listings)
     write_robots()
@@ -884,6 +924,7 @@ def write_home(counts, listings):
   <p class="meta">Last updated {esc(long_date(AS_OF))}.</p>
   <p class="quick-answer"><strong>Quick answer.</strong> {esc(summary)}</p>
   {faq_section_plain(questions)}
+  {answer_nav("")}
   <h2>Private equity ownership lists</h2>
   <ul>{ownership_links}</ul>
   <p class="lede">ElectrifyRadar lists heat pump contractors from public program rosters and one state license file. Each listing says Independent only when we have evidence. Right now the honest default is <strong>Ownership: unverified</strong>, unless the name matches a documented private-equity platform or franchise.</p>
@@ -965,6 +1006,7 @@ def write_country(counts):
   <p class="lede">{total} listings across {len(STATES)} launch states, built so another country or another trade can be added without renaming the URL pattern. Paths look like /us/ma/boston/name/.</p>
   <p>Canada and the UK are not in this release. Electric-vehicle charger installers are not either. The data model already has a country code and a category field so those can be added as their own rosters.</p>
   <ul>{items}</ul>
+  {answer_nav("/us")}
   <p><a href="guides/">All guides</a> · <a href="guides/independent-vs-pe-hvac/">Independent, platform-owned, and franchise</a> · <a href="rebates/">Rebate guides</a></p>
 </div>
 """
@@ -1191,29 +1233,44 @@ def write_states(by_state, by_city):
         from_dir = f"/us/{code}"
         trail = [("Home", "/"), ("United States", "/us/"), (meta["name"], f"/us/{code}/")]
         src = STATE_SOURCE[code]
-        quick = (
-            f"ElectrifyRadar lists {len(rows)} {meta['name']} records as of {AS_OF}, "
-            f"from the {src['program']} ({src['file_note']}). "
-            f"{ownership_sentence(own)}"
-        )
-        updated = ""
-        faq_html = ""
-        if code == "me":
-            quick = (
-                f"As of {long_date(AS_OF)} ({AS_OF}), ElectrifyRadar lists {len(rows)} heat pump installer records in Maine, "
-                f"from the {src['program']} ({src['file_note']}). "
-                f"{ownership_sentence(own)} "
-                "Efficiency Maine's residential heat pump rebates page, checked "
-                f"{AS_OF}, lists per outdoor-unit amounts of $3,000 (low income, lifetime cap $9,000), "
-                "$2,000 (moderate income, cap $6,000), and $1,000 (any income, cap $3,000). "
-                "Multi-zone units are not rebate-eligible on that table. Only matched names are labeled."
-            )
-            questions = maine_directory_faq(rows, own)
+        records = load_platform_records()
+        answer_h1 = {
+            "ma": "Mass Save heat pump installer network list of contractors",
+            "me": "List of heat pump installers in Maine Efficiency Maine registered vendors",
+            "mn": "Cold climate heat pump installers Minnesota directory",
+        }.get(code)
+        directory_html = ""
+        dataset_html = ""
+        if answer_h1:
+            if code == "ma":
+                quick = mass_save_network_lead(rows, records, AS_OF)
+                questions = mass_save_network_faqs(quick, rows)
+                source = MASS_SAVE_FINDER
+            elif code == "me":
+                quick = maine_vendor_lead(rows, records, AS_OF)
+                questions = maine_vendor_faqs(quick, rows)
+                source = EFFICIENCY_MAINE_LOCATOR
+            else:
+                quick = minnesota_lead(rows, records, AS_OF)
+                questions = minnesota_faqs(quick, rows)
+                source = MN_COMMERCE
             faq_html = faq_section_plain(questions)
             updated = f'<p class="meta">Last updated {esc(long_date(AS_OF))}.</p>'
+            h1 = answer_h1
+            directory_html = installer_directory_html(rows, from_dir)
+            dataset_html = json_ld(installer_item_list(rows, h1)) + json_ld(
+                dataset_ld(h1, quick, f"/us/{code}/", source)
+            )
         else:
+            quick = (
+                f"ElectrifyRadar lists {len(rows)} {meta['name']} records as of {AS_OF}, "
+                f"from the {src['program']} ({src['file_note']}). "
+                f"{ownership_sentence(own)}"
+            )
             questions = state_faq(code, len(rows), own)
             faq_html = faq_section(questions)
+            updated = ""
+            h1 = f"Heat pump installers in {meta['name']}"
         city_items = []
         for position, (title, slug, count) in enumerate(cities, start=1):
             city_items.append({
@@ -1222,16 +1279,18 @@ def write_states(by_state, by_city):
                 "name": title,
                 "url": absolute(f"/us/{code}/{slug}/"),
             })
-        desc = f"{len(rows)} heat pump installer listings in {meta['name']}, from the {src['program']}, checked {AS_OF}."
-        page_title = f"Heat pump installers in {meta['name']} | {NAME}"
+        desc = quick if answer_h1 else (
+            f"{len(rows)} heat pump installer listings in {meta['name']}, from the {src['program']}, checked {AS_OF}."
+        )
+        page_title = f"{h1} | {NAME}"
         ld = json_ld({
             "@context": "https://schema.org",
             "@type": "ItemList",
             "name": f"Places with listings in {meta['name']}",
             "numberOfItems": len(cities),
             "itemListElement": city_items,
-        }) + json_ld(faq_ld(questions))
-        if code == "me":
+        }) + json_ld(faq_ld(questions)) + dataset_html
+        if answer_h1:
             ld += json_ld(webpage_ld(page_title, desc, f"/us/{code}/"))
         branch_note = (
             "<p>Some city listings link other listed locations of the same business. The count is directory records matched to a cited location page. It is not an ownership label and it is not an exhaustive national total.</p>"
@@ -1247,19 +1306,21 @@ def write_states(by_state, by_city):
   {ownership_link}
   {branch_note}</div>"""
         quick_html = f'<p class="quick-answer"><strong>Quick answer.</strong> {esc(quick)}</p>'
-        if code == "me":
+        links = answer_nav(from_dir)
+        if answer_h1:
             opening = updated + quick_html + faq_html
-            middle = intro
+            middle = intro + links
         else:
             opening = quick_html
-            middle = intro + faq_html
+            middle = intro + links + faq_html
         body = f"""
 <div class="wrap">
   {crumbs(from_dir, trail)}
   <p class="eyebrow">{esc(meta["code"])}</p>
-  <h1>Heat pump installers in {esc(meta["name"])}</h1>
+  <h1>{esc(h1)}</h1>
   {opening}
   {middle}
+  {directory_html}
   {search_block(from_dir, code.upper())}
   <h2>Cities and mailing-address groups</h2>
   <ul>{city_links}</ul>
@@ -1543,8 +1604,8 @@ def guide(slug, title, description, inner, faqs=None, date_reviewed=None, date_p
     }
 
 
-def write_static_pages(counts, by_state):
-    guides = guide_pages()
+def write_static_pages(counts, by_state, listings):
+    guides = guide_pages(listings)
     index_items = "".join(
         "<li>"
         f'<a href="{esc(page["path"].split("/us/guides/")[1])}">{esc(page["title"])}</a>'
@@ -1585,6 +1646,13 @@ def write_static_pages(counts, by_state):
         extra = json_ld(article_ld(page["title"], page["description"], page["path"], published, reviewed))
         if faqs:
             extra += json_ld(faq_ld(faqs))
+        if page.get("dataset"):
+            extra += json_ld(dataset_ld(
+                page["title"],
+                page.get("lead") or page["description"],
+                page["path"],
+                page.get("dataset_source"),
+            ))
         write_page(page["path"], shell(page["from"], f'{page["title"]} | {NAME}', page["description"], body, page["path"], extra_head=extra, breadcrumbs=trail))
 
     rebate_states = "".join(
@@ -1771,6 +1839,7 @@ def write_ownership_pages(by_state):
             })
             + json_ld(faq_ld(questions))
             + json_ld(webpage_ld(title, desc, path))
+            + json_ld(dataset_ld(title, summary, path, DEALSEAM))
         )
         state_href = rel_url(from_dir, f"/us/{code}/")
         platforms_href = rel_url(from_dir, "/platforms/")
@@ -1898,23 +1967,60 @@ def write_form_page(path, heading, description, subject, intro, extra_fields="")
     write_page(path, shell(from_dir, f"{heading} | {NAME}", description, body, path, breadcrumbs=[("Home", "/"), (heading, path)]))
 
 
-def guide_pages():
+def _apply_answer_guide(page, listings):
+    slug = page["path"].strip("/").split("/")[-1]
+    records = load_platform_records()
+    if slug == "independent-vs-pe-hvac":
+        lead = how_to_tell_lead(listings, records, AS_OF)
+        page["lead"] = lead
+        page["opening"] = (
+            f'<p class="meta">Last updated {esc(long_date(AS_OF))}.</p>\n'
+            f'<p class="quick-answer"><strong>Quick answer.</strong> {esc(lead)}</p>\n'
+        )
+        page["faqs"] = how_to_tell_faqs(lead)
+        page["faq_first"] = True
+        page["faq_plain"] = True
+        page["dataset"] = True
+        page["dataset_source"] = DEALSEAM
+    elif slug == "questions-to-ask-heat-pump-installer":
+        lead = questions_lead(len(listings), len(STATES), AS_OF)
+        page["lead"] = lead
+        page["opening"] = f'<p class="quick-answer"><strong>Quick answer.</strong> {esc(lead)}</p>\n'
+        page["faqs"] = questions_faqs(lead)
+        page["faq_first"] = True
+        page["faq_plain"] = True
+        page["dataset"] = True
+        page["dataset_source"] = "https://www.energystar.gov/saveathome/heating-cooling/10-tips-hiring"
+    elif slug == "mass-save-heat-pump-rebate":
+        page["lead"] = mass_save_rebate_lead(AS_OF)
+        page["dataset"] = True
+        page["dataset_source"] = "https://www.masssave.com/residential/rebates-offers-services/heating-and-cooling/heat-pumps/air-source-heat-pumps"
+    elif slug == "efficiency-maine-heat-pump-rebate":
+        from geo_answers import efficiency_maine_lead
+
+        page["lead"] = efficiency_maine_lead(AS_OF)
+        page["dataset"] = True
+        page["dataset_source"] = "https://www.efficiencymaine.com/at-home/residential-heat-pump-rebates/"
+
+
+def guide_pages(listings=None):
     pages = []
     for item in full_guides(AS_OF):
-        pages.append(
-            guide(
-                item["slug"],
-                item["title"],
-                item["description"],
-                item["inner"],
-                faqs=item.get("faqs") or [],
-                date_reviewed=item.get("date_modified") or AS_OF,
-                date_published=item.get("date_published"),
-                opening=item.get("opening") or "",
-                faq_first=bool(item.get("faq_first")),
-                faq_plain=bool(item.get("faq_plain")),
-            )
+        page = guide(
+            item["slug"],
+            item["title"],
+            item["description"],
+            item["inner"],
+            faqs=item.get("faqs") or [],
+            date_reviewed=item.get("date_modified") or AS_OF,
+            date_published=item.get("date_published"),
+            opening=item.get("opening") or "",
+            faq_first=bool(item.get("faq_first")),
+            faq_plain=bool(item.get("faq_plain")),
         )
+        if listings is not None:
+            _apply_answer_guide(page, listings)
+        pages.append(page)
     return pages
 
 
@@ -2006,6 +2112,12 @@ def write_sitemap(listings, by_city):
     for page in guide_pages():
         pages.append(page["path"])
         page_lastmod[page["path"]] = page.get("date_reviewed") or AS_OF
+    page_lastmod["/"] = CONTENT_UPDATED
+    page_lastmod["/us/"] = CONTENT_UPDATED
+    page_lastmod["/us/guides/"] = CONTENT_UPDATED
+    for code in STATES:
+        page_lastmod[f"/us/{code}/"] = CONTENT_UPDATED
+        page_lastmod[ownership_path(code)] = CONTENT_UPDATED
     cities = [f"/us/{state_slug}/{city_slug}/" for state_slug, city_slug in by_city]
     installers = [row["path"] for row in listings]
     files = {
@@ -2038,6 +2150,16 @@ def write_robots():
         lines.extend([f"User-agent: {bot}", "Allow: /", ""])
     lines.append(f"Sitemap: {absolute('/sitemap.xml')}")
     (DIST / "robots.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def answer_lines(listings, records):
+    lines = []
+    for item in answer_catalog(listings, records):
+        lines.append(f"- {item['title']}")
+        lines.append(f"  URL: {absolute(item['path'])}")
+        lines.append(f"  Answer: {item['lead']}")
+        lines.append("")
+    return lines
 
 
 def write_llms(counts, listings):
@@ -2107,15 +2229,21 @@ def write_llms(counts, listings):
         "Each page answers which HVAC or heat pump installers in that state are owned by private equity or platforms, with the count, the matched names, the platform or owner, the checked date, and the source note.",
         *ownership_urls,
         "",
+        "## Answers",
+        "Each block is the quick-answer paragraph on that URL. Installer counts are computed from data/listings.json. "
+        "Rebate amounts are copied from official pages already quoted in this repo. "
+        f"Checked {AS_OF}.",
+        "",
+        *answer_lines(listings, records),
         "## Key URLs",
         f"- Home: {absolute('/')}",
         f"- Methodology: {absolute('/methodology/')}",
         f"- Platforms: {absolute('/platforms/')}",
         f"- Guides index: {absolute('/us/guides/')}",
-        f"- Mass Save rebate guide: {absolute('/us/guides/mass-save-heat-pump-rebate/')}",
-        f"- How to compare heat pump installers before requesting quotes: {absolute('/us/guides/questions-to-ask-heat-pump-installer/')}",
-        f"- Efficiency Maine rebate guide: {absolute('/us/guides/efficiency-maine-heat-pump-rebate/')}",
-        f"- Ownership / PE guide: {absolute('/us/guides/independent-vs-pe-hvac/')}",
+        f"- Mass Save heat pump rebate 2026 whole-home vs partial amount: {absolute('/us/guides/mass-save-heat-pump-rebate/')}",
+        f"- Questions to ask a heat pump installer before getting quotes: {absolute('/us/guides/questions-to-ask-heat-pump-installer/')}",
+        f"- Efficiency Maine heat pump rebate 2026 amount: {absolute('/us/guides/efficiency-maine-heat-pump-rebate/')}",
+        f"- Is my HVAC heat pump installer owned by private equity: how to tell: {absolute('/us/guides/independent-vs-pe-hvac/')}",
         f"- Cold-climate heat pumps: {absolute('/us/guides/cold-climate-heat-pumps/')}",
         f"- Ownership rules: {absolute('/us/guides/how-we-label-ownership/')}",
         f"- Manual J: {absolute('/us/guides/manual-j-load-calculation/')}",
