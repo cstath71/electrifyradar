@@ -36,3 +36,23 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+  indexnow:
+    needs: deploy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # The state file is how the next deploy tells a first submission from
+      # URLs whose sitemap lastmod changed. It is not committed.
+      - uses: actions/cache@v4
+        with:
+          path: .indexnow
+          key: indexnow-${{ github.run_id }}
+          restore-keys: indexnow-
+      - run: python3 scripts/build_site.py
+      - run: python3 scripts/indexnow.py --after-deploy --state .indexnow/state.json
