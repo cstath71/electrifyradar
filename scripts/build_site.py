@@ -897,6 +897,14 @@ def build():
     )
 
 
+def homepage_description(total: int, states: int) -> str:
+    """Meta description kept inside Bing's 120-155 character window."""
+    return (
+        f"Directory of {total} heat pump installers in {states} states. "
+        "Private equity and franchise labels require a sourced ownership record."
+    )
+
+
 def write_home(counts, listings):
     cards = "".join(
         f'<a class="state-card" href="us/{code}/"><strong>{esc(STATES[code]["name"])}</strong><span>{counts.get(code, 0)} listings</span></a>'
@@ -905,18 +913,13 @@ def write_home(counts, listings):
     records = load_platform_records()
     summary = homepage_summary(listings, counts, records)
     questions = homepage_faq(listings, counts, records)
-    own = ownership_counts(listings)
     ownership_links = "".join(
         f'<li><a href="us/{code}/private-equity/">{esc(STATES[code]["name"])}</a>: '
         f'{pe_count(ownership_counts([row for row in listings if row["admin1_slug"] == code]))} PE or platform-owned '
         f'of {counts.get(code, 0)} listings.</li>'
         for code in STATES
     )
-    desc = (
-        f"As of {AS_OF}, ElectrifyRadar lists {len(listings)} heat pump installer records in 8 states. "
-        f"{pe_count(own)} are PE or platform-owned and {own.get('unverified', 0)} are Ownership: unverified. "
-        "Only matched names are labeled."
-    )
+    desc = homepage_description(len(listings), len(STATES))
     body = f"""
 <div class="wrap hero">
   <p class="eyebrow">United States · heat pumps and ductless mini-splits</p>

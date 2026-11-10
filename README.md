@@ -84,7 +84,7 @@ Listings already have `country_code` and `category` (`heat_pump` today). URLs ar
 
 `config/site.json` has empty `google_site_verification` and `msvalidate` hooks. DNS verification is already done, so leave them empty unless you also add an HTML-tag check.
 
-After a deploy is live, ping IndexNow yourself (this is not part of CI):
+The build writes `dist/<indexnow_key>.txt`. GitHub Pages serves it at `https://electrifyradar.com/<indexnow_key>.txt`. After each successful Pages deploy, `.github/workflows/pages.yml` runs `scripts/indexnow.py --after-deploy`. The first run submits the homepage, state hubs, guides, the other sitemap page URLs, and city pages (largest first), up to 10,000 URLs. Later runs submit URLs whose sitemap lastmod changed. A manual full submission is still:
 
 ```bash
 python3 scripts/build_site.py
